@@ -1,9 +1,9 @@
 {
   "name": "Taste Wallet",
   "short_name": "Taste",
-  "description": "Secure & Fast Digital Wallet – Earn, Deposit & Withdraw",
-  "start_url": "/",
-  "scope": "/",
+  "description": "Secure & Fast Digital Wallet - Earn, Deposit & Withdraw",
+  "start_url": "/Taste-Wallet-wap-App/",
+  "scope": "/Taste-Wallet-wap-App/",
   "display": "standalone",
   "background_color": "#4f46e5",
   "theme_color": "#4f46e5",
