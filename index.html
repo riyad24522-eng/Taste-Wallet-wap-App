@@ -15,7 +15,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js">
     </script>
 
-    <!-- PWA লিংক (এই ২টি লাইন নতুন যোগ করলাম) -->
+    <!-- PWA লিংক -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
 
@@ -186,21 +186,30 @@
             }
         }
 
-        .login-box h2 {
+        /* ===== লোগো/পিকের স্টাইল ===== */
+        .app-logo {
+            display: block;
+            margin: 0 auto 16px auto;
+            width: 110px;
+            height: auto;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+        .app-brand {
             text-align: center;
-            margin-bottom: 4px;
-            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .app-brand h2 {
+            font-size: 26px;
             font-weight: 900;
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            margin-bottom: 2px;
         }
-
-        .login-subtitle {
-            text-align: center;
+        .app-brand p {
             font-size: 14px;
-            margin-bottom: 22px;
             font-weight: 700;
             letter-spacing: 2px;
             color: var(--text-color);
@@ -1453,9 +1462,12 @@
     <!-- ===== লগইন স্ক্রিন ===== -->
     <div id="loginScreen">
         <div class="login-box">
-            <!-- আপনার দেয়া ছবির ব্র্যান্ডিং এখানে -->
-            <h2>Taste Wallet</h2>
-            <div class="login-subtitle">⚡ SECURE · FAST · SMART ⚡</div>
+            <!-- ===== লোগো + ব্র্যান্ডিং (নতুন যোগ করা) ===== -->
+            <div class="app-brand">
+                <img src="logo.png" alt="Taste Wallet Logo" class="app-logo" onerror="this.style.display='none'">
+                <h2>Taste Wallet</h2>
+                <p>⚡ SECURE · FAST · SMART ⚡</p>
+            </div>
 
             <div class="tab-btns">
                 <button class="active" onclick="switchAuthTab('login')">Login</button>
