@@ -64,6 +64,9 @@
             --notif-text: #ffffff;
             --leaderboard-bg: #ffffff;
             --leaderboard-border: #e2e8f0;
+            --blocked-bg: #fee2e2;
+            --blocked-border: #fca5a5;
+            --blocked-color: #991b1b;
         }
 
         /* ===== ডার্ক মোড ===== */
@@ -111,6 +114,9 @@
             --notif-text: #f1f5f9;
             --leaderboard-bg: #1e293b;
             --leaderboard-border: #334155;
+            --blocked-bg: #7f1d1d;
+            --blocked-border: #991b1b;
+            --blocked-color: #fca5a5;
         }
 
         * {
@@ -126,6 +132,59 @@
             height: 100vh;
             overflow: hidden;
             transition: background 0.3s, color 0.3s;
+        }
+
+        /* ===== ব্লকড স্ক্রিন ===== */
+        #blockedScreen {
+            position: fixed;
+            inset: 0;
+            background: var(--blocked-bg);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            padding: 20px;
+            border: 4px solid var(--blocked-border);
+        }
+        #blockedScreen.active {
+            display: flex;
+        }
+        .blocked-box {
+            background: var(--popup-bg);
+            max-width: 400px;
+            width: 100%;
+            border-radius: 28px;
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--blocked-border);
+        }
+        .blocked-box .icon {
+            font-size: 64px;
+            margin-bottom: 12px;
+        }
+        .blocked-box h2 {
+            color: var(--blocked-color);
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+        .blocked-box p {
+            color: var(--text-color);
+            font-size: 15px;
+            font-weight: 600;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+        .blocked-box .reason {
+            background: var(--input-bg);
+            padding: 12px;
+            border-radius: 12px;
+            margin: 16px 0;
+            font-size: 14px;
+            color: var(--blocked-color);
+            font-weight: 700;
+            border: 1px solid var(--blocked-border);
         }
 
         .dark-toggle-btn {
@@ -1591,9 +1650,6 @@
             filter: grayscale(1);
         }
 
-        /* RESET বাটন সরানো হয়েছে — ব্যবহারকারীর চাহিদা অনুযায়ী */
-        /* #sec-game .game-btn-clear পুরোপুরি সরানো */
-
         #sec-game .game-popup-overlay {
             position: fixed;
             top: 0;
@@ -1673,6 +1729,17 @@
 </head>
 
 <body>
+
+    <!-- ===== ব্লকড স্ক্রিন ===== -->
+    <div id="blockedScreen">
+        <div class="blocked-box">
+            <div class="icon">🚫</div>
+            <h2>আপনি ব্লক হয়েছেন!</h2>
+            <p>আপনার অ্যাকাউন্টটি অ্যাডমিন দ্বারা ব্লক করা হয়েছে।</p>
+            <div class="reason" id="blockReason">কারণ: নিয়ম লঙ্ঘন</div>
+            <p style="font-size:13px; opacity:0.6;">বিস্তারিত জানতে অ্যাডমিনের সাথে যোগাযোগ করুন।</p>
+        </div>
+    </div>
 
     <!-- ===== লোডিং ওভারলে ===== -->
     <div class="loading-overlay" id="loadingOverlay">
@@ -1820,7 +1887,7 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 16px; margin-bottom: 6px; font-size: 13px; color: #4f46e5; font-weight: 800;">🎁 প্রতি রেফারে ১০ টাকা (রেফার্ড ইউজার ডিপোজিট করলে) — বন্ধুদের সাথে শেয়ার করো</div>
+                    <div style="margin-top: 16px; margin-bottom: 6px; font-size: 13px; color: #4f46e5; font-weight: 800;">🎁 প্রতি রেফারে ১ টাকা (রেফার্ড ইউজার টেলিগ্রাম জয়েন করলে) — বন্ধুদের সাথে শেয়ার করো</div>
                     <div style="display:flex; gap:10px;">
                         <input type="text" id="refLink" readonly style="flex:1; padding:10px 14px; border:2px solid var(--input-border); border-radius:12px; font-size:13px; background:var(--input-bg); color:var(--text-color);" />
                         <button class="copy-btn" onclick="copyText('refLink')">Copy</button>
@@ -2074,7 +2141,6 @@
                             </div>
 
                             <div class="game-actions">
-                                <!-- RESET বাটন সম্পূর্ণ সরানো হয়েছে — বেট রিজেক্ট করার কোনো অপশন নেই -->
                                 <button class="game-btn game-btn-spin" id="gameSpinBtn" onclick="gameSpinWheel()">SPIN</button>
                             </div>
                         </div>
@@ -2252,9 +2318,7 @@
             "রিপন আহমেদ", "মিতু আক্তার", "আশরাফুল", "সালমা খাতুন", "জাহির রায়হান",
             "হাবিব", "নার্গিস", "রুবেল", "প্রিয়", "মামুন", "সুলতানা", "ফাহিম", "জান্নাত",
             "সোহেল", "বিথি", "আরমান", "মৌমিতা", "কাউসার", "আনিকা", "সাজ্জাদ", "মিতু", "রিয়াদ", "রাসেল", "খলিল",
-            "আব্দুর রহমান", "মোঃ আলী", "সেলিম", "জাকির", "নাজমুল", "ফরিদ", "ইয়াসিন", "শাহিন", "মিলন", "তুহিন",
-            "সিনক্সজামান", "আপসুকুর রহমান", "কুবেল আহমেদ", "সুয়াইয়া আক্তার", "সাদিয়া ইসলাম",
-            "ইব্রাহিম খলিল", "মোয়াজোয়েল হক", "সোহানুর রহমান"
+            "আব্দুর রহমান", "মোঃ আলী", "সেলিম", "জাকির", "নাজমুল", "ফরিদ", "ইয়াসিন", "শাহিন", "মিলন", "তুহিন"
         ];
 
         const methods = ['bKash', 'Nagad'];
@@ -2349,6 +2413,57 @@
                 e) { return ''; }
         }
 
+        // ==========================================================
+        // ===== ব্লক চেক ফাংশন =====
+        // ==========================================================
+        async function checkUserBlocked(loginId) {
+            try {
+                const safeKey = sanitizeKey(loginId);
+                const snap = await db.ref('blocked_users/' + safeKey).once('value');
+                const data = snap.val();
+                if (data && data.blocked === true) {
+                    return { blocked: true, reason: data.reason || 'নিয়ম লঙ্ঘন' };
+                }
+                return { blocked: false };
+            } catch (e) {
+                console.error('Block check error:', e);
+                return { blocked: false };
+            }
+        }
+
+        function listenForBlockStatus(loginId) {
+            const safeKey = sanitizeKey(loginId);
+            db.ref('blocked_users/' + safeKey).on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.blocked === true) {
+                    // ইউজার ব্লক হয়েছে
+                    showBlockedScreen(data.reason || 'নিয়ম লঙ্ঘন');
+                } else {
+                    // ইউজার আনব্লক হয়েছে
+                    hideBlockedScreen();
+                }
+            });
+        }
+
+        function showBlockedScreen(reason) {
+            document.getElementById('blockReason').textContent = 'কারণ: ' + (reason || 'নিয়ম লঙ্ঘন');
+            document.getElementById('blockedScreen').classList.add('active');
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'none';
+        }
+
+        function hideBlockedScreen() {
+            document.getElementById('blockedScreen').classList.remove('active');
+            // আবার অ্যাপ দেখানো
+            if (currentUserData) {
+                document.getElementById('app').style.display = 'flex';
+                document.getElementById('loginScreen').style.display = 'none';
+            }
+        }
+
+        // ==========================================================
+        // ===== ইউজার ফাংশন =====
+        // ==========================================================
         async function getUserFromFirebase(loginId) {
             const safeKey = sanitizeKey(loginId);
             const snapshot = await database.ref('users/' + safeKey).once('value');
@@ -2365,8 +2480,8 @@
             if (!sanitizedObj.completedTasks) sanitizedObj.completedTasks = {};
             if (!sanitizedObj.linkedWithdrawNumber) sanitizedObj.linkedWithdrawNumber = '';
             if (!sanitizedObj.linkedNumbers) sanitizedObj.linkedNumbers = { bKash: '', Nagad: '' };
-            // রেফার বোনাস ট্র্যাকিং
             if (!sanitizedObj.referralBonusesGiven) sanitizedObj.referralBonusesGiven = [];
+            if (!sanitizedObj.referredUsers) sanitizedObj.referredUsers = [];
             await database.ref('users/' + safeKey).set(sanitizedObj);
             currentUserData = sanitizedObj;
         }
@@ -2396,152 +2511,440 @@
             });
         }
 
-        async function manualRefreshApp() {
+        // ==========================================================
+        // ===== রেফারেল বোনাস (শুধু টেলিগ্রাম জয়েনে) =====
+        // ==========================================================
+        async function giveReferralBonusForTelegram(userLoginId) {
+            try {
+                const user = await getUserFromFirebase(userLoginId);
+                if (!user) return false;
+
+                const referrerLoginId = user.referredBy;
+                if (!referrerLoginId) return false;
+
+                // ইতিমধ্যে বোনাস দেয়া হয়েছে কিনা চেক
+                if (user.referralBonusGivenForTelegram) return false;
+
+                const referrer = await getUserFromFirebase(referrerLoginId);
+                if (!referrer) return false;
+
+                // রেফারারকে ১ টাকা বোনাস দিই
+                referrer.balance = (referrer.balance || 0) + 1;
+                referrer.referCount = (referrer.referCount || 0) + 1;
+
+                if (!referrer.history) referrer.history = [];
+                referrer.history.push({
+                    id: 'REFBONUS_TG_' + Date.now(),
+                    type: `রেফারেল বোনাস (${user.nick || user.loginId} টেলিগ্রাম জয়েন করেছে)`,
+                    amount: 1,
+                    status: 'Completed',
+                    time: getFormattedServerTime()
+                });
+
+                // রেফার্ড ইউজার লিস্ট আপডেট
+                if (!referrer.referredUsers) referrer.referredUsers = [];
+                if (!referrer.referredUsers.includes(user.userId)) {
+                    referrer.referredUsers.push(user.userId);
+                }
+
+                await saveUserToFirebase(referrer);
+
+                // ইউজারের রেকর্ডে বোনাস দেয়া হয়েছে মার্ক করি
+                user.referralBonusGivenForTelegram = true;
+                await saveUserToFirebase(user);
+
+                console.log(`✅ রেফার বোনাস দেয়া হয়েছে: ${referrer.nick} পেল ১ টাকা (টেলিগ্রাম জয়েন)`);
+                return true;
+            } catch (err) {
+                console.error('Referral bonus error:', err);
+                return false;
+            }
+        }
+
+        // ==========================================================
+        // ===== রেজিস্টার =====
+        // ==========================================================
+        async function doRegister() {
+            const nick = document.getElementById('regNick').value.trim();
+            const id = document.getElementById('regId').value.trim();
+            const pass = document.getElementById('regPass').value;
+            const refCode = document.getElementById('regRefCode').value.trim();
+            if (!nick || !id || !pass) { showPopup('Error', 'সব ঘর পূরণ করো'); return; }
+
             showLoading(true);
             try {
-                if (currentUserKey) {
-                    const user = await getUserFromFirebase(currentUserKey);
-                    if (user) {
-                        currentUserData = user;
-                        await checkAndUpdateProfits();
-                        updateUI();
-                        gameUpdateBalance();
-                    } else { showPopup('Notice', 'লগইন তথ্য পাওয়া যায়নি, আবার লগইন করুন।'); }
-                } else { window.location.reload(); }
-            } catch (err) { console.error(err);
-                showPopup('Error', 'রিফ্রেশ করতে সমস্যা হয়েছে।'); } finally { showLoading(false); }
-        }
-
-        function selectWdMethod(method) {
-            selectedWdMethodName = method;
-            document.getElementById('wdMethodBkash').classList.toggle('active', method === 'bKash');
-            document.getElementById('wdMethodNagad').classList.toggle('active', method === 'Nagad');
-            let user = getActiveUser();
-            if (user && user.linkedNumbers) {
-                const wdNumberField = document.getElementById('wdNumber');
-                if (wdNumberField && user.linkedNumbers[method]) {
-                    wdNumberField.value = user.linkedNumbers[method];
-                } else if (wdNumberField) {
-                    wdNumberField.value = '';
+                // ব্লক চেক
+                const blockCheck = await checkUserBlocked(id);
+                if (blockCheck.blocked) {
+                    showPopup('⚠️ ব্লক', 'এই আইডি ব্লক করা আছে!');
+                    showLoading(false);
+                    return;
                 }
-            }
-        }
 
-        function selectDepMethod(method) {
-            selectedDepMethodName = method;
-            document.getElementById('depMethodBkash').classList.toggle('active', method === 'bKash');
-            document.getElementById('depMethodNagad').classList.toggle('active', method === 'Nagad');
-            updateDepositInfo();
-        }
+                const existing = await getUserFromFirebase(id);
+                if (existing) { showPopup('Error', 'এই ফোন/ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট খোলা হয়েছে!');
+                    showLoading(false); return; }
 
-        async function checkNumberLinkedToOtherAccount(number, currentLoginId, method) {
-            try {
+                const deviceId = getDeviceId();
                 const allUsersSnap = await database.ref('users').once('value');
                 const allUsers = allUsersSnap.val() || {};
-                for (let key in allUsers) {
-                    const user = allUsers[key];
-                    if (user.linkedNumbers) {
-                        if (user.linkedNumbers.bKash === number && user.loginId !== currentLoginId) {
-                            return { linked: true, userId: user.userId, nick: user.nick, method: 'bKash' };
-                        }
-                        if (user.linkedNumbers.Nagad === number && user.loginId !== currentLoginId) {
-                            return { linked: true, userId: user.userId, nick: user.nick, method: 'Nagad' };
-                        }
+                let deviceAccountCount = 0;
+                for (let k in allUsers) { if (allUsers[k].deviceId === deviceId) deviceAccountCount++; }
+                if (deviceAccountCount >= 2) { showPopup('Error', 'এই ডিভাইস থেকে ইতিমধ্যে সর্বোচ্চ ২ টি অ্যাকাউন্ট খোলা হয়েছে!');
+                    showLoading(false); return; }
+
+                let assignedUserId = 'USR' + Math.floor(100000 + Math.random() * 900000);
+                let newUser = {
+                    nick: nick,
+                    loginId: id,
+                    password: pass,
+                    userId: assignedUserId,
+                    balance: 1.00, // লগইন বোনাস ১ টাকা
+                    referCount: 0,
+                    totalDeposit: 0,
+                    totalWithdraw: 0,
+                    referredBy: null,
+                    referralBonusGivenForTelegram: false,
+                    history: [{ id: 'BONUS_' + Date.now(), type: 'Registration Bonus', amount: 1.00, status: 'Completed',
+                        time: getFormattedServerTime() }],
+                    investments: [],
+                    completedTasks: {},
+                    lastDailyBonusDate: '',
+                    lastPromoDate: '',
+                    usedGifts: [],
+                    giftHistory: [],
+                    profileImg: '',
+                    authProvider: 'email',
+                    deviceId: deviceId,
+                    linkedWithdrawNumber: '',
+                    linkedNumbers: { bKash: '', Nagad: '' },
+                    referralBonusesGiven: [],
+                    referredUsers: []
+                };
+
+                if (refCode) {
+                    if (refCode === assignedUserId || refCode.toLowerCase() === id.toLowerCase()) {
+                        showPopup('Error', 'নিজের রেফার কোড নিজে ব্যবহার করা যাবে না!');
+                        showLoading(false);
+                        return;
+                    }
+                    let referrerKey = null,
+                        referrerData = null;
+                    for (let k in allUsers) { if (allUsers[k].userId === refCode) { referrerKey = k;
+                            referrerData = allUsers[k]; break; } }
+                    if (referrerKey && referrerKey !== sanitizeKey(id)) {
+                        newUser.referredBy = referrerData.loginId;
                     }
                 }
-                return { linked: false };
-            } catch (err) {
-                console.error('Number check error:', err);
-                return { linked: false, error: err.message };
-            }
+
+                await saveUserToFirebase(newUser);
+                currentUserKey = id;
+                currentUserData = newUser;
+                setLoggedKey(currentUserKey);
+                enterApp();
+                listenUserChanges(currentUserKey);
+                listenForBlockStatus(currentUserKey);
+
+                // রেজিস্ট্রেশন বোনাস পপআপ
+                showClaimSuccess('অভিনন্দন! রেজিস্ট্রেশন বোনাস ১ টাকা যোগ হয়েছে!');
+            } catch (err) { console.error(err);
+                showPopup('Error', 'রেজিস্ট্রেশন ব্যর্থ: ' + err.message); } finally { showLoading(false); }
         }
 
-        function loadDepositSettings() {
-            db.ref('admin_settings/deposit_methods').on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    if (Array.isArray(data.bKash)) {
-                        depositSettings.bKash = data.bKash;
-                    } else if (typeof data.bKash === 'object' && data.bKash !== null) {
-                        depositSettings.bKash = [{
-                            title: data.bKash.title || 'আমাদের bKash Personal নম্বরে সেন্ড মানি করুন:',
-                            number: data.bKash.number || '01829889350',
-                            instruction: data.bKash.instruction || 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে।'
-                        }];
-                    } else {
-                        depositSettings.bKash = [{
-                            title: 'আমাদের bKash Personal নম্বরে সেন্ড মানি করুন:',
-                            number: '01829889350',
-                            instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে।'
-                        }];
+        // ==========================================================
+        // ===== লগইন =====
+        // ==========================================================
+        async function doLogin() {
+            const id = document.getElementById('loginId').value.trim();
+            const pass = document.getElementById('loginPass').value;
+            if (!id || !pass) { showPopup('Error', 'Phone/Email এবং Password দিন'); return; }
+            showLoading(true);
+            try {
+                // ব্লক চেক
+                const blockCheck = await checkUserBlocked(id);
+                if (blockCheck.blocked) {
+                    showPopup('⚠️ ব্লক', 'এই অ্যাকাউন্টটি ব্লক করা আছে!');
+                    showLoading(false);
+                    return;
+                }
+
+                const user = await getUserFromFirebase(id);
+                if (user && user.password === pass) {
+                    currentUserKey = id;
+                    currentUserData = user;
+                    if (!user.investments) user.investments = [];
+                    if (user.referCount === undefined) user.referCount = 0;
+                    if (user.totalDeposit === undefined) user.totalDeposit = 0;
+                    if (user.totalWithdraw === undefined) user.totalWithdraw = 0;
+                    if (!user.completedTasks) user.completedTasks = {};
+                    if (!user.usedGifts) user.usedGifts = [];
+                    if (!user.giftHistory) user.giftHistory = [];
+                    if (!user.history) user.history = [];
+                    if (!user.linkedWithdrawNumber) user.linkedWithdrawNumber = '';
+                    if (!user.linkedNumbers) user.linkedNumbers = { bKash: '', Nagad: '' };
+                    if (!user.referralBonusesGiven) user.referralBonusesGiven = [];
+                    if (!user.referredUsers) user.referredUsers = [];
+                    setLoggedKey(currentUserKey);
+                    enterApp();
+                    listenUserChanges(currentUserKey);
+                    listenForBlockStatus(currentUserKey);
+                } else { showPopup('Error', 'Phone/Email বা Password ভুল'); }
+            } catch (err) { console.error(err);
+                showPopup('Error', 'লগইন ব্যর্থ: ' + err.message); } finally { showLoading(false); }
+        }
+
+        // ==========================================================
+        // ===== সোশ্যাল লগইন =====
+        // ==========================================================
+        async function socialLogin(providerName) {
+            showLoading(true);
+            document.getElementById('googleBtn').disabled = true;
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                provider.setCustomParameters({ prompt: 'select_account' });
+                const result = await auth.signInWithPopup(provider);
+                const firebaseUser = result.user;
+                const email = firebaseUser.email || ('google_' + firebaseUser.uid + '@social.com');
+                const displayName = firebaseUser.displayName || 'Google User';
+                const photoURL = firebaseUser.photoURL || '';
+
+                // ব্লক চেক
+                const blockCheck = await checkUserBlocked(email);
+                if (blockCheck.blocked) {
+                    showPopup('⚠️ ব্লক', 'এই অ্যাকাউন্টটি ব্লক করা আছে!');
+                    showLoading(false);
+                    document.getElementById('googleBtn').disabled = false;
+                    return;
+                }
+
+                let user = await getUserFromFirebase(email);
+                const deviceId = getDeviceId();
+
+                if (!user) {
+                    const allUsersSnap = await database.ref('users').once('value');
+                    const allUsers = allUsersSnap.val() || {};
+                    let deviceAccountCount = 0;
+                    for (let k in allUsers) { if (allUsers[k].deviceId === deviceId) deviceAccountCount++; }
+                    if (deviceAccountCount >= 2) {
+                        showPopup('Error', 'এই ডিভাইস থেকে ইতিমধ্যে সর্বোচ্চ ২ টি অ্যাকাউন্ট খোলা হয়েছে!');
+                        showLoading(false);
+                        document.getElementById('googleBtn').disabled = false;
+                        return;
                     }
-                    if (Array.isArray(data.Nagad)) {
-                        depositSettings.Nagad = data.Nagad;
-                    } else if (typeof data.Nagad === 'object' && data.Nagad !== null) {
-                        depositSettings.Nagad = [{
-                            title: data.Nagad.title || 'আমাদের Nagad Personal নম্বরে সেন্ড মানি করুন:',
-                            number: data.Nagad.number || '01829889350',
-                            instruction: data.Nagad.instruction || 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে।'
-                        }];
-                    } else {
-                        depositSettings.Nagad = [{
-                            title: 'আমাদের Nagad Personal নম্বরে সেন্ড মানি করুন:',
-                            number: '01829889350',
-                            instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে।'
-                        }];
+
+                    user = {
+                        nick: displayName,
+                        loginId: email,
+                        password: 'social_' + firebaseUser.uid,
+                        userId: 'USR' + Math.floor(100000 + Math.random() * 900000),
+                        balance: 1.00,
+                        referCount: 0,
+                        totalDeposit: 0,
+                        totalWithdraw: 0,
+                        referredBy: null,
+                        referralBonusGivenForTelegram: false,
+                        history: [{ id: 'BONUS_' + Date.now(), type: 'Google Registration Bonus', amount: 1.00,
+                            status: 'Completed', time: getFormattedServerTime() }],
+                        investments: [],
+                        completedTasks: {},
+                        lastDailyBonusDate: '',
+                        lastPromoDate: '',
+                        usedGifts: [],
+                        giftHistory: [],
+                        profileImg: photoURL,
+                        authProvider: 'google',
+                        firebaseUid: firebaseUser.uid,
+                        deviceId: deviceId,
+                        linkedWithdrawNumber: '',
+                        linkedNumbers: { bKash: '', Nagad: '' },
+                        referralBonusesGiven: [],
+                        referredUsers: []
+                    };
+                    const refCode = getUrlRefCode();
+                    if (refCode && refCode !== user.userId) {
+                        let referrerKey = null,
+                            referrerData = null;
+                        for (let k in allUsers) { if (allUsers[k].userId === refCode) { referrerKey = k;
+                                referrerData = allUsers[k]; break; } }
+                        if (referrerKey && referrerData.loginId !== email) user.referredBy = referrerData.loginId;
                     }
+                    await saveUserToFirebase(user);
                 } else {
-                    depositSettings.bKash = [{
-                        title: 'আমাদের bKash Personal নম্বরে সেন্ড মানি করুন:',
-                        number: '01829889350',
-                        instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে।'
-                    }];
-                    depositSettings.Nagad = [{
-                        title: 'আমাদের Nagad Personal নম্বরে সেন্ড মানি করুন:',
-                        number: '01829889350',
-                        instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে।'
-                    }];
+                    if (photoURL && !user.profileImg) { user.profileImg = photoURL;
+                        await saveUserToFirebase(user); }
                 }
-                updateDepositInfo();
-            });
+                currentUserKey = email;
+                currentUserData = user;
+                setLoggedKey(currentUserKey);
+                enterApp();
+                listenUserChanges(currentUserKey);
+                listenForBlockStatus(currentUserKey);
+            } catch (err) {
+                console.error('Social login error:', err);
+                let msg = err.message || 'লগইন ব্যর্থ';
+                if (err.code === 'auth/popup-closed-by-user') msg = 'লগইন উইন্ডো বন্ধ করে দিয়েছ। আবার চেষ্টা করো।';
+                else if (err.code === 'auth/popup-blocked') msg = 'পপআপ ব্লক করা হয়েছে। ব্রাউজারের পপআপ ব্লকার বন্ধ করো।';
+                showPopup('Error', msg);
+            } finally { showLoading(false);
+                document.getElementById('googleBtn').disabled = false; }
         }
 
-        function updateDepositInfo() {
-            const entries = depositSettings[selectedDepMethodName] || [];
-            const container = document.getElementById('depositInfoList');
-            if (!container) return;
-            if (entries.length === 0) {
-                container.innerHTML = `<p style="color:var(--deposit-notice-color); font-weight:600;">কোনো নাম্বার পাওয়া যায়নি।</p>`;
+        // ==========================================================
+        // ===== লগআউট =====
+        // ==========================================================
+        async function doLogout() {
+            try { await auth.signOut(); } catch (e) {}
+            currentUserKey = null;
+            currentUserData = null;
+            hasShownNoticePopup = false;
+            setLoggedKey(null);
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            hideBlockedScreen();
+            showPopup('Info', 'Logout হয়েছে');
+        }
+
+        // ==========================================================
+        // ===== অ্যাপ এন্ট্রি =====
+        // ==========================================================
+        async function enterApp() {
+            // ব্লক চেক
+            const blockCheck = await checkUserBlocked(currentUserKey);
+            if (blockCheck.blocked) {
+                showBlockedScreen(blockCheck.reason);
                 return;
             }
-            let html = '';
-            entries.forEach((entry, index) => {
-                html += `
-                    <div style="border-bottom: 1px solid var(--deposit-notice-border); padding: 10px 0; ${index === entries.length - 1 ? 'border-bottom: none;' : ''}">
-                        <div style="font-weight:700; font-size:14px; color:var(--deposit-notice-color); margin-bottom:4px;">
-                            ${index+1}. ${entry.title || `আমাদের ${selectedDepMethodName} Personal নম্বরে সেন্ড মানি করুন:`}
-                        </div>
-                        <div style="font-size:16px; font-weight:800; color:var(--deposit-notice-color); display:flex; align-items:center; gap:8px; margin:4px 0;">
-                            <span>${entry.number || '01829889350'}</span>
-                            <button class="copy-btn" onclick="copyTextFrom('${entry.number || '01829889350'}')" style="padding: 2px 10px; font-size: 11px;">📋 Copy</button>
-                        </div>
-                        <div style="font-size:12px; color:var(--deposit-notice-color); opacity:0.8; font-weight:600;">
-                            ${entry.instruction || 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে।'}
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
+
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('app').style.display = 'flex';
+            document.getElementById('blockedScreen').classList.remove('active');
+
+            await checkAndUpdateProfits();
+            updateUI();
+            renderPackages();
+            renderLeaderboard();
+            gameInit();
+            gameUpdateBalance();
+            loadDepositSettings();
+
+            if (!hasShownNoticePopup) {
+                hasShownNoticePopup = true;
+                database.ref('notifications').limitToLast(1).once('child_added', (snapshot) => {
+                    const notif = snapshot.val();
+                    if (notif && typeof showPopup === 'function') showPopup(notif.title, notif.body);
+                });
+            }
+            loadReferData();
+            loadUserMessages();
+            loadDarkModePreference();
+            // ব্লক স্ট্যাটাস লিসেন
+            listenForBlockStatus(currentUserKey);
         }
 
-        function copyTextFrom(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showPopup('Copied', 'নাম্বার কপি করা হয়েছে!');
-            }).catch(err => {
-                showPopup('Error', 'কপি করতে সমস্যা হয়েছে');
-            });
+        // ==========================================================
+        // ===== সিকিউরিটি: ডিভাইস আইডি =====
+        // ==========================================================
+        function generateCanvasFingerprint() {
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 200;
+                canvas.height = 50;
+                ctx.textBaseline = "top";
+                ctx.font = "14px 'Arial'";
+                ctx.textBaseline = "alphabetic";
+                ctx.fillStyle = "#f60";
+                ctx.fillRect(125, 1, 62, 20);
+                ctx.fillStyle = "#069";
+                ctx.fillText("TrustWalletFP,123", 2, 15);
+                ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+                ctx.fillText("TrustWalletFP,123", 4, 17);
+                const str = canvas.toDataURL();
+                let hash = 0;
+                for (let i = 0; i < str.length; i++) {
+                    const char = str.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash |= 0;
+                }
+                return 'FP_' + Math.abs(hash);
+            } catch (e) {
+                return 'FP_FALLBACK_' + screen.width + 'x' + screen.height;
+            }
         }
 
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        function setCookie(name, value, days = 365) {
+            const d = new Date();
+            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+            document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/`;
+        }
+
+        function getDeviceId() {
+            const fpHash = generateCanvasFingerprint();
+            let devId = localStorage.getItem('trust_wallet_device_id') || getCookie('trust_wallet_device_id');
+            if (!devId) {
+                devId = 'DEV_' + fpHash + '_' + Math.random().toString(36).substring(2, 9);
+                localStorage.setItem('trust_wallet_device_id', devId);
+                setCookie('trust_wallet_device_id', devId);
+            } else {
+                localStorage.setItem('trust_wallet_device_id', devId);
+                setCookie('trust_wallet_device_id', devId);
+            }
+            return devId;
+        }
+
+        // ==========================================================
+        // ===== টেলিগ্রাম জয়েন (রেফার বোনাস সহ) =====
+        // ==========================================================
+        async function joinTelegram(channelKey) {
+            let user = getActiveUser();
+            if (!user) return;
+            if (!user.completedTasks) user.completedTasks = {};
+
+            const link = channelKey === 'tg1' ? 'https://t.me/+P0TB5j0FONc1Njhl' :
+                'https://t.me/+HsRU7ICa1SoxNDk1';
+            window.open(link, '_blank');
+
+            if (!user.completedTasks[channelKey]) {
+                showLoading(true);
+                try {
+                    user.completedTasks[channelKey] = true;
+                    user.balance = (user.balance || 0) + 1.00;
+                    if (!user.history) user.history = [];
+                    user.history.push({
+                        id: 'TG_' + Date.now(),
+                        type: 'Telegram Join Reward',
+                        amount: 1.00,
+                        status: 'Completed',
+                        time: getFormattedServerTime()
+                    });
+
+                    // সেভ করার আগে রেফারেল বোনাস চেক
+                    await saveUserToFirebase(user);
+
+                    // রেফারেল বোনাস (শুধু টেলিগ্রাম জয়েনের জন্য)
+                    await giveReferralBonusForTelegram(user.loginId);
+
+                    updateUI();
+                    gameUpdateBalance();
+                    showClaimSuccess('চ্যানেলে জয়েন করার জন্য ১ টাকা রিওয়ার্ড দেওয়া হয়েছে!');
+                } catch (err) {
+                    showPopup('Error', err.message);
+                } finally {
+                    showLoading(false);
+                }
+            }
+        }
+
+        // ==========================================================
+        // ===== বাকি ফাংশন (পূর্বের মতো) =====
+        // ==========================================================
         function switchAuthTab(tab) {
             document.querySelectorAll('.tab-btns button').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
@@ -2604,354 +3007,151 @@
             }, 1000);
         }
 
-        function generateCanvasFingerprint() {
+        async function manualRefreshApp() {
+            showLoading(true);
             try {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = 200;
-                canvas.height = 50;
-                ctx.textBaseline = "top";
-                ctx.font = "14px 'Arial'";
-                ctx.textBaseline = "alphabetic";
-                ctx.fillStyle = "#f60";
-                ctx.fillRect(125, 1, 62, 20);
-                ctx.fillStyle = "#069";
-                ctx.fillText("TrustWalletFP,123", 2, 15);
-                ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
-                ctx.fillText("TrustWalletFP,123", 4, 17);
-                const str = canvas.toDataURL();
-                let hash = 0;
-                for (let i = 0; i < str.length; i++) {
-                    const char = str.charCodeAt(i);
-                    hash = ((hash << 5) - hash) + char;
-                    hash |= 0;
+                if (currentUserKey) {
+                    const user = await getUserFromFirebase(currentUserKey);
+                    if (user) {
+                        currentUserData = user;
+                        await checkAndUpdateProfits();
+                        updateUI();
+                        gameUpdateBalance();
+                    } else { showPopup('Notice', 'লগইন তথ্য পাওয়া যায়নি, আবার লগইন করুন。'); }
+                } else { window.location.reload(); }
+            } catch (err) { console.error(err);
+                showPopup('Error', 'রিফ্রেশ করতে সমস্যা হয়েছে।'); } finally { showLoading(false); }
+        }
+
+        function selectWdMethod(method) {
+            selectedWdMethodName = method;
+            document.getElementById('wdMethodBkash').classList.toggle('active', method === 'bKash');
+            document.getElementById('wdMethodNagad').classList.toggle('active', method === 'Nagad');
+            let user = getActiveUser();
+            if (user && user.linkedNumbers) {
+                const wdNumberField = document.getElementById('wdNumber');
+                if (wdNumberField && user.linkedNumbers[method]) {
+                    wdNumberField.value = user.linkedNumbers[method];
+                } else if (wdNumberField) {
+                    wdNumberField.value = '';
                 }
-                return 'FP_' + Math.abs(hash);
-            } catch (e) {
-                return 'FP_FALLBACK_' + screen.width + 'x' + screen.height;
             }
         }
 
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-            return null;
+        function selectDepMethod(method) {
+            selectedDepMethodName = method;
+            document.getElementById('depMethodBkash').classList.toggle('active', method === 'bKash');
+            document.getElementById('depMethodNagad').classList.toggle('active', method === 'Nagad');
+            updateDepositInfo();
         }
 
-        function setCookie(name, value, days = 365) {
-            const d = new Date();
-            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
-            document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/`;
-        }
-
-        function getDeviceId() {
-            const fpHash = generateCanvasFingerprint();
-            let devId = localStorage.getItem('trust_wallet_device_id') || getCookie('trust_wallet_device_id');
-            if (!devId) {
-                devId = 'DEV_' + fpHash + '_' + Math.random().toString(36).substring(2, 9);
-                localStorage.setItem('trust_wallet_device_id', devId);
-                setCookie('trust_wallet_device_id', devId);
-            } else {
-                localStorage.setItem('trust_wallet_device_id', devId);
-                setCookie('trust_wallet_device_id', devId);
-            }
-            return devId;
-        }
-
-        // ===== সোশ্যাল লগইন =====
-        async function socialLogin(providerName) {
-            showLoading(true);
-            document.getElementById('googleBtn').disabled = true;
+        async function checkNumberLinkedToOtherAccount(number, currentLoginId, method) {
             try {
-                const provider = new firebase.auth.GoogleAuthProvider();
-                provider.setCustomParameters({ prompt: 'select_account' });
-                const result = await auth.signInWithPopup(provider);
-                const firebaseUser = result.user;
-                const email = firebaseUser.email || ('google_' + firebaseUser.uid + '@social.com');
-                const displayName = firebaseUser.displayName || 'Google User';
-                const photoURL = firebaseUser.photoURL || '';
-
-                let user = await getUserFromFirebase(email);
-                const deviceId = getDeviceId();
-
-                if (!user) {
-                    const allUsersSnap = await database.ref('users').once('value');
-                    const allUsers = allUsersSnap.val() || {};
-                    let deviceAccountCount = 0;
-                    for (let k in allUsers) { if (allUsers[k].deviceId === deviceId) deviceAccountCount++; }
-                    if (deviceAccountCount >= 2) {
-                        showPopup('Error', 'এই ডিভাইস থেকে ইতিমধ্যে সর্বোচ্চ ২ টি অ্যাকাউন্ট খোলা হয়েছে!');
-                        showLoading(false);
-                        document.getElementById('googleBtn').disabled = false;
-                        return;
-                    }
-
-                    user = {
-                        nick: displayName,
-                        loginId: email,
-                        password: 'social_' + firebaseUser.uid,
-                        userId: 'USR' + Math.floor(100000 + Math.random() * 900000),
-                        balance: 2.00,
-                        referCount: 0,
-                        totalDeposit: 0,
-                        totalWithdraw: 0,
-                        referredBy: null,
-                        referralBonusGiven: false,
-                        history: [{ id: 'BONUS_' + Date.now(), type: 'Google Registration Bonus', amount: 2.00,
-                            status: 'Completed', time: getFormattedServerTime() }],
-                        investments: [],
-                        completedTasks: {},
-                        lastDailyBonusDate: '',
-                        lastPromoDate: '',
-                        usedGifts: [],
-                        giftHistory: [],
-                        profileImg: photoURL,
-                        authProvider: 'google',
-                        firebaseUid: firebaseUser.uid,
-                        deviceId: deviceId,
-                        linkedWithdrawNumber: '',
-                        linkedNumbers: { bKash: '', Nagad: '' },
-                        referralBonusesGiven: []
-                    };
-                    const refCodeInput = document.getElementById('regRefCode');
-                    const refCode = getUrlRefCode() || (refCodeInput ? refCodeInput.value.trim() : '');
-                    if (refCode && refCode !== user.userId) {
-                        let referrerKey = null,
-                            referrerData = null;
-                        for (let k in allUsers) { if (allUsers[k].userId === refCode) { referrerKey = k;
-                                referrerData = allUsers[k]; break; } }
-                        if (referrerKey && referrerData.loginId !== email) user.referredBy = referrerData.loginId;
-                    }
-                    await saveUserToFirebase(user);
-                } else {
-                    if (photoURL && !user.profileImg) { user.profileImg = photoURL;
-                        await saveUserToFirebase(user); }
-                }
-                currentUserKey = email;
-                currentUserData = user;
-                setLoggedKey(currentUserKey);
-                enterApp();
-                listenUserChanges(currentUserKey);
-            } catch (err) {
-                console.error('Social login error:', err);
-                let msg = err.message || 'লগইন ব্যর্থ';
-                if (err.code === 'auth/popup-closed-by-user') msg = 'লগইন উইন্ডো বন্ধ করে দিয়েছ। আবার চেষ্টা করো।';
-                else if (err.code === 'auth/popup-blocked') msg = 'পপআপ ব্লক করা হয়েছে। ব্রাউজারের পপআপ ব্লকার বন্ধ করো।';
-                showPopup('Error', msg);
-            } finally { showLoading(false);
-                document.getElementById('googleBtn').disabled = false; }
-        }
-
-        // ===== রেজিস্টার =====
-        async function doRegister() {
-            const nick = document.getElementById('regNick').value.trim();
-            const id = document.getElementById('regId').value.trim();
-            const pass = document.getElementById('regPass').value;
-            const refCode = document.getElementById('regRefCode').value.trim();
-            if (!nick || !id || !pass) { showPopup('Error', 'সব ঘর পূরণ করো'); return; }
-
-            showLoading(true);
-            try {
-                const existing = await getUserFromFirebase(id);
-                if (existing) { showPopup('Error', 'এই ফোন/ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট খোলা হয়েছে!');
-                    showLoading(false); return; }
-
-                const numberCheck = await checkNumberLinkedToOtherAccount(id, '', '');
-                if (numberCheck.linked) {
-                    showPopup('⚠️ সতর্কতা', `এই নাম্বারটি ইতিমধ্যে অন্য অ্যাকাউন্টে সংযুক্ত আছে!\nআপনি শুধুমাত্র আপনার নিজের নাম্বার ব্যবহার করতে পারেন।`);
-                    showLoading(false);
-                    return;
-                }
-
-                const deviceId = getDeviceId();
                 const allUsersSnap = await database.ref('users').once('value');
                 const allUsers = allUsersSnap.val() || {};
-                let deviceAccountCount = 0;
-                for (let k in allUsers) { if (allUsers[k].deviceId === deviceId) deviceAccountCount++; }
-                if (deviceAccountCount >= 2) { showPopup('Error', 'এই ডিভাইস থেকে ইতিমধ্যে সর্বোচ্চ ২ টি অ্যাকাউন্ট খোলা হয়েছে!');
-                    showLoading(false); return; }
-
-                let assignedUserId = 'USR' + Math.floor(100000 + Math.random() * 900000);
-                let newUser = {
-                    nick: nick,
-                    loginId: id,
-                    password: pass,
-                    userId: assignedUserId,
-                    balance: 2.00,
-                    referCount: 0,
-                    totalDeposit: 0,
-                    totalWithdraw: 0,
-                    referredBy: null,
-                    referralBonusGiven: false,
-                    history: [{ id: 'BONUS_' + Date.now(), type: 'Registration Bonus', amount: 2.00, status: 'Completed',
-                        time: getFormattedServerTime() }],
-                    investments: [],
-                    completedTasks: {},
-                    lastDailyBonusDate: '',
-                    lastPromoDate: '',
-                    usedGifts: [],
-                    giftHistory: [],
-                    profileImg: '',
-                    authProvider: 'email',
-                    deviceId: deviceId,
-                    linkedWithdrawNumber: '',
-                    linkedNumbers: { bKash: '', Nagad: '' },
-                    referralBonusesGiven: []
-                };
-                if (refCode) {
-                    if (refCode === assignedUserId || refCode.toLowerCase() === id.toLowerCase()) {
-                        showPopup('Error', 'নিজের রেফার কোড নিজে ব্যবহার করা যাবে না!');
-                        showLoading(false);
-                        return;
+                for (let key in allUsers) {
+                    const user = allUsers[key];
+                    if (user.linkedNumbers) {
+                        if (user.linkedNumbers.bKash === number && user.loginId !== currentLoginId) {
+                            return { linked: true, userId: user.userId, nick: user.nick, method: 'bKash' };
+                        }
+                        if (user.linkedNumbers.Nagad === number && user.loginId !== currentLoginId) {
+                            return { linked: true, userId: user.userId, nick: user.nick, method: 'Nagad' };
+                        }
                     }
-                    let referrerKey = null,
-                        referrerData = null;
-                    for (let k in allUsers) { if (allUsers[k].userId === refCode) { referrerKey = k;
-                            referrerData = allUsers[k]; break; } }
-                    if (referrerKey && referrerKey !== sanitizeKey(id)) newUser.referredBy = referrerData.loginId;
                 }
-                await saveUserToFirebase(newUser);
-                currentUserKey = id;
-                currentUserData = newUser;
-                setLoggedKey(currentUserKey);
-                enterApp();
-                listenUserChanges(currentUserKey);
-            } catch (err) { console.error(err);
-                showPopup('Error', 'রেজিস্ট্রেশন ব্যর্থ: ' + err.message); } finally { showLoading(false); }
-        }
-
-        // ===== লগইন =====
-        async function doLogin() {
-            const id = document.getElementById('loginId').value.trim();
-            const pass = document.getElementById('loginPass').value;
-            if (!id || !pass) { showPopup('Error', 'Phone/Email এবং Password দিন'); return; }
-            showLoading(true);
-            try {
-                const user = await getUserFromFirebase(id);
-                if (user && user.password === pass) {
-                    currentUserKey = id;
-                    currentUserData = user;
-                    if (!user.investments) user.investments = [];
-                    if (user.referCount === undefined) user.referCount = 0;
-                    if (user.totalDeposit === undefined) user.totalDeposit = 0;
-                    if (user.totalWithdraw === undefined) user.totalWithdraw = 0;
-                    if (!user.completedTasks) user.completedTasks = {};
-                    if (!user.usedGifts) user.usedGifts = [];
-                    if (!user.giftHistory) user.giftHistory = [];
-                    if (!user.history) user.history = [];
-                    if (!user.linkedWithdrawNumber) user.linkedWithdrawNumber = '';
-                    if (!user.linkedNumbers) user.linkedNumbers = { bKash: '', Nagad: '' };
-                    if (!user.referralBonusesGiven) user.referralBonusesGiven = [];
-                    setLoggedKey(currentUserKey);
-                    enterApp();
-                    listenUserChanges(currentUserKey);
-                } else { showPopup('Error', 'Phone/Email বা Password ভুল'); }
-            } catch (err) { console.error(err);
-                showPopup('Error', 'লগইন ব্যর্থ: ' + err.message); } finally { showLoading(false); }
-        }
-
-        // ===== লগআউট =====
-        async function doLogout() {
-            try { await auth.signOut(); } catch (e) {}
-            currentUserKey = null;
-            currentUserData = null;
-            hasShownNoticePopup = false;
-            setLoggedKey(null);
-            document.getElementById('app').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'flex';
-            showPopup('Info', 'Logout হয়েছে');
-        }
-
-        // ===== অ্যাপ এন্ট্রি =====
-        async function enterApp() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('app').style.display = 'flex';
-            await checkAndUpdateProfits();
-            updateUI();
-            renderPackages();
-            renderLeaderboard();
-            gameInit();
-            gameUpdateBalance();
-            loadDepositSettings();
-            if (!hasShownNoticePopup) {
-                hasShownNoticePopup = true;
-                database.ref('notifications').limitToLast(1).once('child_added', (snapshot) => {
-                    const notif = snapshot.val();
-                    if (notif && typeof showPopup === 'function') showPopup(notif.title, notif.body);
-                });
+                return { linked: false };
+            } catch (err) {
+                console.error('Number check error:', err);
+                return { linked: false, error: err.message };
             }
-            loadReferData();
-            loadUserMessages();
-            loadDarkModePreference();
-            // ডিপোজিট অ্যাপ্রুভ লিসেনার — রেফার বোনাসের জন্য
-            listenForDepositApprovals();
         }
 
-        // ===== রেফার বোনাস: ডিপোজিট অ্যাপ্রুভ হলে ১০ টাকা =====
-        function listenForDepositApprovals() {
-            db.ref('pendingDeposits').on('child_changed', async (snapshot) => {
-                const deposit = snapshot.val();
-                const key = snapshot.key;
-                if (!deposit) return;
-                // শুধু তখনই কাজ করবে যখন স্ট্যাটাস 'Completed' হয় এবং বোনাস এখনও দেয়া হয়নি
-                if (deposit.status === 'Completed' && !deposit.referralBonusGiven) {
-                    await giveReferralDepositBonus(key, deposit);
+        function loadDepositSettings() {
+            db.ref('admin_settings/deposit_methods').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    if (Array.isArray(data.bKash)) {
+                        depositSettings.bKash = data.bKash;
+                    } else if (typeof data.bKash === 'object' && data.bKash !== null) {
+                        depositSettings.bKash = [{
+                            title: data.bKash.title || 'আমাদের bKash Personal নম্বরে সেন্ড মানি করুন:',
+                            number: data.bKash.number || '01829889350',
+                            instruction: data.bKash.instruction || 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে。'
+                        }];
+                    } else {
+                        depositSettings.bKash = [{
+                            title: 'আমাদের bKash Personal নম্বরে সেন্ড মানি করুন:',
+                            number: '01829889350',
+                            instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে。'
+                        }];
+                    }
+                    if (Array.isArray(data.Nagad)) {
+                        depositSettings.Nagad = data.Nagad;
+                    } else if (typeof data.Nagad === 'object' && data.Nagad !== null) {
+                        depositSettings.Nagad = [{
+                            title: data.Nagad.title || 'আমাদের Nagad Personal নম্বরে সেন্ড মানি করুন:',
+                            number: data.Nagad.number || '01829889350',
+                            instruction: data.Nagad.instruction || 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে。'
+                        }];
+                    } else {
+                        depositSettings.Nagad = [{
+                            title: 'আমাদের Nagad Personal নম্বরে সেন্ড মানি করুন:',
+                            number: '01829889350',
+                            instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে。'
+                        }];
+                    }
+                } else {
+                    depositSettings.bKash = [{
+                        title: 'আমাদের bKash Personal নম্বরে সেন্ড মানি করুন:',
+                        number: '01829889350',
+                        instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে。'
+                    }];
+                    depositSettings.Nagad = [{
+                        title: 'আমাদের Nagad Personal নম্বরে সেন্ড মানি করুন:',
+                        number: '01829889350',
+                        instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে。'
+                    }];
                 }
+                updateDepositInfo();
             });
         }
 
-        async function giveReferralDepositBonus(depositId, depositData) {
-            try {
-                const userLoginId = depositData.loginId;
-                if (!userLoginId) return false;
-
-                // ইউজার ডাটা লোড করি
-                const user = await getUserFromFirebase(userLoginId);
-                if (!user) return false;
-
-                // রেফারার আছে কিনা চেক
-                const referrerLoginId = user.referredBy;
-                if (!referrerLoginId) return false;
-
-                // রেফারার ডাটা লোড
-                const referrer = await getUserFromFirebase(referrerLoginId);
-                if (!referrer) return false;
-
-                // ইতিমধ্যে বোনাস দেয়া হয়েছে কিনা চেক (এই ডিপোজিটের জন্য)
-                if (user.referralBonusesGiven && user.referralBonusesGiven.includes(depositId)) {
-                    return false;
-                }
-
-                // রেফারারকে ১০ টাকা বোনাস দিই
-                referrer.balance = (referrer.balance || 0) + 10;
-                referrer.referCount = (referrer.referCount || 0) + 1;
-
-                if (!referrer.history) referrer.history = [];
-                referrer.history.push({
-                    id: 'REFBONUS_' + Date.now(),
-                    type: `Referral Deposit Bonus (${user.nick || user.loginId})`,
-                    amount: 10,
-                    status: 'Completed',
-                    time: getFormattedServerTime()
-                });
-
-                await saveUserToFirebase(referrer);
-
-                // ইউজারের রেকর্ডে বোনাস দেয়া হয়েছে মার্ক করি
-                if (!user.referralBonusesGiven) user.referralBonusesGiven = [];
-                user.referralBonusesGiven.push(depositId);
-                await saveUserToFirebase(user);
-
-                // ডিপোজিট রেকর্ডে বোনাস দেয়া হয়েছে মার্ক করি
-                await db.ref('pendingDeposits/' + depositId + '/referralBonusGiven').set(true);
-
-                console.log(`✅ রেফার বোনাস দেয়া হয়েছে: ${referrer.nick} পেল ১০ টাকা (ডিপোজিট: ${depositId})`);
-                return true;
-            } catch (err) {
-                console.error('Referral deposit bonus error:', err);
-                return false;
+        function updateDepositInfo() {
+            const entries = depositSettings[selectedDepMethodName] || [];
+            const container = document.getElementById('depositInfoList');
+            if (!container) return;
+            if (entries.length === 0) {
+                container.innerHTML =
+                `<p style="color:var(--deposit-notice-color); font-weight:600;">কোনো নাম্বার পাওয়া যায়নি।</p>`;
+                return;
             }
+            let html = '';
+            entries.forEach((entry, index) => {
+                html += `
+                    <div style="border-bottom: 1px solid var(--deposit-notice-border); padding: 10px 0; ${index === entries.length - 1 ? 'border-bottom: none;' : ''}">
+                        <div style="font-weight:700; font-size:14px; color:var(--deposit-notice-color); margin-bottom:4px;">
+                            ${index+1}. ${entry.title || `আমাদের ${selectedDepMethodName} Personal নম্বরে সেন্ড মানি করুন:`}
+                        </div>
+                        <div style="font-size:16px; font-weight:800; color:var(--deposit-notice-color); display:flex; align-items:center; gap:8px; margin:4px 0;">
+                            <span>${entry.number || '01829889350'}</span>
+                            <button class="copy-btn" onclick="copyTextFrom('${entry.number || '01829889350'}')" style="padding: 2px 10px; font-size: 11px;">📋 Copy</button>
+                        </div>
+                        <div style="font-size:12px; color:var(--deposit-notice-color); opacity:0.8; font-weight:600;">
+                            ${entry.instruction || 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে。'}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function copyTextFrom(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showPopup('Copied', 'নাম্বার কপি করা হয়েছে!');
+            }).catch(err => {
+                showPopup('Error', 'কপি করতে সমস্যা হয়েছে');
+            });
         }
 
         async function checkAndUpdateProfits() {
@@ -3294,7 +3494,7 @@
             const numberCheck = await checkNumberLinkedToOtherAccount(wdNum, user.loginId, selectedWdMethodName);
             if (numberCheck.linked) {
                 showPopup('⚠️ সতর্কতা',
-                    `এই নাম্বারটি ইতিমধ্যে অন্য অ্যাকাউন্টে সংযুক্ত আছে!\nআপনি শুধুমাত্র আপনার নিজের নাম্বার ব্যবহার করতে পারেন।`
+                    `এই নাম্বারটি ইতিমধ্যে অন্য অ্যাকাউন্টে সংযুক্ত আছে!\nআপনি শুধুমাত্র আপনার নিজের নাম্বার ব্যবহার করতে পারেন。`
                 );
                 return;
             }
@@ -3302,7 +3502,7 @@
             if (user.linkedNumbers && user.linkedNumbers[selectedWdMethodName] && user.linkedNumbers[selectedWdMethodName] !==
                 wdNum) {
                 showPopup('⚠️ সতর্কতা',
-                    `আপনার অ্যাকাউন্টে ইতিমধ্যে ${selectedWdMethodName} এর জন্য একটি নাম্বার সংযুক্ত আছে!\nএকটি মেথডের জন্য শুধুমাত্র একটি নাম্বার ব্যবহার করতে পারেন।`
+                    `আপনার অ্যাকাউন্টে ইতিমধ্যে ${selectedWdMethodName} এর জন্য একটি নাম্বার সংযুক্ত আছে!\nএকটি মেথডের জন্য শুধুমাত্র একটি নাম্বার ব্যবহার করতে পারেন。`
                 );
                 return;
             }
@@ -3389,41 +3589,6 @@
                 gameUpdateBalance();
                 showClaimSuccess(`ডেইলি বোনাস সফল! +৳ 1.00`);
             } catch (err) { showPopup('Error', err.message); } finally { showLoading(false); }
-        }
-
-        // ===== টেলিগ্রাম জয়েন (রেফার বোনাস সরানো হয়েছে) =====
-        async function joinTelegram(channelKey) {
-            let user = getActiveUser();
-            if (!user) return;
-            if (!user.completedTasks) user.completedTasks = {};
-
-            const link = channelKey === 'tg1' ? 'https://t.me/+P0TB5j0FONc1Njhl' :
-                'https://t.me/+HsRU7ICa1SoxNDk1';
-            window.open(link, '_blank');
-
-            if (!user.completedTasks[channelKey]) {
-                showLoading(true);
-                try {
-                    user.completedTasks[channelKey] = true;
-                    user.balance = (user.balance || 0) + 1.00;
-                    if (!user.history) user.history = [];
-                    user.history.push({
-                        id: 'TG_' + Date.now(),
-                        type: 'Telegram Join Reward',
-                        amount: 1.00,
-                        status: 'Completed',
-                        time: getFormattedServerTime()
-                    });
-                    await saveUserToFirebase(user);
-                    updateUI();
-                    gameUpdateBalance();
-                    showClaimSuccess('চ্যানেলে জয়েন করার জন্য ১ টাকা রিওয়ার্ড দেওয়া হয়েছে!');
-                } catch (err) {
-                    showPopup('Error', err.message);
-                } finally {
-                    showLoading(false);
-                }
-            }
         }
 
         function showPromoPopup() { document.getElementById('promoPopup').style.display = 'flex'; }
@@ -3917,7 +4082,6 @@
             }
         }
 
-        // ===== বেট প্লেস (রিজেক্ট অপশন নেই) =====
         function gamePlaceBet(type, amount) {
             if (gameIsSpinning) return;
             if (gameBalance < amount) {
@@ -3946,12 +4110,7 @@
             gameTotalBet += amount;
             gameBets[type] += amount;
             gameUpdateUI();
-
-            // বেট প্লেস করার পর রিজেক্ট করার কোনো অপশন নেই — RESET বাটন সরানো হয়েছে
         }
-
-        // ===== বেট ক্লিয়ার — RESET বাটন সরানো হয়েছে, তাই এই ফাংশন আর ব্যবহার হচ্ছে না =====
-        // gameClearBets() আর কল হবে না কারণ RESET বাটন নেই
 
         function gameTriggerFlapperTick() {
             gamePlayTickSound();
@@ -4037,7 +4196,6 @@
             requestAnimationFrame(animate);
         }
 
-        // ===== গেম জয় ক্যালকুলেশন =====
         function gameCalculateWin(winningSegment) {
             const label = winningSegment.label;
             let winAmount = 0;
@@ -4074,18 +4232,14 @@
                     timestamp: getFormattedServerTime(),
                     serverTime: getServerTime()
                 };
-                // নতুন রেকর্ড সবসময় উপরে থাকবে (পুশ + লিমিট)
                 database.ref('game_spins/').push(spinData).catch(err => console.error('Spin save error:', err));
             }
 
-            // হিস্টোরি — নতুন রেকর্ড উপরে, পুরান নিচে
             const history = document.getElementById('gameHistory');
             const badge = document.createElement('span');
             badge.className = `game-badge g-b-${label.toLowerCase()}`;
             badge.innerText = label;
-            // নতুন এলিমেন্ট উপরে যোগ করুন
             history.insertBefore(badge, history.firstChild);
-            // সর্বোচ্চ ২০টি রাখুন
             while (history.children.length > 20) {
                 history.removeChild(history.lastChild);
             }
@@ -4095,7 +4249,6 @@
             gameUpdateUI();
         }
 
-        // ===== গেম পপআপ =====
         function gameShowPopup(title, msg) {
             const popup = document.getElementById('gamePopup');
             const titleEl = document.getElementById('gamePopupTitle');
@@ -4126,7 +4279,7 @@
         function gameInit() {
             gameDrawWheel();
             gameUpdateBalance();
-            console.log('🎰 Game initialized — RESET বাটন সরানো হয়েছে, বেট রিজেক্ট করার অপশন নেই');
+            console.log('🎰 Game initialized');
         }
 
         // ==========================================================
@@ -4142,12 +4295,21 @@
             if (savedKey) {
                 showLoading(true);
                 try {
+                    // ব্লক চেক
+                    const blockCheck = await checkUserBlocked(savedKey);
+                    if (blockCheck.blocked) {
+                        showBlockedScreen(blockCheck.reason);
+                        showLoading(false);
+                        return;
+                    }
+
                     const user = await getUserFromFirebase(savedKey);
                     if (user) {
                         currentUserKey = savedKey;
                         currentUserData = user;
                         await enterApp();
                         listenUserChanges(currentUserKey);
+                        listenForBlockStatus(currentUserKey);
                     } else {
                         setLoggedKey(null);
                     }
@@ -4159,6 +4321,5 @@
             navigator.serviceWorker.register('sw.js').catch(e => console.log('SW skip'));
         }
     </script>
-
 </body>
 </html>
