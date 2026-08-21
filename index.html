@@ -208,6 +208,58 @@
             font-size: 16px;
         }
 
+        /* ===== হেডারের আইকন ===== */
+        .header-icon-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            color: white;
+        }
+        .header-icon-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        .header-icon-btn:active {
+            transform: scale(0.9);
+        }
+        .header-icon-btn .badge-dot {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 1px solid white;
+            animation: pulseDot 1.5s infinite;
+        }
+        .header-icon-btn .badge-dot.hidden {
+            display: none;
+        }
+        @keyframes pulseDot {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
         #loginScreen {
             position: fixed;
             inset: 0;
@@ -433,58 +485,70 @@
         .header {
             background: var(--header-bg);
             color: white;
-            padding: 18px 20px;
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+            min-height: 60px;
         }
         .header h1 {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 800;
             letter-spacing: 0.5px;
         }
         .header-right {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
         }
         .balance-badge {
             background: rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
+            padding: 4px 10px;
             border-radius: 30px;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 13px;
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.3);
+            white-space: nowrap;
         }
-        .notif-bell {
-            background: rgba(255, 255, 255, 0.2);
-            width: 38px;
-            height: 38px;
+        .header-icon-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
+            width: 34px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: transform 0.2s;
+            transition: all 0.2s;
             position: relative;
+            color: white;
+            flex-shrink: 0;
         }
-        .notif-bell:active {
+        .header-icon-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+        }
+        .header-icon-btn:active {
             transform: scale(0.9);
         }
-        .notif-dot {
+        .header-icon-btn .badge-dot {
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: 2px;
+            right: 2px;
             width: 8px;
             height: 8px;
             background: #ef4444;
             border-radius: 50%;
-            border: 1px solid white;
+            border: 1.5px solid rgba(79, 70, 229, 0.8);
         }
+        .header-icon-btn .badge-dot.hidden {
+            display: none;
+        }
+
         #pullToRefreshIndicator {
             text-align: center;
             font-size: 13px;
@@ -499,31 +563,31 @@
         .content {
             flex: 1;
             overflow-y: auto;
-            padding: 16px;
-            padding-bottom: 90px;
+            padding: 12px;
+            padding-bottom: 80px;
             position: relative;
             background: var(--bg-color);
         }
         .card {
             background: var(--card-bg);
             border-radius: 20px;
-            padding: 22px;
-            margin-bottom: 16px;
+            padding: 18px;
+            margin-bottom: 14px;
             box-shadow: var(--shadow);
             border: 1px solid var(--card-border);
             transition: background 0.3s, border 0.3s, box-shadow 0.3s;
         }
         .card h3 {
-            font-size: 19px;
-            margin-bottom: 16px;
+            font-size: 17px;
+            margin-bottom: 14px;
             color: var(--text-color);
             font-weight: 800;
         }
         .stat-row {
             display: flex;
             justify-content: space-between;
-            margin: 12px 0;
-            font-size: 15px;
+            margin: 10px 0;
+            font-size: 14px;
             align-items: center;
             color: var(--text-color);
             opacity: 0.8;
@@ -536,13 +600,13 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-top: 14px;
+            margin-top: 12px;
         }
         .info-box {
             background: var(--info-box-bg);
             border: none;
             border-radius: 14px;
-            padding: 12px 10px;
+            padding: 10px 8px;
             text-align: center;
             transition: transform 0.2s;
             box-shadow: 0 6px 15px rgba(79, 70, 229, 0.25);
@@ -551,26 +615,26 @@
             transform: translateY(-2px);
         }
         .info-box .box-title {
-            font-size: 11px;
+            font-size: 10px;
             color: #e0e7ff;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         .info-box .box-value {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 800;
             color: #ffffff;
         }
         .btn {
             display: inline-block;
-            padding: 12px 20px;
+            padding: 10px 16px;
             border: none;
             border-radius: 12px;
             font-weight: 700;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
             text-decoration: none;
             text-align: center;
             transition: all 0.2s;
@@ -602,20 +666,20 @@
         }
         .btn-full {
             width: 100%;
-            margin-top: 12px;
-            padding: 15px;
-            font-size: 17px;
+            margin-top: 10px;
+            padding: 13px;
+            font-size: 15px;
         }
         .method-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
         .method-option {
             border: 2px solid var(--input-border);
             border-radius: 14px;
-            padding: 12px;
+            padding: 10px;
             text-align: center;
             cursor: pointer;
             background: var(--input-bg);
@@ -635,28 +699,28 @@
             background: var(--notice-bg);
             border: 1px solid var(--notice-border);
             border-radius: 12px;
-            padding: 12px;
-            font-size: 13px;
+            padding: 10px;
+            font-size: 12px;
             color: var(--notice-color);
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             font-weight: 600;
             line-height: 1.6;
         }
         .package-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
         .package-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 14px;
+            gap: 12px;
         }
         .package-card-box {
             background: var(--package-bg) !important;
             border: 1px solid var(--package-border) !important;
-            border-radius: 18px;
-            padding: 16px 12px;
+            border-radius: 16px;
+            padding: 14px 10px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -668,19 +732,19 @@
             transform: translateY(-2px);
         }
         .package-card-box .price {
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 800;
             color: #ffffff !important;
         }
         .package-card-box .label {
-            font-size: 12px;
+            font-size: 11px;
             color: #9ca3af !important;
             margin-top: 2px;
             font-weight: 700;
             text-transform: uppercase;
         }
         .package-card-box .profit-tag {
-            font-size: 11px;
+            font-size: 10px;
             color: #fde047 !important;
             font-weight: 700;
             margin-top: 4px;
@@ -692,22 +756,22 @@
         .investment-item {
             background: var(--package-bg) !important;
             border: 1px solid var(--package-border) !important;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .investment-info .title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 800;
             color: #ffffff !important;
         }
         .investment-info .details {
-            font-size: 13px;
+            font-size: 12px;
             color: #fde047 !important;
-            margin-top: 4px;
+            margin-top: 3px;
             font-weight: 600;
         }
         .claim-btn-wrapper {
@@ -725,24 +789,10 @@
             border: 2px solid white;
             animation: pulseDot 1.5s infinite;
         }
-        @keyframes pulseDot {
-            0% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-            }
-            70% {
-                transform: scale(1);
-                box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
-            }
-            100% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-            }
-        }
         .btn-disabled {
             background: #374151 !important;
             color: #9ca3af !important;
-            font-size: 13px !important;
+            font-size: 12px !important;
             font-weight: 700 !important;
             cursor: not-allowed !important;
             box-shadow: none !important;
@@ -752,9 +802,9 @@
         .task-item {
             background: var(--task-bg) !important;
             border: 1px solid var(--task-border) !important;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -762,28 +812,28 @@
         .task-info {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
         .task-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 20px;
             background: var(--package-border);
             border: 1px solid var(--task-border);
         }
         .task-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 800;
             color: #ffffff !important;
         }
         .task-desc {
-            font-size: 13px;
+            font-size: 12px;
             color: #fde047 !important;
-            margin-top: 3px;
+            margin-top: 2px;
             font-weight: 600;
         }
 
@@ -791,11 +841,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 16px;
-            margin-bottom: 10px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
             background: var(--history-bg);
             border: 1px solid var(--history-border);
-            border-radius: 16px;
+            border-radius: 14px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -808,24 +858,24 @@
         .history-info-left {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
         }
         .history-title {
             font-weight: 800;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--history-text);
             display: flex;
             align-items: center;
             gap: 6px;
         }
         .history-subtext {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-color);
             opacity: 0.6;
             font-weight: 600;
         }
         .history-time {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-color);
             opacity: 0.4;
             font-weight: 500;
@@ -834,10 +884,10 @@
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            gap: 6px;
+            gap: 4px;
         }
         .history-amount {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 800;
             letter-spacing: -0.3px;
         }
@@ -851,9 +901,9 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 800;
             letter-spacing: 0.3px;
             text-transform: uppercase;
@@ -883,15 +933,15 @@
             background: var(--nav-bg);
             display: flex;
             border-top: 1px solid var(--nav-border);
-            padding: 8px 0;
+            padding: 6px 0;
             z-index: 100;
             box-shadow: -4px 20px rgba(0, 0, 0, 0.05);
         }
         .nav-item {
             flex: 1;
             text-align: center;
-            padding: 6px 0;
-            font-size: 12px;
+            padding: 4px 0;
+            font-size: 10px;
             color: var(--text-color);
             cursor: pointer;
             font-weight: 700;
@@ -904,22 +954,22 @@
             opacity: 1;
         }
         .nav-item .icon {
-            font-size: 22px;
+            font-size: 20px;
             display: block;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
         .nav-badge {
             position: absolute;
-            top: 2px;
-            right: 26%;
+            top: 0px;
+            right: 20%;
             background: #ef4444;
             color: white;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 800;
             padding: 1px 5px;
             border-radius: 10px;
             border: 1px solid white;
-            min-width: 16px;
+            min-width: 14px;
             text-align: center;
         }
 
@@ -938,10 +988,38 @@
             width: 88%;
             max-width: 360px;
             border-radius: 24px;
-            padding: 28px;
+            padding: 24px;
             text-align: center;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .popup .notice-item {
+            text-align: left;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--card-border);
+        }
+        .popup .notice-item:last-child {
+            border-bottom: none;
+        }
+        .popup .notice-item .notice-title {
+            font-weight: 800;
+            font-size: 14px;
+            color: var(--popup-text);
+        }
+        .popup .notice-item .notice-body {
+            font-size: 13px;
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-top: 4px;
+            line-height: 1.5;
+        }
+        .popup .notice-item .notice-time {
+            font-size: 11px;
+            color: var(--text-color);
+            opacity: 0.4;
+            margin-top: 4px;
         }
         @keyframes popIn {
             0% {
@@ -955,14 +1033,14 @@
         }
         .popup h3 {
             margin-bottom: 10px;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
             color: var(--popup-text);
         }
         .popup p {
             color: var(--text-color);
-            margin-bottom: 20px;
-            font-size: 15px;
+            margin-bottom: 16px;
+            font-size: 14px;
             font-weight: 600;
             line-height: 1.5;
             white-space: pre-line;
@@ -1049,9 +1127,9 @@
             background: #eef2ff;
             color: #4f46e5;
             border: none;
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-size: 13px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
             cursor: pointer;
             font-weight: 700;
         }
@@ -1062,15 +1140,15 @@
 
         .gift-hero {
             background: var(--gift-bg);
-            border-radius: 18px;
-            padding: 24px 16px;
+            border-radius: 16px;
+            padding: 20px 14px;
             text-align: center;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             border: 1px solid var(--gift-border);
         }
         .gift-box {
-            font-size: 60px;
-            margin-bottom: 8px;
+            font-size: 50px;
+            margin-bottom: 6px;
             animation: bounce 2s infinite;
         }
         @keyframes bounce {
@@ -1083,49 +1161,49 @@
             }
         }
         .gift-hero h2 {
-            font-size: 18px;
+            font-size: 16px;
             color: var(--text-color);
             font-weight: 800;
             margin-bottom: 4px;
         }
         .gift-hero p {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-color);
             font-weight: 600;
             opacity: 0.7;
         }
         .gift-input {
             width: 100%;
-            padding: 14px 16px;
+            padding: 12px 14px;
             border: 2px solid var(--gift-border);
             border-radius: 12px;
-            font-size: 15px;
+            font-size: 14px;
             text-align: center;
-            margin: 12px 0;
+            margin: 10px 0;
             background: var(--input-bg);
             font-weight: 700;
             color: var(--text-color);
         }
         .receive-btn {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: linear-gradient(135deg, #fbbf24, #f59e0b);
             color: #78350f;
             border: none;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 800;
             cursor: pointer;
             box-shadow: 0 6px 15px rgba(245, 158, 11, 0.35);
         }
         .gift-history-empty {
             text-align: center;
-            padding: 24px 10px;
+            padding: 20px 10px;
             color: var(--text-color);
             opacity: 0.5;
         }
         .gift-history-empty .icon {
-            font-size: 38px;
+            font-size: 34px;
             margin-bottom: 6px;
             opacity: 0.5;
         }
@@ -1145,13 +1223,13 @@
             display: flex;
         }
         .spinner {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border: 4px solid rgba(255, 255, 255, 0.3);
             border-top-color: white;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         @keyframes spin {
             to {
@@ -1194,15 +1272,15 @@
             transform: translateX(-50%);
             background: var(--notif-bg);
             color: var(--notif-text);
-            padding: 16px 20px;
-            border-radius: 20px;
+            padding: 14px 18px;
+            border-radius: 18px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
             z-index: 5000;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             display: none;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             max-width: 92%;
             animation: slideDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -1225,14 +1303,14 @@
             }
         }
         .top-notification .notif-avatar {
-            width: 44px;
-            height: 44px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
             color: white;
             flex-shrink: 0;
@@ -1261,11 +1339,11 @@
             border: none;
             color: var(--notif-text);
             cursor: pointer;
-            font-size: 18px;
+            font-size: 16px;
             padding: 0 4px;
             border-radius: 50%;
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1279,14 +1357,14 @@
         .leaderboard-card {
             background: var(--leaderboard-bg);
             border: 1px solid var(--leaderboard-border);
-            border-radius: 20px;
-            padding: 18px 16px;
-            margin-top: 12px;
+            border-radius: 18px;
+            padding: 16px 14px;
+            margin-top: 10px;
         }
         .leaderboard-card h4 {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 800;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -1295,18 +1373,18 @@
         .lb-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 10px;
-            border-radius: 12px;
-            margin-bottom: 6px;
+            gap: 8px;
+            padding: 6px 8px;
+            border-radius: 10px;
+            margin-bottom: 4px;
             background: var(--input-bg);
             border: 1px solid var(--input-border);
             transition: background 0.2s;
         }
         .lb-rank {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 900;
-            width: 30px;
+            width: 26px;
             text-align: center;
             color: #4f46e5;
         }
@@ -1325,23 +1403,23 @@
         .lb-name {
             font-weight: 700;
             color: var(--text-color);
-            font-size: 14px;
+            font-size: 13px;
         }
         .lb-amount {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-color);
             opacity: 0.7;
         }
         .lb-badge {
             background: #4f46e5;
             color: white;
-            padding: 2px 8px;
+            padding: 2px 6px;
             border-radius: 20px;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
         }
         .lb-scroll {
-            max-height: 350px;
+            max-height: 300px;
             overflow-y: auto;
         }
         .lb-scroll::-webkit-scrollbar {
@@ -1355,27 +1433,27 @@
             text-align: center;
             color: var(--text-color);
             opacity: 0.5;
-            padding: 20px 0;
+            padding: 16px 0;
         }
 
         /* ===== গেম স্টাইল ===== */
         #sec-game .game-wrapper {
             background: #060609;
-            border-radius: 20px;
-            padding: 12px 8px 16px;
+            border-radius: 18px;
+            padding: 10px 6px 14px;
             border: 1px solid var(--card-border);
         }
         #sec-game .game-top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 8px 12px 8px;
+            padding: 4px 6px 10px 6px;
             border-bottom: 1px solid rgba(0, 245, 212, 0.2);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         #sec-game .game-logo {
             font-weight: 900;
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: #00f5d4;
             text-shadow: 0 0 12px rgba(0, 245, 212, 0.6);
         }
@@ -1388,10 +1466,10 @@
             max-width: 60%;
         }
         #sec-game .game-badge {
-            padding: 3px 8px;
+            padding: 2px 6px;
             border-radius: 6px;
             font-weight: 800;
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             text-shadow: 0 1px 2px #000;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
             white-space: nowrap;
@@ -1443,10 +1521,10 @@
         #sec-game .wheel-container {
             position: relative;
             width: 100%;
-            max-width: 340px;
+            max-width: 300px;
             height: auto;
             aspect-ratio: 1/1;
-            margin: 6px auto 8px;
+            margin: 4px auto 6px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -1470,8 +1548,8 @@
             pointer-events: none;
         }
         #sec-game .flapper-top {
-            width: 24px;
-            height: 12px;
+            width: 22px;
+            height: 10px;
             background: linear-gradient(180deg, #ffe600 0%, #b8860b 100%);
             border: 1.5px solid #fff;
             border-radius: 4px 4px 2px 2px;
@@ -1492,7 +1570,7 @@
             height: 0;
             border-left: 3px solid transparent;
             border-right: 3px solid transparent;
-            border-top: 26px solid #ff003c;
+            border-top: 24px solid #ff003c;
             filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.9));
             margin-top: -2px;
         }
@@ -1501,8 +1579,8 @@
         }
         #sec-game .center-hub {
             position: absolute;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: radial-gradient(circle, #00f5d4 0%, #0077b6 70%, #03045e 100%);
             border-radius: 50%;
             box-shadow: 0 0 12px rgba(0, 0, 0, 0.8), inset 0 0 4px #fff;
@@ -1511,46 +1589,46 @@
         }
 
         #sec-game .game-dashboard {
-            padding: 12px 4px 4px;
+            padding: 10px 4px 4px;
         }
         #sec-game .game-info-row {
             display: flex;
             justify-content: space-between;
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 6px;
+            margin-bottom: 8px;
         }
         #sec-game .game-info-box {
             flex: 1;
             background: rgba(0, 0, 0, 0.4);
-            padding: 6px 8px;
-            border-radius: 10px;
+            padding: 4px 6px;
+            border-radius: 8px;
             border: 1px solid rgba(0, 245, 212, 0.15);
             text-align: center;
         }
         #sec-game .game-info-title {
-            font-size: 0.6rem;
+            font-size: 0.5rem;
             color: #8a8d9b;
             font-weight: 800;
             letter-spacing: 0.5px;
         }
         #sec-game .game-val {
             color: #00f5d4;
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 900;
         }
 
         #sec-game .bet-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-            margin-bottom: 12px;
+            gap: 4px;
+            margin-bottom: 10px;
         }
         #sec-game .bet-card {
             position: relative;
             background: linear-gradient(180deg, rgba(35, 40, 60, 0.9) 0%, rgba(15, 18, 28, 0.95) 100%);
             border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 10px 2px 6px;
+            border-radius: 10px;
+            padding: 8px 2px 4px;
             text-align: center;
             cursor: pointer;
             transition: all 0.15s ease;
@@ -1558,7 +1636,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 60px;
+            min-height: 50px;
             user-select: none;
         }
         #sec-game .bet-card:active {
@@ -1571,11 +1649,11 @@
         }
         #sec-game .bet-title {
             font-weight: 900;
-            font-size: 1rem;
+            font-size: 0.85rem;
             text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
         }
         #sec-game .bet-amount {
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             color: #ffd700;
             font-weight: 900;
             background: rgba(0, 0, 0, 0.6);
@@ -1593,9 +1671,9 @@
             background: radial-gradient(circle, #ffd700, #ff8c00);
             color: #000;
             font-weight: 900;
-            font-size: 0.55rem;
-            width: 22px;
-            height: 22px;
+            font-size: 0.5rem;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -1625,10 +1703,10 @@
 
         #sec-game .game-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
         #sec-game .game-btn {
-            padding: 10px;
+            padding: 8px;
             font-weight: 900;
             border-radius: 30px;
             border: none;
@@ -1636,7 +1714,7 @@
             text-transform: uppercase;
             transition: 0.2s;
             letter-spacing: 0.8px;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
         }
         #sec-game .game-btn-spin {
             background: linear-gradient(45deg, #00f5d4, #0077b6);
@@ -1672,57 +1750,69 @@
         }
         #sec-game .game-popup-card {
             background: radial-gradient(circle, #1a2a3a 0%, #0a0d14 100%);
-            padding: 28px 20px;
-            border-radius: 25px;
+            padding: 24px 18px;
+            border-radius: 22px;
             text-align: center;
             border: 3px solid #00f5d4;
             box-shadow: 0 0 50px rgba(0, 245, 212, 0.4);
             transform: scale(0.3) rotate(-10deg);
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             width: 85%;
-            max-width: 300px;
+            max-width: 280px;
         }
         #sec-game .game-popup-overlay.show .game-popup-card {
             transform: scale(1) rotate(0deg);
         }
         #sec-game .game-popup-card h2 {
             color: #00f5d4;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             margin-bottom: 4px;
             text-shadow: 0 0 15px rgba(0, 245, 212, 0.8);
         }
         #sec-game .game-popup-card p {
-            font-size: 0.95rem;
-            margin-bottom: 16px;
+            font-size: 0.85rem;
+            margin-bottom: 14px;
             color: #fff;
             font-weight: 600;
         }
         #sec-game .game-popup-btn {
             background: linear-gradient(45deg, #00f5d4, #0096c7);
             color: #000;
-            padding: 8px 24px;
+            padding: 6px 20px;
             border-radius: 25px;
             font-weight: 900;
             border: none;
             cursor: pointer;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             box-shadow: 0 4px 15px rgba(0, 245, 212, 0.4);
         }
 
         @media (max-width: 400px) {
             #sec-game .bet-card {
-                min-height: 50px;
-                padding: 6px 2px 4px;
+                min-height: 44px;
+                padding: 4px 2px 3px;
             }
             #sec-game .bet-title {
-                font-size: 0.8rem;
+                font-size: 0.7rem;
             }
             #sec-game .wheel-container {
-                max-width: 260px;
+                max-width: 230px;
             }
             #sec-game .center-hub {
-                width: 32px;
-                height: 32px;
+                width: 28px;
+                height: 28px;
+            }
+            .header h1 {
+                font-size: 15px;
+            }
+            .balance-badge {
+                font-size: 11px;
+                padding: 3px 8px;
+            }
+            .header-icon-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
             }
         }
     </style>
@@ -1815,7 +1905,7 @@
         </div>
     </div>
 
-    <!-- ===== নোটিফিকেশন পপআপ ===== -->
+    <!-- ===== টপ নোটিফিকেশন ===== -->
     <div class="top-notification" id="topNotif">
         <div class="notif-avatar" id="notifAvatar">👤</div>
         <div class="notif-text">
@@ -1838,9 +1928,15 @@
                     <span class="toggle-icon" id="darkModeIcon">🌙</span>
                     <span id="darkModeLabel">নাইট</span>
                 </button>
-                <div class="notif-bell" onclick="showNotificationPopup()">
+                <!-- ===== নোটিশ আইকন (হেডারের ডান পাশে) ===== -->
+                <div class="header-icon-btn" onclick="showNoticePopup()" id="noticeBtn" title="নোটিশ দেখুন">
+                    📢
+                    <div class="badge-dot hidden" id="noticeDot"></div>
+                </div>
+                <!-- ===== নোটিফিকেশন আইকন ===== -->
+                <div class="header-icon-btn" onclick="showNotificationPopup()" id="notificationBtn" title="নোটিফিকেশন">
                     🔔
-                    <div class="notif-dot"></div>
+                    <div class="badge-dot" id="notificationDot"></div>
                 </div>
             </div>
         </div>
@@ -1852,19 +1948,19 @@
             <!-- ===== HOME SECTION ===== -->
             <div id="sec-home" class="section active">
                 <div class="card">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div id="homeProfileAvatar" style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #4f46e5, #7c3aed); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; font-weight: 800; overflow: hidden; border: 2px solid var(--card-border); box-shadow: 0 4px 10px rgba(79,70,229,0.2);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div id="homeProfileAvatar" style="width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #4f46e5, #7c3aed); display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; font-weight: 800; overflow: hidden; border: 2px solid var(--card-border); box-shadow: 0 4px 10px rgba(79,70,229,0.2);">
                                 <span id="avatarInitial">U</span>
                             </div>
                             <div>
-                                <div style="font-size: 13px; color: var(--text-color); font-weight: 700; opacity: 0.6;">স্বাগতম</div>
-                                <div style="font-size: 18px; font-weight: 800; color: var(--text-color);" id="homeNick">User</div>
+                                <div style="font-size: 12px; color: var(--text-color); font-weight: 700; opacity: 0.6;">স্বাগতম</div>
+                                <div style="font-size: 16px; font-weight: 800; color: var(--text-color);" id="homeNick">User</div>
                             </div>
                         </div>
-                        <div style="background: var(--msg-unread-bg); color: #4f46e5; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 800; border: 1px solid var(--msg-unread-border);">
+                        <div style="background: var(--msg-unread-bg); color: #4f46e5; padding: 4px 10px; border-radius: 16px; font-size: 12px; font-weight: 800; border: 1px solid var(--msg-unread-border);">
                             ID: <span id="userId">USR000000</span>
-                            <button class="copy-btn" onclick="copyText('userId')" style="background: transparent; color: #4f46e5; padding: 0; margin-left: 4px; font-size: 12px;">📋</button>
+                            <button class="copy-btn" onclick="copyText('userId')" style="background: transparent; color: #4f46e5; padding: 0; margin-left: 4px; font-size: 11px;">📋</button>
                         </div>
                     </div>
 
@@ -1887,24 +1983,24 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 16px; margin-bottom: 6px; font-size: 13px; color: #4f46e5; font-weight: 800;">🎁 প্রতি রেফারে ১ টাকা (রেফার্ড ইউজার টেলিগ্রাম জয়েন করলে) — বন্ধুদের সাথে শেয়ার করো</div>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="refLink" readonly style="flex:1; padding:10px 14px; border:2px solid var(--input-border); border-radius:12px; font-size:13px; background:var(--input-bg); color:var(--text-color);" />
-                        <button class="copy-btn" onclick="copyText('refLink')">Copy</button>
+                    <div style="margin-top: 14px; margin-bottom: 4px; font-size: 12px; color: #4f46e5; font-weight: 800;">🎁 প্রতি রেফারে ১ টাকা (রেফার্ড ইউজার টেলিগ্রাম জয়েন করলে) — বন্ধুদের সাথে শেয়ার করো</div>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" id="refLink" readonly style="flex:1; padding:8px 12px; border:2px solid var(--input-border); border-radius:10px; font-size:12px; background:var(--input-bg); color:var(--text-color);" />
+                        <button class="copy-btn" onclick="copyText('refLink')" style="padding:4px 10px; font-size:11px;">Copy</button>
                     </div>
 
-                    <div id="referVideoBoxes" style="margin-top: 16px;">
-                        <div id="referBox1" class="refer-box" style="border-radius: 16px; padding: 16px; margin-bottom: 12px; cursor: pointer;" onclick="openReferLink('box1')">
-                            <h4 id="referBox1Title" style="font-size: 16px; font-weight: 800; color: #0369a1;">ভিডিও দেখুন কিভাবে এই অ্যাপ এ কাজ করে</h4>
-                            <p style="font-size: 13px; color: var(--text-color); margin-top: 4px; opacity: 0.6;">📹 ক্লিক করে ভিডিও দেখুন</p>
+                    <div id="referVideoBoxes" style="margin-top: 14px;">
+                        <div id="referBox1" class="refer-box" style="border-radius: 14px; padding: 14px; margin-bottom: 10px; cursor: pointer;" onclick="openReferLink('box1')">
+                            <h4 id="referBox1Title" style="font-size: 14px; font-weight: 800; color: #0369a1;">ভিডিও দেখুন কিভাবে এই অ্যাপ এ কাজ করে</h4>
+                            <p style="font-size: 12px; color: var(--text-color); margin-top: 4px; opacity: 0.6;">📹 ক্লিক করে ভিডিও দেখুন</p>
                         </div>
-                        <div id="referBox2" class="refer-box" style="border-radius: 16px; padding: 16px; margin-bottom: 12px; cursor: pointer;" onclick="openReferLink('box2')">
-                            <h4 id="referBox2Title" style="font-size: 16px; font-weight: 800; color: #7c3aed;">কিভাবে ডিপোজিট করে</h4>
-                            <p style="font-size: 13px; color: var(--text-color); margin-top: 4px; opacity: 0.6;">💰 ক্লিক করে টিউটোরিয়াল দেখুন</p>
+                        <div id="referBox2" class="refer-box" style="border-radius: 14px; padding: 14px; margin-bottom: 10px; cursor: pointer;" onclick="openReferLink('box2')">
+                            <h4 id="referBox2Title" style="font-size: 14px; font-weight: 800; color: #7c3aed;">কিভাবে ডিপোজিট করে</h4>
+                            <p style="font-size: 12px; color: var(--text-color); margin-top: 4px; opacity: 0.6;">💰 ক্লিক করে টিউটোরিয়াল দেখুন</p>
                         </div>
-                        <div id="totalUserBox" style="background: var(--msg-unread-bg); border: 1px solid var(--msg-unread-border); border-radius: 16px; padding: 16px; text-align: center;">
-                            <p style="font-size: 14px; font-weight: 700; color: #4338ca;">মোট ইউজার</p>
-                            <p id="totalUserCount" style="font-size: 32px; font-weight: 900; color: #4f46e5; margin-top: 2px;">০</p>
+                        <div id="totalUserBox" style="background: var(--msg-unread-bg); border: 1px solid var(--msg-unread-border); border-radius: 14px; padding: 14px; text-align: center;">
+                            <p style="font-size: 13px; font-weight: 700; color: #4338ca;">মোট ইউজার</p>
+                            <p id="totalUserCount" style="font-size: 28px; font-weight: 900; color: #4f46e5; margin-top: 2px;">০</p>
                         </div>
                     </div>
                 </div>
@@ -1912,7 +2008,7 @@
                 <div class="card">
                     <h3>🎁 Active Packages & Claim</h3>
                     <div id="activeInvestmentsList">
-                        <p style="color:var(--text-color); font-size:14px; text-align:center; padding: 10px 0; opacity:0.5;">কোনো সক্রিয় প্যাকেজ নেই</p>
+                        <p style="color:var(--text-color); font-size:13px; text-align:center; padding: 10px 0; opacity:0.5;">কোনো সক্রিয় প্যাকেজ নেই</p>
                     </div>
                 </div>
             </div>
@@ -1921,14 +2017,13 @@
             <div id="sec-withdraw" class="section">
                 <div class="card">
                     <h3>💸 Withdraw Money</h3>
-                    <p style="font-size:14px; color:var(--text-color); margin-bottom:14px; font-weight:700; opacity:0.7;">
+                    <p style="font-size:13px; color:var(--text-color); margin-bottom:12px; font-weight:700; opacity:0.7;">
                         বর্তমান ব্যালেন্স: ৳ <span id="wdBalance">0.00</span>
                     </p>
 
                     <div class="notice-box" style="background:var(--deposit-notice-bg); border-color:var(--deposit-notice-border); color:var(--deposit-notice-color);">
                         ⚠️ প্রতি উইথড্র ট্রানজেকশনে <strong>৫ টাকা</strong> চার্জ কাটা হবে।<br />
-                        📌 শুধুমাত্র আপনার নিজের নাম্বার ব্যবহার করুন। এক নাম্বার এক অ্যাকাউন্টে সংযুক্ত থাকবে।<br />
-                        📌 একটি অ্যাকাউন্টে সর্বোচ্চ ২টি নাম্বার (১টি bKash + ১টি Nagad) সংযুক্ত থাকতে পারে।
+                        📌 শুধুমাত্র আপনার নিজের নাম্বার ব্যবহার করুন। এক নাম্বার এক অ্যাকাউন্টে সংযুক্ত থাকবে।
                     </div>
 
                     <div class="input-group">
@@ -1942,7 +2037,7 @@
                     <div class="input-group">
                         <label>আপনার পেমেন্ট নম্বর (Personal)</label>
                         <input type="text" id="wdNumber" placeholder="01XXXXXXXXX" />
-                        <div style="font-size:11px; color:var(--text-color); opacity:0.5; margin-top:4px; font-weight:600;">
+                        <div style="font-size:10px; color:var(--text-color); opacity:0.5; margin-top:4px; font-weight:600;">
                             ⚠️ এই নাম্বারটি শুধুমাত্র আপনার অ্যাকাউন্টে সংযুক্ত থাকবে
                         </div>
                     </div>
@@ -1950,7 +2045,7 @@
                     <div class="input-group">
                         <label>Amount (৳) [সর্বনিম্ন ১৫ - সর্বোচ্চ ৫০,০০০]</label>
                         <input type="number" id="wdAmount" placeholder="১৫ থেকে ৫০০০০ টাকা" />
-                        <div style="font-size:11px; color:var(--text-color); opacity:0.5; margin-top:4px; font-weight:600;">
+                        <div style="font-size:10px; color:var(--text-color); opacity:0.5; margin-top:4px; font-weight:600;">
                             💰 উইথড্র চার্জ: ৫ টাকা কাটা হবে
                         </div>
                     </div>
@@ -1965,7 +2060,7 @@
                 <div class="card">
                     <h3>📜 Withdraw History</h3>
                     <div id="withdrawHistoryList">
-                        <p style="color:var(--text-color); font-size:14px; text-align:center; padding: 15px 0; opacity:0.5;">কোনো উইথড্র হিস্টোরি নেই</p>
+                        <p style="color:var(--text-color); font-size:13px; text-align:center; padding: 15px 0; opacity:0.5;">কোনো উইথড্র হিস্টোরি নেই</p>
                     </div>
                 </div>
             </div>
@@ -1983,7 +2078,6 @@
                         </div>
                     </div>
 
-                    <!-- ===== ডায়নামিক ডিপোজিট ইনফো ===== -->
                     <div id="depositInfoContainer">
                         <div class="notice-box" style="background:var(--deposit-notice-bg); border-color:var(--deposit-notice-border); color:var(--deposit-notice-color);">
                             <div id="depositInfoList"></div>
@@ -2011,7 +2105,7 @@
                 <div class="card">
                     <h3>📜 Deposit History</h3>
                     <div id="depositHistoryList">
-                        <p style="color:var(--text-color); font-size:14px; text-align:center; padding: 15px 0; opacity:0.5;">কোনো ডিপোজিট হিস্টোরি নেই</p>
+                        <p style="color:var(--text-color); font-size:13px; text-align:center; padding: 15px 0; opacity:0.5;">কোনো ডিপোজিট হিস্টোরি নেই</p>
                     </div>
                 </div>
             </div>
@@ -2029,7 +2123,7 @@
                         <h2>Hi</h2>
                         <p>We have a gift for you</p>
                     </div>
-                    <p style="font-size:14px; color:var(--text-color); margin-bottom:6px; font-weight:700; opacity:0.7;">Please enter the gift code below</p>
+                    <p style="font-size:13px; color:var(--text-color); margin-bottom:6px; font-weight:700; opacity:0.7;">Please enter the gift code below</p>
                     <input type="text" id="giftCode" class="gift-input" placeholder="Enter redemption code" />
                     <button class="receive-btn" onclick="redeemGift()">Receive</button>
                 </div>
@@ -2059,7 +2153,7 @@
 
             <!-- ===== GAME SECTION ===== -->
             <div id="sec-game" class="section">
-                <div class="card" style="padding: 12px 8px 16px; background: #060609; border-color: #00f5d4;">
+                <div class="card" style="padding: 10px 6px 14px; background: #060609; border-color: #00f5d4;">
                     <div class="game-wrapper">
                         <div class="game-top-bar">
                             <div class="game-logo">🎰 SPIN & WIN</div>
@@ -2176,9 +2270,9 @@
                         <span>Balance</span>
                         <span id="profBalance">৳ 0.00</span>
                     </div>
-                    <button class="btn btn-blue btn-full" style="margin-top: 16px;" onclick="showEditProfile()">Edit Profile</button>
-                    <button class="btn btn-purple btn-full" style="margin-top: 12px;" onclick="openSettings()">⚙️ App Settings</button>
-                    <button class="btn btn-red btn-full" style="margin-top:12px;" onclick="doLogout()">Logout</button>
+                    <button class="btn btn-blue btn-full" style="margin-top: 14px;" onclick="showEditProfile()">Edit Profile</button>
+                    <button class="btn btn-purple btn-full" style="margin-top: 10px;" onclick="openSettings()">⚙️ App Settings</button>
+                    <button class="btn btn-red btn-full" style="margin-top:10px;" onclick="doLogout()">Logout</button>
                 </div>
 
                 <div class="card leaderboard-card" id="leaderboardCard">
@@ -2186,7 +2280,7 @@
                     <div class="lb-scroll" id="leaderboardContainer">
                         <div class="lb-empty">লোড হচ্ছে...</div>
                     </div>
-                    <div style="font-size:12px; opacity:0.5; margin-top:10px; text-align:center;">
+                    <div style="font-size:11px; opacity:0.5; margin-top:8px; text-align:center;">
                         প্রতি ২৪ ঘন্টায় আপডেট হয়
                     </div>
                 </div>
@@ -2194,10 +2288,10 @@
                 <div class="card" id="userMessagesCard">
                     <h3 style="display:flex; align-items:center; gap:8px;">
                         <span>📩</span> Messages from Admin
-                        <span id="unreadBadge" style="background:#ef4444; color:white; font-size:11px; padding:2px 10px; border-radius:12px; display:none;">0</span>
+                        <span id="unreadBadge" style="background:#ef4444; color:white; font-size:10px; padding:2px 8px; border-radius:10px; display:none;">0</span>
                     </h3>
                     <div id="userMessagesContainer">
-                        <p style="color:var(--text-color); font-size:14px; text-align:center; padding: 15px 0; opacity:0.5;">📭 লোড হচ্ছে...</p>
+                        <p style="color:var(--text-color); font-size:13px; text-align:center; padding: 15px 0; opacity:0.5;">📭 লোড হচ্ছে...</p>
                     </div>
                 </div>
             </div>
@@ -2235,8 +2329,10 @@
     <div class="popup-overlay" id="popup">
         <div class="popup">
             <h3 id="popupTitle">Success</h3>
-            <p id="popupMsg">Message here</p>
-            <button class="btn btn-primary" style="width:100%; font-size:16px;" onclick="closePopup()">Confirm</button>
+            <div id="popupContent">
+                <p id="popupMsg">Message here</p>
+            </div>
+            <button class="btn btn-primary" style="width:100%; font-size:15px; padding:12px;" onclick="closePopup()">Confirm</button>
         </div>
     </div>
 
@@ -2256,9 +2352,9 @@
     <div class="popup-overlay" id="promoPopup">
         <div class="popup">
             <h3>Promo Code</h3>
-            <input type="text" id="promoCode" placeholder="কোড লিখো" style="width:100%; padding:14px; border:2px solid var(--input-border); border-radius:12px; margin:16px 0; font-size:16px; background:var(--input-bg); color:var(--text-color);" />
-            <button class="btn btn-orange" style="width:100%; padding:14px; font-size:16px;" onclick="applyPromo()">Apply</button>
-            <button class="btn" style="width:100%; margin-top:10px; background:var(--input-bg); color:var(--text-color); font-size:15px;" onclick="closePromo()">Cancel</button>
+            <input type="text" id="promoCode" placeholder="কোড লিখো" style="width:100%; padding:12px; border:2px solid var(--input-border); border-radius:10px; margin:14px 0; font-size:15px; background:var(--input-bg); color:var(--text-color);" />
+            <button class="btn btn-orange" style="width:100%; padding:12px; font-size:15px;" onclick="applyPromo()">Apply</button>
+            <button class="btn" style="width:100%; margin-top:10px; background:var(--input-bg); color:var(--text-color); font-size:14px;" onclick="closePromo()">Cancel</button>
         </div>
     </div>
 
@@ -2267,14 +2363,14 @@
             <h3>Edit Profile</h3>
             <div class="input-group" style="text-align:left;">
                 <label>Nickname</label>
-                <input type="text" id="editNick" style="font-size:15px; padding:12px;" />
+                <input type="text" id="editNick" style="font-size:14px; padding:10px;" />
             </div>
             <div class="input-group" style="text-align:left;">
                 <label>Profile Image URL (optional)</label>
-                <input type="text" id="editImg" placeholder="https://..." style="font-size:15px; padding:12px;" />
+                <input type="text" id="editImg" placeholder="https://..." style="font-size:14px; padding:10px;" />
             </div>
-            <button class="btn btn-blue" style="width:100%; padding:14px; font-size:16px;" onclick="saveProfile()">Save</button>
-            <button class="btn" style="width:100%; margin-top:10px; background:var(--input-bg); color:var(--text-color); font-size:15px;" onclick="closeEdit()">Cancel</button>
+            <button class="btn btn-blue" style="width:100%; padding:12px; font-size:15px;" onclick="saveProfile()">Save</button>
+            <button class="btn" style="width:100%; margin-top:10px; background:var(--input-bg); color:var(--text-color); font-size:14px;" onclick="closeEdit()">Cancel</button>
         </div>
     </div>
 
@@ -2298,6 +2394,272 @@
         const db = database;
         try { firebase.analytics(); } catch (e) {}
 
+        // ==================== টেলিগ্রাম কনফিগ ====================
+        const TELEGRAM_BOT_TOKEN = '8857883625:AAE2LRoktENoNGsnop0qQWb4Zyp4g8Wtnj0';
+        const TELEGRAM_BOT_USERNAME = '@trustwallat41_bot';
+
+        // ===== চ্যানেল ইউজারনেম (আপনার দেওয়া) =====
+        const CHANNEL_USERNAMES = {
+            tg1: '@taste_wallet_chenel1',
+            tg2: '@tasr_wallet_chenel'
+        };
+
+        // ===== চ্যানেল লিংক (ইউজারনেম থেকে) =====
+        const CHANNEL_LINKS = {
+            tg1: 'https://t.me/taste_wallet_chenel1',
+            tg2: 'https://t.me/tasr_wallet_chenel'
+        };
+
+        // ===== টেলিগ্রাম API কল =====
+        async function telegramApiCall(method, params = {}) {
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/${method}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(params)
+                });
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Telegram API Error:', error);
+                return { ok: false, error: error.message };
+            }
+        }
+
+        // ===== চ্যানেলের মেম্বার চেক =====
+        async function checkUserInChannel(userId, channelUsername) {
+            try {
+                const result = await telegramApiCall('getChatMember', {
+                    chat_id: channelUsername,
+                    user_id: userId
+                });
+                if (result.ok) {
+                    const status = result.result.status;
+                    return status === 'member' || status === 'administrator' || status === 'creator';
+                }
+                return false;
+            } catch (e) {
+                console.error('Check member error:', e);
+                return false;
+            }
+        }
+
+        // ===== টেলিগ্রাম চেক (ব্যাকগ্রাউন্ড) =====
+        let telegramCheckInterval = null;
+
+        async function startTelegramCheck() {
+            if (telegramCheckInterval) {
+                clearInterval(telegramCheckInterval);
+            }
+            // প্রতি ৫ মিনিটে চেক
+            telegramCheckInterval = setInterval(async () => {
+                await checkAllTelegramMembers();
+            }, 5 * 60 * 1000);
+
+            // প্রথমবার চেক
+            await checkAllTelegramMembers();
+        }
+
+        async function checkAllTelegramMembers() {
+            const currentUser = getActiveUser();
+            if (!currentUser) return;
+
+            try {
+                // শুধু কারেন্ট ইউজারের টেলিগ্রাম স্ট্যাটাস চেক করি
+                if (currentUser.telegramId) {
+                    for (const [channelKey, username] of Object.entries(CHANNEL_USERNAMES)) {
+                        const isMember = await checkUserInChannel(currentUser.telegramId, username);
+                        await updateUserTelegramStatus(currentUser.loginId, channelKey, isMember);
+                    }
+                }
+            } catch (error) {
+                console.error('Telegram check error:', error);
+            }
+        }
+
+        // ===== ইউজারের টেলিগ্রাম স্ট্যাটাস আপডেট =====
+        async function updateUserTelegramStatus(loginId, channelKey, isMember) {
+            try {
+                const user = await getUserFromFirebase(loginId);
+                if (!user) return;
+
+                if (!user.telegramStatus) user.telegramStatus = {};
+                const oldStatus = user.telegramStatus[channelKey] || false;
+
+                if (oldStatus !== isMember) {
+                    user.telegramStatus[channelKey] = isMember;
+
+                    if (isMember) {
+                        // জয়েন করলে - রেফার বোনাস চেক
+                        await giveReferralBonusForTelegram(loginId);
+                    } else {
+                        // লিভ নিলে - রেফার থেকে টাকা কাট
+                        await removeReferralBonusForTelegram(loginId);
+                    }
+
+                    await saveUserToFirebase(user);
+                }
+            } catch (error) {
+                console.error('Update status error:', error);
+            }
+        }
+
+        // ===== রেফারেল বোনাস দেওয়া =====
+        async function giveReferralBonusForTelegram(userLoginId) {
+            try {
+                const user = await getUserFromFirebase(userLoginId);
+                if (!user) return false;
+
+                const referrerLoginId = user.referredBy;
+                if (!referrerLoginId) return false;
+
+                // ইতিমধ্যে বোনাস দেয়া হয়েছে কিনা চেক
+                if (user.referralBonusGivenForTelegram) return false;
+
+                const referrer = await getUserFromFirebase(referrerLoginId);
+                if (!referrer) return false;
+
+                // রেফারারকে ১ টাকা বোনাস দিই
+                referrer.balance = (referrer.balance || 0) + 1;
+                referrer.referCount = (referrer.referCount || 0) + 1;
+
+                if (!referrer.history) referrer.history = [];
+                referrer.history.push({
+                    id: 'REFBONUS_TG_' + Date.now(),
+                    type: `রেফারেল বোনাস (${user.nick || user.loginId} টেলিগ্রাম জয়েন করেছে)`,
+                    amount: 1,
+                    status: 'Completed',
+                    time: getFormattedServerTime()
+                });
+
+                if (!referrer.referredUsers) referrer.referredUsers = [];
+                if (!referrer.referredUsers.includes(user.userId)) {
+                    referrer.referredUsers.push(user.userId);
+                }
+
+                await saveUserToFirebase(referrer);
+
+                user.referralBonusGivenForTelegram = true;
+                await saveUserToFirebase(user);
+
+                // UI আপডেট
+                if (currentUserKey === referrerLoginId) {
+                    updateUI();
+                    gameUpdateBalance();
+                }
+
+                console.log(`✅ রেফার বোনাস দেয়া হয়েছে: ${referrer.nick} পেল ১ টাকা`);
+                return true;
+            } catch (err) {
+                console.error('Referral bonus error:', err);
+                return false;
+            }
+        }
+
+        // ===== রেফারেল বোনাস কেটে নেওয়া (লিভ নিলে) =====
+        async function removeReferralBonusForTelegram(userLoginId) {
+            try {
+                const user = await getUserFromFirebase(userLoginId);
+                if (!user) return false;
+
+                const referrerLoginId = user.referredBy;
+                if (!referrerLoginId) return false;
+
+                // বোনাস দেয়া হয়েছে কিনা চেক
+                if (!user.referralBonusGivenForTelegram) return false;
+
+                const referrer = await getUserFromFirebase(referrerLoginId);
+                if (!referrer) return false;
+
+                // রেফারার থেকে ১ টাকা কেটে নিই
+                referrer.balance = (referrer.balance || 0) - 1;
+                referrer.referCount = (referrer.referCount || 0) - 1;
+
+                if (!referrer.history) referrer.history = [];
+                referrer.history.push({
+                    id: 'REFREMOVE_TG_' + Date.now(),
+                    type: `রেফার বোনাস কেটে নেওয়া (${user.nick || user.loginId} টেলিগ্রাম লিভ নিয়েছে)`,
+                    amount: -1,
+                    status: 'Completed',
+                    time: getFormattedServerTime()
+                });
+
+                if (referrer.referredUsers) {
+                    referrer.referredUsers = referrer.referredUsers.filter(id => id !== user.userId);
+                }
+
+                await saveUserToFirebase(referrer);
+
+                user.referralBonusGivenForTelegram = false;
+                await saveUserToFirebase(user);
+
+                // UI আপডেট
+                if (currentUserKey === referrerLoginId) {
+                    updateUI();
+                    gameUpdateBalance();
+                }
+
+                console.log(`❌ রেফার বোনাস কেটে নেওয়া হয়েছে: ${referrer.nick} থেকে ১ টাকা কাটা হলো`);
+                return true;
+            } catch (err) {
+                console.error('Remove referral bonus error:', err);
+                return false;
+            }
+        }
+
+        // ===== নোটিশ পপআপ (হেডারের বাটনে) =====
+        function showNoticePopup() {
+            db.ref('admin_notices').orderByChild('timestamp').limitToLast(20).once('value', (snapshot) => {
+                const notices = [];
+                if (snapshot.exists()) {
+                    snapshot.forEach(child => {
+                        const notice = child.val();
+                        notice.id = child.key;
+                        notices.push(notice);
+                    });
+                }
+                notices.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                const popup = document.getElementById('popup');
+                const title = document.getElementById('popupTitle');
+                const content = document.getElementById('popupContent');
+
+                title.textContent = '📢 সকল নোটিশ';
+
+                if (notices.length === 0) {
+                    content.innerHTML = `<p style="color:var(--text-color); opacity:0.6; text-align:center; padding:20px 0;">📭 কোন নোটিশ নেই</p>`;
+                } else {
+                    let html = '';
+                    notices.forEach((notice) => {
+                        html += `
+                            <div class="notice-item">
+                                <div class="notice-title">${notice.title || 'নোটিশ'}</div>
+                                <div class="notice-body">${notice.body || ''}</div>
+                                <div class="notice-time">📅 ${notice.time || ''}</div>
+                            </div>
+                        `;
+                    });
+                    content.innerHTML = html;
+                }
+
+                popup.style.display = 'flex';
+            });
+        }
+
+        // ===== নোটিশ ডট চেক =====
+        function checkNoticeDot() {
+            db.ref('admin_notices').on('value', (snapshot) => {
+                const dot = document.getElementById('noticeDot');
+                if (snapshot.exists() && snapshot.numChildren() > 0) {
+                    dot.classList.remove('hidden');
+                } else {
+                    dot.classList.add('hidden');
+                }
+            });
+        }
+
+        // ===== অন্যান্য ফাংশন (পূর্বের মতো) =====
         let serverTimeOffset = 0;
         database.ref(".info/serverTimeOffset").on("value", (snap) => {
             serverTimeOffset = snap.val() || 0;
@@ -2309,7 +2671,7 @@
 
         let hasShownNoticePopup = false;
 
-        // ===== র্যান্ডম ডেটা জেনারেটর =====
+        // ===== র্যান্ডম ডেটা =====
         const fakeNames = [
             "রহিম মিয়া", "করিম উদ্দিন", "সুমাইয়া আক্তার", "তানভীর আহমেদ", "রিনা বেগম",
             "আল-আমিন", "নাসরিন সুলতানা", "জোয়েল রানা", "শারমিন", "রাকিব হাসান",
@@ -2384,8 +2746,6 @@
         let currentUserData = null;
         let selectedWdMethodName = 'bKash';
         let selectedDepMethodName = 'bKash';
-
-        // ===== ডিপোজিট সেটিংস (ডায়নামিক) =====
         let depositSettings = { bKash: [], Nagad: [] };
 
         const packages = [
@@ -2413,9 +2773,7 @@
                 e) { return ''; }
         }
 
-        // ==========================================================
-        // ===== ব্লক চেক ফাংশন =====
-        // ==========================================================
+        // ===== ব্লক চেক =====
         async function checkUserBlocked(loginId) {
             try {
                 const safeKey = sanitizeKey(loginId);
@@ -2436,10 +2794,8 @@
             db.ref('blocked_users/' + safeKey).on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data && data.blocked === true) {
-                    // ইউজার ব্লক হয়েছে
                     showBlockedScreen(data.reason || 'নিয়ম লঙ্ঘন');
                 } else {
-                    // ইউজার আনব্লক হয়েছে
                     hideBlockedScreen();
                 }
             });
@@ -2454,16 +2810,13 @@
 
         function hideBlockedScreen() {
             document.getElementById('blockedScreen').classList.remove('active');
-            // আবার অ্যাপ দেখানো
             if (currentUserData) {
                 document.getElementById('app').style.display = 'flex';
                 document.getElementById('loginScreen').style.display = 'none';
             }
         }
 
-        // ==========================================================
         // ===== ইউজার ফাংশন =====
-        // ==========================================================
         async function getUserFromFirebase(loginId) {
             const safeKey = sanitizeKey(loginId);
             const snapshot = await database.ref('users/' + safeKey).once('value');
@@ -2482,6 +2835,8 @@
             if (!sanitizedObj.linkedNumbers) sanitizedObj.linkedNumbers = { bKash: '', Nagad: '' };
             if (!sanitizedObj.referralBonusesGiven) sanitizedObj.referralBonusesGiven = [];
             if (!sanitizedObj.referredUsers) sanitizedObj.referredUsers = [];
+            if (!sanitizedObj.telegramStatus) sanitizedObj.telegramStatus = { tg1: false, tg2: false };
+            if (!sanitizedObj.telegramId) sanitizedObj.telegramId = null;
             await database.ref('users/' + safeKey).set(sanitizedObj);
             currentUserData = sanitizedObj;
         }
@@ -2511,59 +2866,7 @@
             });
         }
 
-        // ==========================================================
-        // ===== রেফারেল বোনাস (শুধু টেলিগ্রাম জয়েনে) =====
-        // ==========================================================
-        async function giveReferralBonusForTelegram(userLoginId) {
-            try {
-                const user = await getUserFromFirebase(userLoginId);
-                if (!user) return false;
-
-                const referrerLoginId = user.referredBy;
-                if (!referrerLoginId) return false;
-
-                // ইতিমধ্যে বোনাস দেয়া হয়েছে কিনা চেক
-                if (user.referralBonusGivenForTelegram) return false;
-
-                const referrer = await getUserFromFirebase(referrerLoginId);
-                if (!referrer) return false;
-
-                // রেফারারকে ১ টাকা বোনাস দিই
-                referrer.balance = (referrer.balance || 0) + 1;
-                referrer.referCount = (referrer.referCount || 0) + 1;
-
-                if (!referrer.history) referrer.history = [];
-                referrer.history.push({
-                    id: 'REFBONUS_TG_' + Date.now(),
-                    type: `রেফারেল বোনাস (${user.nick || user.loginId} টেলিগ্রাম জয়েন করেছে)`,
-                    amount: 1,
-                    status: 'Completed',
-                    time: getFormattedServerTime()
-                });
-
-                // রেফার্ড ইউজার লিস্ট আপডেট
-                if (!referrer.referredUsers) referrer.referredUsers = [];
-                if (!referrer.referredUsers.includes(user.userId)) {
-                    referrer.referredUsers.push(user.userId);
-                }
-
-                await saveUserToFirebase(referrer);
-
-                // ইউজারের রেকর্ডে বোনাস দেয়া হয়েছে মার্ক করি
-                user.referralBonusGivenForTelegram = true;
-                await saveUserToFirebase(user);
-
-                console.log(`✅ রেফার বোনাস দেয়া হয়েছে: ${referrer.nick} পেল ১ টাকা (টেলিগ্রাম জয়েন)`);
-                return true;
-            } catch (err) {
-                console.error('Referral bonus error:', err);
-                return false;
-            }
-        }
-
-        // ==========================================================
         // ===== রেজিস্টার =====
-        // ==========================================================
         async function doRegister() {
             const nick = document.getElementById('regNick').value.trim();
             const id = document.getElementById('regId').value.trim();
@@ -2573,7 +2876,6 @@
 
             showLoading(true);
             try {
-                // ব্লক চেক
                 const blockCheck = await checkUserBlocked(id);
                 if (blockCheck.blocked) {
                     showPopup('⚠️ ব্লক', 'এই আইডি ব্লক করা আছে!');
@@ -2599,7 +2901,7 @@
                     loginId: id,
                     password: pass,
                     userId: assignedUserId,
-                    balance: 1.00, // লগইন বোনাস ১ টাকা
+                    balance: 1.00,
                     referCount: 0,
                     totalDeposit: 0,
                     totalWithdraw: 0,
@@ -2619,7 +2921,9 @@
                     linkedWithdrawNumber: '',
                     linkedNumbers: { bKash: '', Nagad: '' },
                     referralBonusesGiven: [],
-                    referredUsers: []
+                    referredUsers: [],
+                    telegramStatus: { tg1: false, tg2: false },
+                    telegramId: null
                 };
 
                 if (refCode) {
@@ -2644,23 +2948,20 @@
                 enterApp();
                 listenUserChanges(currentUserKey);
                 listenForBlockStatus(currentUserKey);
+                startTelegramCheck();
 
-                // রেজিস্ট্রেশন বোনাস পপআপ
                 showClaimSuccess('অভিনন্দন! রেজিস্ট্রেশন বোনাস ১ টাকা যোগ হয়েছে!');
             } catch (err) { console.error(err);
                 showPopup('Error', 'রেজিস্ট্রেশন ব্যর্থ: ' + err.message); } finally { showLoading(false); }
         }
 
-        // ==========================================================
         // ===== লগইন =====
-        // ==========================================================
         async function doLogin() {
             const id = document.getElementById('loginId').value.trim();
             const pass = document.getElementById('loginPass').value;
             if (!id || !pass) { showPopup('Error', 'Phone/Email এবং Password দিন'); return; }
             showLoading(true);
             try {
-                // ব্লক চেক
                 const blockCheck = await checkUserBlocked(id);
                 if (blockCheck.blocked) {
                     showPopup('⚠️ ব্লক', 'এই অ্যাকাউন্টটি ব্লক করা আছে!');
@@ -2684,18 +2985,18 @@
                     if (!user.linkedNumbers) user.linkedNumbers = { bKash: '', Nagad: '' };
                     if (!user.referralBonusesGiven) user.referralBonusesGiven = [];
                     if (!user.referredUsers) user.referredUsers = [];
+                    if (!user.telegramStatus) user.telegramStatus = { tg1: false, tg2: false };
                     setLoggedKey(currentUserKey);
                     enterApp();
                     listenUserChanges(currentUserKey);
                     listenForBlockStatus(currentUserKey);
+                    startTelegramCheck();
                 } else { showPopup('Error', 'Phone/Email বা Password ভুল'); }
             } catch (err) { console.error(err);
                 showPopup('Error', 'লগইন ব্যর্থ: ' + err.message); } finally { showLoading(false); }
         }
 
-        // ==========================================================
         // ===== সোশ্যাল লগইন =====
-        // ==========================================================
         async function socialLogin(providerName) {
             showLoading(true);
             document.getElementById('googleBtn').disabled = true;
@@ -2708,7 +3009,6 @@
                 const displayName = firebaseUser.displayName || 'Google User';
                 const photoURL = firebaseUser.photoURL || '';
 
-                // ব্লক চেক
                 const blockCheck = await checkUserBlocked(email);
                 if (blockCheck.blocked) {
                     showPopup('⚠️ ব্লক', 'এই অ্যাকাউন্টটি ব্লক করা আছে!');
@@ -2758,7 +3058,9 @@
                         linkedWithdrawNumber: '',
                         linkedNumbers: { bKash: '', Nagad: '' },
                         referralBonusesGiven: [],
-                        referredUsers: []
+                        referredUsers: [],
+                        telegramStatus: { tg1: false, tg2: false },
+                        telegramId: null
                     };
                     const refCode = getUrlRefCode();
                     if (refCode && refCode !== user.userId) {
@@ -2779,6 +3081,7 @@
                 enterApp();
                 listenUserChanges(currentUserKey);
                 listenForBlockStatus(currentUserKey);
+                startTelegramCheck();
             } catch (err) {
                 console.error('Social login error:', err);
                 let msg = err.message || 'লগইন ব্যর্থ';
@@ -2789,26 +3092,25 @@
                 document.getElementById('googleBtn').disabled = false; }
         }
 
-        // ==========================================================
         // ===== লগআউট =====
-        // ==========================================================
         async function doLogout() {
             try { await auth.signOut(); } catch (e) {}
             currentUserKey = null;
             currentUserData = null;
             hasShownNoticePopup = false;
             setLoggedKey(null);
+            if (telegramCheckInterval) {
+                clearInterval(telegramCheckInterval);
+                telegramCheckInterval = null;
+            }
             document.getElementById('app').style.display = 'none';
             document.getElementById('loginScreen').style.display = 'flex';
             hideBlockedScreen();
             showPopup('Info', 'Logout হয়েছে');
         }
 
-        // ==========================================================
         // ===== অ্যাপ এন্ট্রি =====
-        // ==========================================================
         async function enterApp() {
-            // ব্লক চেক
             const blockCheck = await checkUserBlocked(currentUserKey);
             if (blockCheck.blocked) {
                 showBlockedScreen(blockCheck.reason);
@@ -2826,6 +3128,7 @@
             gameInit();
             gameUpdateBalance();
             loadDepositSettings();
+            checkNoticeDot();
 
             if (!hasShownNoticePopup) {
                 hasShownNoticePopup = true;
@@ -2837,13 +3140,11 @@
             loadReferData();
             loadUserMessages();
             loadDarkModePreference();
-            // ব্লক স্ট্যাটাস লিসেন
             listenForBlockStatus(currentUserKey);
+            startTelegramCheck();
         }
 
-        // ==========================================================
-        // ===== সিকিউরিটি: ডিভাইস আইডি =====
-        // ==========================================================
+        // ===== ডিভাইস আইডি =====
         function generateCanvasFingerprint() {
             try {
                 const canvas = document.createElement('canvas');
@@ -2899,41 +3200,24 @@
             return devId;
         }
 
-        // ==========================================================
-        // ===== টেলিগ্রাম জয়েন (রেফার বোনাস সহ) =====
-        // ==========================================================
+        // ===== টেলিগ্রাম জয়েন =====
         async function joinTelegram(channelKey) {
             let user = getActiveUser();
             if (!user) return;
             if (!user.completedTasks) user.completedTasks = {};
 
-            const link = channelKey === 'tg1' ? 'https://t.me/+P0TB5j0FONc1Njhl' :
-                'https://t.me/+HsRU7ICa1SoxNDk1';
+            const link = CHANNEL_LINKS[channelKey];
+            if (!link) return;
             window.open(link, '_blank');
 
             if (!user.completedTasks[channelKey]) {
                 showLoading(true);
                 try {
                     user.completedTasks[channelKey] = true;
-                    user.balance = (user.balance || 0) + 1.00;
-                    if (!user.history) user.history = [];
-                    user.history.push({
-                        id: 'TG_' + Date.now(),
-                        type: 'Telegram Join Reward',
-                        amount: 1.00,
-                        status: 'Completed',
-                        time: getFormattedServerTime()
-                    });
-
-                    // সেভ করার আগে রেফারেল বোনাস চেক
                     await saveUserToFirebase(user);
-
-                    // রেফারেল বোনাস (শুধু টেলিগ্রাম জয়েনের জন্য)
-                    await giveReferralBonusForTelegram(user.loginId);
-
                     updateUI();
                     gameUpdateBalance();
-                    showClaimSuccess('চ্যানেলে জয়েন করার জন্য ১ টাকা রিওয়ার্ড দেওয়া হয়েছে!');
+                    showPopup('✅ সফল', 'আপনি টেলিগ্রাম চ্যানেলে জয়েন করেছেন!');
                 } catch (err) {
                     showPopup('Error', err.message);
                 } finally {
@@ -2942,9 +3226,7 @@
             }
         }
 
-        // ==========================================================
-        // ===== বাকি ফাংশন (পূর্বের মতো) =====
-        // ==========================================================
+        // ===== বাকি ফাংশন =====
         function switchAuthTab(tab) {
             document.querySelectorAll('.tab-btns button').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
@@ -3017,7 +3299,7 @@
                         await checkAndUpdateProfits();
                         updateUI();
                         gameUpdateBalance();
-                    } else { showPopup('Notice', 'লগইন তথ্য পাওয়া যায়নি, আবার লগইন করুন。'); }
+                    } else { showPopup('Notice', 'লগইন তথ্য পাওয়া যায়নি, আবার লগইন করুন।'); }
                 } else { window.location.reload(); }
             } catch (err) { console.error(err);
                 showPopup('Error', 'রিফ্রেশ করতে সমস্যা হয়েছে।'); } finally { showLoading(false); }
@@ -3077,13 +3359,13 @@
                         depositSettings.bKash = [{
                             title: data.bKash.title || 'আমাদের bKash Personal নম্বরে সেন্ড মানি করুন:',
                             number: data.bKash.number || '01829889350',
-                            instruction: data.bKash.instruction || 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে。'
+                            instruction: data.bKash.instruction || 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে।'
                         }];
                     } else {
                         depositSettings.bKash = [{
                             title: 'আমাদের bKash Personal নম্বরে সেন্ড মানি করুন:',
                             number: '01829889350',
-                            instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে。'
+                            instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে।'
                         }];
                     }
                     if (Array.isArray(data.Nagad)) {
@@ -3092,25 +3374,25 @@
                         depositSettings.Nagad = [{
                             title: data.Nagad.title || 'আমাদের Nagad Personal নম্বরে সেন্ড মানি করুন:',
                             number: data.Nagad.number || '01829889350',
-                            instruction: data.Nagad.instruction || 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে。'
+                            instruction: data.Nagad.instruction || 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে।'
                         }];
                     } else {
                         depositSettings.Nagad = [{
                             title: 'আমাদের Nagad Personal নম্বরে সেন্ড মানি করুন:',
                             number: '01829889350',
-                            instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে。'
+                            instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে।'
                         }];
                     }
                 } else {
                     depositSettings.bKash = [{
                         title: 'আমাদের bKash Personal নম্বরে সেন্ড মানি করুন:',
                         number: '01829889350',
-                        instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে。'
+                        instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে।'
                     }];
                     depositSettings.Nagad = [{
                         title: 'আমাদের Nagad Personal নম্বরে সেন্ড মানি করুন:',
                         number: '01829889350',
-                        instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে。'
+                        instruction: 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে।'
                     }];
                 }
                 updateDepositInfo();
@@ -3129,16 +3411,16 @@
             let html = '';
             entries.forEach((entry, index) => {
                 html += `
-                    <div style="border-bottom: 1px solid var(--deposit-notice-border); padding: 10px 0; ${index === entries.length - 1 ? 'border-bottom: none;' : ''}">
-                        <div style="font-weight:700; font-size:14px; color:var(--deposit-notice-color); margin-bottom:4px;">
+                    <div style="border-bottom: 1px solid var(--deposit-notice-border); padding: 8px 0; ${index === entries.length - 1 ? 'border-bottom: none;' : ''}">
+                        <div style="font-weight:700; font-size:13px; color:var(--deposit-notice-color); margin-bottom:4px;">
                             ${index+1}. ${entry.title || `আমাদের ${selectedDepMethodName} Personal নম্বরে সেন্ড মানি করুন:`}
                         </div>
-                        <div style="font-size:16px; font-weight:800; color:var(--deposit-notice-color); display:flex; align-items:center; gap:8px; margin:4px 0;">
+                        <div style="font-size:15px; font-weight:800; color:var(--deposit-notice-color); display:flex; align-items:center; gap:8px; margin:4px 0;">
                             <span>${entry.number || '01829889350'}</span>
-                            <button class="copy-btn" onclick="copyTextFrom('${entry.number || '01829889350'}')" style="padding: 2px 10px; font-size: 11px;">📋 Copy</button>
+                            <button class="copy-btn" onclick="copyTextFrom('${entry.number || '01829889350'}')" style="padding: 2px 8px; font-size: 10px;">📋 Copy</button>
                         </div>
-                        <div style="font-size:12px; color:var(--deposit-notice-color); opacity:0.8; font-weight:600;">
-                            ${entry.instruction || 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে。'}
+                        <div style="font-size:11px; color:var(--deposit-notice-color); opacity:0.8; font-weight:600;">
+                            ${entry.instruction || 'ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে ডিপোজিট হয়ে যাবে।'}
                         </div>
                     </div>
                 `;
@@ -3198,7 +3480,7 @@
                 .slice().reverse();
             if (filtered.length === 0) {
                 container.innerHTML =
-                    `<p style="color:var(--text-color); font-size:14px; text-align:center; padding: 20px 0; opacity:0.5;">কোনো ${filterType === 'withdraw' ? 'উইথড্র' : 'ডিপোজিট'} হিস্টোরি নেই</p>`;
+                    `<p style="color:var(--text-color); font-size:13px; text-align:center; padding: 15px 0; opacity:0.5;">কোনো ${filterType === 'withdraw' ? 'উইথড্র' : 'ডিপোজিট'} হিস্টোরি নেই</p>`;
                 return;
             }
             container.innerHTML = filtered.map(item => {
@@ -3222,7 +3504,7 @@
             }).join('');
         }
 
-        // ===== আপডেটেড UI =====
+        // ===== UI আপডেট =====
         function updateUI() {
             let user = getActiveUser();
             if (!user) return;
@@ -3265,7 +3547,7 @@
                 homeNavBadge.classList.remove('hidden'); } else { homeNavBadge.classList.add('hidden'); }
 
             if (activeItems.length === 0) {
-                invList.innerHTML = '<p style="color:var(--text-color); font-size:14px; text-align:center; padding: 10px 0; opacity:0.5;">কোনো সক্রিয় প্যাকেজ নেই</p>';
+                invList.innerHTML = '<p style="color:var(--text-color); font-size:13px; text-align:center; padding: 10px 0; opacity:0.5;">কোনো সক্রিয় প্যাকেজ নেই</p>';
             } else {
                 activeItems.sort((a, b) => (b.accumulatedProfit > 0 ? 1 : 0) - (a.accumulatedProfit > 0 ? 1 : 0));
                 invList.innerHTML = activeItems.map((inv) => {
@@ -3277,7 +3559,7 @@
                             <div class="details">প্রফিট জমা: ৳ ${inv.accumulatedProfit.toFixed(2)} | দিন: ${inv.daysCount}/${inv.totalDays}</div>
                         </div>
                         <div class="claim-btn-wrapper">
-                            <button class="btn ${hasProfitToClaim ? 'btn-green' : 'btn-disabled'}" style="padding: 8px 14px; font-size: 13px;" ${hasProfitToClaim ? '' : 'disabled'} onclick="claimProfit(${originalIndex})">${hasProfitToClaim ? 'Claim' : 'Claimed'}</button>
+                            <button class="btn ${hasProfitToClaim ? 'btn-green' : 'btn-disabled'}" style="padding: 6px 12px; font-size: 12px;" ${hasProfitToClaim ? '' : 'disabled'} onclick="claimProfit(${originalIndex})">${hasProfitToClaim ? 'Claim' : 'Claimed'}</button>
                             ${hasProfitToClaim ? '<div class="claim-notification-dot"></div>' : ''}
                         </div>
                     </div>`;
@@ -3306,28 +3588,28 @@
                 desc: 'ডেইলি বোনাস ১ টাকা',
                 icon: '🎁',
                 isDone: isDailyClaimed,
-                actionBtn: `<button class="btn ${!isDailyClaimed ? 'btn-green' : 'btn-disabled'}" style="padding: 8px 14px; font-size: 13px;" ${isDailyClaimed ? 'disabled' : ''} onclick="claimDailyBonus()">${!isDailyClaimed ? 'Claim' : 'Claimed'}</button>`
+                actionBtn: `<button class="btn ${!isDailyClaimed ? 'btn-green' : 'btn-disabled'}" style="padding: 6px 12px; font-size: 12px;" ${isDailyClaimed ? 'disabled' : ''} onclick="claimDailyBonus()">${!isDailyClaimed ? 'Claim' : 'Claimed'}</button>`
             }, {
                 key: 'tg1',
                 title: 'Telegram Channel 1',
-                desc: '১৳ বোনাস (দুই চ্যানেলই জয়েন করলে বোনাস)',
+                desc: 'টেলিগ্রাম চ্যানেল ১ জয়েন করুন (বাধ্যতামূলক)',
                 icon: '✈️',
                 isDone: tg1Claimed,
-                actionBtn: `<button class="btn btn-blue" style="padding: 8px 14px; font-size: 13px;" onclick="joinTelegram('tg1')">${!tg1Claimed ? 'Join' : 'Joined'}</button>`
+                actionBtn: `<button class="btn ${!tg1Claimed ? 'btn-blue' : 'btn-disabled'}" style="padding: 6px 12px; font-size: 12px;" ${tg1Claimed ? 'disabled' : ''} onclick="joinTelegram('tg1')">${!tg1Claimed ? 'Join' : 'Joined'}</button>`
             }, {
                 key: 'tg2',
                 title: 'Telegram Channel 2',
-                desc: '১৳ বোনাস (দুই চ্যানেলই জয়েন করলে বোনাস)',
+                desc: 'টেলিগ্রাম চ্যানেল ২ জয়েন করুন (বাধ্যতামূলক)',
                 icon: '✈️',
                 isDone: tg2Claimed,
-                actionBtn: `<button class="btn btn-blue" style="padding: 8px 14px; font-size: 13px;" onclick="joinTelegram('tg2')">${!tg2Claimed ? 'Join' : 'Joined'}</button>`
+                actionBtn: `<button class="btn ${!tg2Claimed ? 'btn-blue' : 'btn-disabled'}" style="padding: 6px 12px; font-size: 12px;" ${tg2Claimed ? 'disabled' : ''} onclick="joinTelegram('tg2')">${!tg2Claimed ? 'Join' : 'Joined'}</button>`
             }, {
                 key: 'promo',
                 title: 'Promo Code',
                 desc: 'কোড দিয়ে ১ টাকা রিওয়ার্ড নাও',
                 icon: '🎁',
                 isDone: isPromoClaimed,
-                actionBtn: `<button class="btn ${!isPromoClaimed ? 'btn-orange' : 'btn-disabled'}" style="padding: 8px 14px; font-size: 13px;" ${isPromoClaimed ? 'disabled' : ''} onclick="showPromoPopup()">${!isPromoClaimed ? 'Enter' : 'Done'}</button>`
+                actionBtn: `<button class="btn ${!isPromoClaimed ? 'btn-orange' : 'btn-disabled'}" style="padding: 6px 12px; font-size: 12px;" ${isPromoClaimed ? 'disabled' : ''} onclick="showPromoPopup()">${!isPromoClaimed ? 'Enter' : 'Done'}</button>`
             }];
 
             tasks.sort((a, b) => (a.isDone === b.isDone) ? 0 : a.isDone ? 1 : -1);
@@ -3378,7 +3660,7 @@
                 return;
             }
             box.innerHTML = user.giftHistory.slice().reverse().map(g => `
-                <div class="history-item"><div><div class="type">${g.code}</div><div style="font-size:12px; color:var(--text-color); opacity:0.5; margin-top:2px;">${g.time}</div></div><div class="amount pos">+৳ ${g.amount.toFixed(2)}</div></div>
+                <div class="history-item"><div><div class="type">${g.code}</div><div style="font-size:11px; color:var(--text-color); opacity:0.5; margin-top:2px;">${g.time}</div></div><div class="amount pos">+৳ ${g.amount.toFixed(2)}</div></div>
             `).join('');
         }
 
@@ -3494,7 +3776,7 @@
             const numberCheck = await checkNumberLinkedToOtherAccount(wdNum, user.loginId, selectedWdMethodName);
             if (numberCheck.linked) {
                 showPopup('⚠️ সতর্কতা',
-                    `এই নাম্বারটি ইতিমধ্যে অন্য অ্যাকাউন্টে সংযুক্ত আছে!\nআপনি শুধুমাত্র আপনার নিজের নাম্বার ব্যবহার করতে পারেন。`
+                    `এই নাম্বারটি ইতিমধ্যে অন্য অ্যাকাউন্টে সংযুক্ত আছে!\nআপনি শুধুমাত্র আপনার নিজের নাম্বার ব্যবহার করতে পারেন।`
                 );
                 return;
             }
@@ -3502,7 +3784,7 @@
             if (user.linkedNumbers && user.linkedNumbers[selectedWdMethodName] && user.linkedNumbers[selectedWdMethodName] !==
                 wdNum) {
                 showPopup('⚠️ সতর্কতা',
-                    `আপনার অ্যাকাউন্টে ইতিমধ্যে ${selectedWdMethodName} এর জন্য একটি নাম্বার সংযুক্ত আছে!\nএকটি মেথডের জন্য শুধুমাত্র একটি নাম্বার ব্যবহার করতে পারেন。`
+                    `আপনার অ্যাকাউন্টে ইতিমধ্যে ${selectedWdMethodName} এর জন্য একটি নাম্বার সংযুক্ত আছে!\nএকটি মেথডের জন্য শুধুমাত্র একটি নাম্বার ব্যবহার করতে পারেন।`
                 );
                 return;
             }
@@ -3624,6 +3906,14 @@
 
         async function redeemGift() {
             let user = getActiveUser();
+
+            const isTg1Joined = user.completedTasks && user.completedTasks['tg1'];
+            const isTg2Joined = user.completedTasks && user.completedTasks['tg2'];
+            if (!isTg1Joined || !isTg2Joined) {
+                showPopup('বিজ্ঞপ্তি', 'গিফট কোড রিডিম করার জন্য আপনাকে ২টি টেলিগ্রাম চ্যানেলেই জয়েন করতে হবে!');
+                return;
+            }
+
             const code = document.getElementById('giftCode').value.trim().toUpperCase();
             if (!code) { showPopup('Error', 'রিডিম কোড ইনপুট দিন'); return; }
             if (user.usedGifts && user.usedGifts.includes(code)) {
@@ -3667,8 +3957,8 @@
             grid.innerHTML = packages.map(p => {
                 const isActive = activePkgIds.has(p.id);
                 const buttonHtml = isActive ?
-                    `<button class="btn btn-disabled btn-full" style="margin-top:12px; padding:8px 10px; font-size:13px;" disabled>Active</button><div style="color:#ef4444; font-size:11px; font-weight:700; margin-top:6px;">সক্রিয় আছে</div>` :
-                    `<button class="btn btn-purple btn-full" style="margin-top:12px; padding:8px 10px; font-size:13px;" onclick="buyPackage(${p.id})">Kina</button>`;
+                    `<button class="btn btn-disabled btn-full" style="margin-top:10px; padding:6px 8px; font-size:12px;" disabled>Active</button><div style="color:#ef4444; font-size:10px; font-weight:700; margin-top:4px;">সক্রিয় আছে</div>` :
+                    `<button class="btn btn-purple btn-full" style="margin-top:10px; padding:6px 8px; font-size:12px;" onclick="buyPackage(${p.id})">Kina</button>`;
                 return `<div class="package-card-box"><div><div class="price">৳ ${p.price.toLocaleString()}</div><div class="label">${p.label}</div><div class="profit-tag">দৈনিক ${p.rate}% | ${p.days} দিন</div></div>${buttonHtml}</div>`;
             }).join('');
         }
@@ -3727,7 +4017,7 @@
         }
 
         function openSettings() {
-            showPopup('App Settings', 'অ্যাপ ভার্সন: v2.6.0\nস্ট্যাটাস: Active & Encrypted\n\n🌙 নাইট মোড টগল করতে হেডারে বাটন ব্যবহার করুন।');
+            showPopup('App Settings', 'অ্যাপ ভার্সন: v2.8.0\nস্ট্যাটাস: Active & Encrypted\n\n🌙 নাইট মোড টগল করতে হেডারে বাটন ব্যবহার করুন।');
         }
 
         function showNotificationPopup() {
@@ -3739,9 +4029,11 @@
         }
 
         function showPopup(title, msg) {
+            const popup = document.getElementById('popup');
+            const content = document.getElementById('popupContent');
             document.getElementById('popupTitle').textContent = title;
-            document.getElementById('popupMsg').textContent = msg;
-            document.getElementById('popup').style.display = 'flex';
+            content.innerHTML = `<p id="popupMsg">${msg}</p>`;
+            popup.style.display = 'flex';
         }
 
         function closePopup() { document.getElementById('popup').style.display = 'none'; }
@@ -3807,7 +4099,7 @@
                 if (!container) return;
                 if (messages.length === 0) {
                     container.innerHTML =
-                        `<p style="color:var(--text-color); font-size:14px; text-align:center; padding: 15px 0; opacity:0.5;">📭 কোনো মেসেজ নেই</p>`;
+                        `<p style="color:var(--text-color); font-size:13px; text-align:center; padding: 15px 0; opacity:0.5;">📭 কোনো মেসেজ নেই</p>`;
                     return;
                 }
                 const unreadCount = messages.filter(m => !m.read).length;
@@ -3819,11 +4111,11 @@
                 container.innerHTML = messages.map(msg => `
                     <div class="history-item ${msg.read ? 'msg-read' : 'msg-unread'}">
                         <div class="history-info-left">
-                            <div class="history-title" style="font-size: 15px;">📩 ${msg.title || 'Message from Admin'}${!msg.read ? '<span class="msg-new-badge">NEW</span>' : ''}</div>
-                            <div class="history-subtext" style="font-size: 13px; color: var(--text-color); opacity:0.7;">${msg.body || ''}</div>
+                            <div class="history-title" style="font-size: 14px;">📩 ${msg.title || 'Message from Admin'}${!msg.read ? '<span class="msg-new-badge">NEW</span>' : ''}</div>
+                            <div class="history-subtext" style="font-size: 12px; color: var(--text-color); opacity:0.7;">${msg.body || ''}</div>
                             <div class="history-time">${msg.time || ''}</div>
                         </div>
-                        <div>${!msg.read ? `<button onclick="markMessageRead('${msg.id}')" style="background:#4f46e5; color:white; border:none; padding:4px 12px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer;">Mark Read</button>` : '<span style="color:var(--text-color); opacity:0.5; font-size:11px; font-weight:700;">✓ Read</span>'}</div>
+                        <div>${!msg.read ? `<button onclick="markMessageRead('${msg.id}')" style="background:#4f46e5; color:white; border:none; padding:3px 10px; border-radius:6px; font-size:10px; font-weight:700; cursor:pointer;">Mark Read</button>` : '<span style="color:var(--text-color); opacity:0.5; font-size:10px; font-weight:700;">✓ Read</span>'}</div>
                     </div>
                 `).join('');
             });
@@ -3837,9 +4129,7 @@
                     'Error marking message read:', err); }
         }
 
-        // ==========================================================
         // ===== নোটিফিকেশন পপআপ =====
-        // ==========================================================
         let topNotifTimer = null;
         let notifIndex = 0;
 
@@ -3875,9 +4165,7 @@
             }
         }
 
-        // ==========================================================
         // ===== লিডারবোর্ড =====
-        // ==========================================================
         function renderLeaderboard() {
             const container = document.getElementById('leaderboardContainer');
             if (!container) return;
@@ -3918,10 +4206,7 @@
             container.innerHTML = html;
         }
 
-        // ==========================================================
         // ===== গেমের লজিক =====
-        // ==========================================================
-
         let gameBalance = 0;
         let gameTotalBet = 0;
         let gameBets = { '1x': 0, '2x': 0, '5x': 0, '10x': 0, '20x': 0, '40x': 0, '60x': 0, '80x': 0 };
@@ -4282,9 +4567,7 @@
             console.log('🎰 Game initialized');
         }
 
-        // ==========================================================
         // ===== Auto-login =====
-        // ==========================================================
         window.addEventListener('DOMContentLoaded', async () => {
             const urlRefCode = getUrlRefCode();
             if (urlRefCode) {
@@ -4295,7 +4578,6 @@
             if (savedKey) {
                 showLoading(true);
                 try {
-                    // ব্লক চেক
                     const blockCheck = await checkUserBlocked(savedKey);
                     if (blockCheck.blocked) {
                         showBlockedScreen(blockCheck.reason);
@@ -4310,6 +4592,7 @@
                         await enterApp();
                         listenUserChanges(currentUserKey);
                         listenForBlockStatus(currentUserKey);
+                        startTelegramCheck();
                     } else {
                         setLoggedKey(null);
                     }
