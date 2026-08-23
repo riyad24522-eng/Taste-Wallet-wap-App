@@ -5,21 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Taste Wallet - Secure & Fast</title>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js">
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
 
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="icon-192.png" />
 
     <style>
-        /* ===== লাইট মোড ===== */
         :root {
             --bg-color: #f8fafc;
             --text-color: #1e293b;
@@ -69,7 +63,6 @@
             --blocked-color: #991b1b;
         }
 
-        /* ===== ডার্ক মোড ===== */
         body.dark-mode {
             --bg-color: #0f172a;
             --text-color: #f1f5f9;
@@ -134,7 +127,6 @@
             transition: background 0.3s, color 0.3s;
         }
 
-        /* ===== ব্লকড স্ক্রিন ===== */
         #blockedScreen {
             position: fixed;
             inset: 0;
@@ -208,7 +200,6 @@
             font-size: 16px;
         }
 
-        /* ===== হেডারের আইকন ===== */
         .header-icon-btn {
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -1436,7 +1427,6 @@
             padding: 16px 0;
         }
 
-        /* ===== গেম স্টাইল ===== */
         #sec-game .game-wrapper {
             background: #060609;
             border-radius: 18px;
@@ -1820,7 +1810,6 @@
 
 <body>
 
-    <!-- ===== ব্লকড স্ক্রিন ===== -->
     <div id="blockedScreen">
         <div class="blocked-box">
             <div class="icon">🚫</div>
@@ -1831,13 +1820,11 @@
         </div>
     </div>
 
-    <!-- ===== লোডিং ওভারলে ===== -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
         <div style="font-weight:700; font-size:15px;">লোড হচ্ছে...</div>
     </div>
 
-    <!-- ===== লগইন স্ক্রিন ===== -->
     <div id="loginScreen">
         <div class="login-box">
             <div class="app-brand">
@@ -1905,7 +1892,6 @@
         </div>
     </div>
 
-    <!-- ===== টপ নোটিফিকেশন ===== -->
     <div class="top-notification" id="topNotif">
         <div class="notif-avatar" id="notifAvatar">👤</div>
         <div class="notif-text">
@@ -1917,9 +1903,7 @@
         <button class="notif-close" onclick="closeTopNotification()">✕</button>
     </div>
 
-    <!-- ===== মেইন অ্যাপ ===== -->
     <div id="app">
-        <!-- হেডার -->
         <div class="header">
             <h1 id="headerTitle">Home</h1>
             <div class="header-right">
@@ -1928,12 +1912,10 @@
                     <span class="toggle-icon" id="darkModeIcon">🌙</span>
                     <span id="darkModeLabel">নাইট</span>
                 </button>
-                <!-- ===== নোটিশ আইকন (হেডারের ডান পাশে) ===== -->
                 <div class="header-icon-btn" onclick="showNoticePopup()" id="noticeBtn" title="নোটিশ দেখুন">
                     📢
                     <div class="badge-dot hidden" id="noticeDot"></div>
                 </div>
-                <!-- ===== নোটিফিকেশন আইকন ===== -->
                 <div class="header-icon-btn" onclick="showNotificationPopup()" id="notificationBtn" title="নোটিফিকেশন">
                     🔔
                     <div class="badge-dot" id="notificationDot"></div>
@@ -1941,11 +1923,9 @@
             </div>
         </div>
 
-        <!-- কন্টেন্ট -->
         <div class="content" id="scrollableContent">
             <div id="pullToRefreshIndicator">♻️ রিফ্রেশ হচ্ছে...</div>
 
-            <!-- ===== HOME SECTION ===== -->
             <div id="sec-home" class="section active">
                 <div class="card">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
@@ -1983,7 +1963,7 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 14px; margin-bottom: 4px; font-size: 12px; color: #4f46e5; font-weight: 800;">🎁 প্রতি রেফারে ১ টাকা (রেফার্ড ইউজার টেলিগ্রাম জয়েন করলে) — বন্ধুদের সাথে শেয়ার করো</div>
+                    <div style="margin-top: 14px; margin-bottom: 4px; font-size: 12px; color: #4f46e5; font-weight: 800;">🎁 প্রতি রেফারে ১ টাকা (রেফার্ড ইউজার টেলিগ্রাম জয়েন করলে) — বন্ধুদের সাথে শেয়ার করো</div>
                     <div style="display:flex; gap:8px;">
                         <input type="text" id="refLink" readonly style="flex:1; padding:8px 12px; border:2px solid var(--input-border); border-radius:10px; font-size:12px; background:var(--input-bg); color:var(--text-color);" />
                         <button class="copy-btn" onclick="copyText('refLink')" style="padding:4px 10px; font-size:11px;">Copy</button>
@@ -2013,7 +1993,6 @@
                 </div>
             </div>
 
-            <!-- ===== WITHDRAW SECTION ===== -->
             <div id="sec-withdraw" class="section">
                 <div class="card">
                     <h3>💸 Withdraw Money</h3>
@@ -2065,7 +2044,6 @@
                 </div>
             </div>
 
-            <!-- ===== DEPOSIT SECTION ===== -->
             <div id="sec-deposit" class="section">
                 <div class="card">
                     <h3>💳 Deposit / Add Balance</h3>
@@ -2110,7 +2088,6 @@
                 </div>
             </div>
 
-            <!-- ===== TASK SECTION ===== -->
             <div id="sec-task" class="section">
                 <div class="card">
                     <h3>✅ Daily Tasks</h3>
@@ -2141,7 +2118,6 @@
                 </div>
             </div>
 
-            <!-- ===== BUY SECTION ===== -->
             <div id="sec-buy" class="section">
                 <div class="card">
                     <h3>🛒 VIP Packages</h3>
@@ -2151,7 +2127,6 @@
                 </div>
             </div>
 
-            <!-- ===== GAME SECTION ===== -->
             <div id="sec-game" class="section">
                 <div class="card" style="padding: 10px 6px 14px; background: #060609; border-color: #00f5d4;">
                     <div class="game-wrapper">
@@ -2241,7 +2216,6 @@
                     </div>
                 </div>
 
-                <!-- ===== গেম পপআপ ===== -->
                 <div class="game-popup-overlay" id="gamePopup">
                     <div class="game-popup-card">
                         <h2 id="gamePopupTitle">🎉 WINNER!</h2>
@@ -2251,7 +2225,6 @@
                 </div>
             </div>
 
-            <!-- ===== PROFILE SECTION ===== -->
             <div id="sec-profile" class="section">
                 <div class="card">
                     <h3>👤 Profile & Settings</h3>
@@ -2297,7 +2270,6 @@
             </div>
         </div>
 
-        <!-- ===== নেভিগেশন বার ===== -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="showSection('home')" id="navHomeItem">
                 <span class="icon">🏠</span>Home
@@ -2325,7 +2297,6 @@
         </div>
     </div>
 
-    <!-- ===== পপআপ ===== -->
     <div class="popup-overlay" id="popup">
         <div class="popup">
             <h3 id="popupTitle">Success</h3>
@@ -2374,7 +2345,6 @@
         </div>
     </div>
 
-    <!-- =========================== JAVASCRIPT =========================== -->
     <script>
         // ==================== FIREBASE CONFIG ====================
         const firebaseConfig = {
@@ -2394,17 +2364,16 @@
         const db = database;
         try { firebase.analytics(); } catch (e) {}
 
-        // ==================== টেলিগ্রাম কনফিগ ====================
-        const TELEGRAM_BOT_TOKEN = '8857883625:AAE2LRoktENoNGsnop0qQWb4Zyp4g8Wtnj0';
-        const TELEGRAM_BOT_USERNAME = '@trustwallat41_bot';
+        // ==================== টেলিগ্রাম কনফিগ (আপডেটেড) ====================
+        // ✅ আপনার দেওয়া নতুন টোকেন বসানো হয়েছে
+        const TELEGRAM_BOT_TOKEN = '8991653191:AAEugNuEYf6NSHRIIMFerZsn6BJ-6WZoCJI';
+        const TELEGRAM_BOT_USERNAME = '@bd_international_bot';
 
-        // ===== চ্যানেল ইউজারনেম (আপনার দেওয়া) =====
         const CHANNEL_USERNAMES = {
             tg1: '@taste_wallet_chenel1',
             tg2: '@tasr_wallet_chenel'
         };
 
-        // ===== চ্যানেল লিংক (ইউজারনেম থেকে) =====
         const CHANNEL_LINKS = {
             tg1: 'https://t.me/taste_wallet_chenel1',
             tg2: 'https://t.me/tasr_wallet_chenel'
@@ -2427,16 +2396,17 @@
             }
         }
 
-        // ===== চ্যানেলের মেম্বার চেক =====
+        // ===== চ্যানেলের মেম্বার চেক (আপডেটেড) =====
         async function checkUserInChannel(userId, channelUsername) {
             try {
+                const cleanUsername = channelUsername.replace('@', '');
                 const result = await telegramApiCall('getChatMember', {
-                    chat_id: channelUsername,
+                    chat_id: '@' + cleanUsername,
                     user_id: userId
                 });
                 if (result.ok) {
                     const status = result.result.status;
-                    return status === 'member' || status === 'administrator' || status === 'creator';
+                    return status === 'member' || status === 'administrator' || status === 'creator' || status === 'restricted';
                 }
                 return false;
             } catch (e) {
@@ -2452,12 +2422,10 @@
             if (telegramCheckInterval) {
                 clearInterval(telegramCheckInterval);
             }
-            // প্রতি ৫ মিনিটে চেক
             telegramCheckInterval = setInterval(async () => {
                 await checkAllTelegramMembers();
             }, 5 * 60 * 1000);
 
-            // প্রথমবার চেক
             await checkAllTelegramMembers();
         }
 
@@ -2466,7 +2434,6 @@
             if (!currentUser) return;
 
             try {
-                // শুধু কারেন্ট ইউজারের টেলিগ্রাম স্ট্যাটাস চেক করি
                 if (currentUser.telegramId) {
                     for (const [channelKey, username] of Object.entries(CHANNEL_USERNAMES)) {
                         const isMember = await checkUserInChannel(currentUser.telegramId, username);
@@ -2491,10 +2458,8 @@
                     user.telegramStatus[channelKey] = isMember;
 
                     if (isMember) {
-                        // জয়েন করলে - রেফার বোনাস চেক
                         await giveReferralBonusForTelegram(loginId);
                     } else {
-                        // লিভ নিলে - রেফার থেকে টাকা কাট
                         await removeReferralBonusForTelegram(loginId);
                     }
 
@@ -2505,7 +2470,7 @@
             }
         }
 
-        // ===== রেফারেল বোনাস দেওয়া =====
+        // ===== রেফারেল বোনাস দেওয়া (১ টাকা + ১ কাউন্ট) =====
         async function giveReferralBonusForTelegram(userLoginId) {
             try {
                 const user = await getUserFromFirebase(userLoginId);
@@ -2514,20 +2479,18 @@
                 const referrerLoginId = user.referredBy;
                 if (!referrerLoginId) return false;
 
-                // ইতিমধ্যে বোনাস দেয়া হয়েছে কিনা চেক
                 if (user.referralBonusGivenForTelegram) return false;
 
                 const referrer = await getUserFromFirebase(referrerLoginId);
                 if (!referrer) return false;
 
-                // রেফারারকে ১ টাকা বোনাস দিই
                 referrer.balance = (referrer.balance || 0) + 1;
                 referrer.referCount = (referrer.referCount || 0) + 1;
 
                 if (!referrer.history) referrer.history = [];
                 referrer.history.push({
                     id: 'REFBONUS_TG_' + Date.now(),
-                    type: `রেফারেল বোনাস (${user.nick || user.loginId} টেলিগ্রাম জয়েন করেছে)`,
+                    type: `রেফারেল বোনাস (${user.nick || user.loginId} টেলিগ্রাম জয়েন করেছে)`,
                     amount: 1,
                     status: 'Completed',
                     time: getFormattedServerTime()
@@ -2543,13 +2506,12 @@
                 user.referralBonusGivenForTelegram = true;
                 await saveUserToFirebase(user);
 
-                // UI আপডেট
                 if (currentUserKey === referrerLoginId) {
                     updateUI();
                     gameUpdateBalance();
                 }
 
-                console.log(`✅ রেফার বোনাস দেয়া হয়েছে: ${referrer.nick} পেল ১ টাকা`);
+                console.log(`✅ রেফার বোনাস: ${referrer.nick} পেল ১ টাকা`);
                 return true;
             } catch (err) {
                 console.error('Referral bonus error:', err);
@@ -2557,7 +2519,7 @@
             }
         }
 
-        // ===== রেফারেল বোনাস কেটে নেওয়া (লিভ নিলে) =====
+        // ===== রেফারেল বোনাস কেটে নেওয়া (লিভ নিলে) =====
         async function removeReferralBonusForTelegram(userLoginId) {
             try {
                 const user = await getUserFromFirebase(userLoginId);
@@ -2566,20 +2528,18 @@
                 const referrerLoginId = user.referredBy;
                 if (!referrerLoginId) return false;
 
-                // বোনাস দেয়া হয়েছে কিনা চেক
                 if (!user.referralBonusGivenForTelegram) return false;
 
                 const referrer = await getUserFromFirebase(referrerLoginId);
                 if (!referrer) return false;
 
-                // রেফারার থেকে ১ টাকা কেটে নিই
                 referrer.balance = (referrer.balance || 0) - 1;
                 referrer.referCount = (referrer.referCount || 0) - 1;
 
                 if (!referrer.history) referrer.history = [];
                 referrer.history.push({
                     id: 'REFREMOVE_TG_' + Date.now(),
-                    type: `রেফার বোনাস কেটে নেওয়া (${user.nick || user.loginId} টেলিগ্রাম লিভ নিয়েছে)`,
+                    type: `রেফার বোনাস কেটে নেওয়া (${user.nick || user.loginId} টেলিগ্রাম লিভ নিয়েছে)`,
                     amount: -1,
                     status: 'Completed',
                     time: getFormattedServerTime()
@@ -2594,13 +2554,12 @@
                 user.referralBonusGivenForTelegram = false;
                 await saveUserToFirebase(user);
 
-                // UI আপডেট
                 if (currentUserKey === referrerLoginId) {
                     updateUI();
                     gameUpdateBalance();
                 }
 
-                console.log(`❌ রেফার বোনাস কেটে নেওয়া হয়েছে: ${referrer.nick} থেকে ১ টাকা কাটা হলো`);
+                console.log(`❌ রেফার বোনাস কাটা: ${referrer.nick} থেকে ১ টাকা কাটা হলো`);
                 return true;
             } catch (err) {
                 console.error('Remove referral bonus error:', err);
@@ -2608,7 +2567,7 @@
             }
         }
 
-        // ===== নোটিশ পপআপ (হেডারের বাটনে) =====
+        // ===== নোটিশ পপআপ =====
         function showNoticePopup() {
             db.ref('admin_notices').orderByChild('timestamp').limitToLast(20).once('value', (snapshot) => {
                 const notices = [];
@@ -2647,7 +2606,6 @@
             });
         }
 
-        // ===== নোটিশ ডট চেক =====
         function checkNoticeDot() {
             db.ref('admin_notices').on('value', (snapshot) => {
                 const dot = document.getElementById('noticeDot');
@@ -2659,19 +2617,16 @@
             });
         }
 
-        // ===== অন্যান্য ফাংশন (পূর্বের মতো) =====
         let serverTimeOffset = 0;
         database.ref(".info/serverTimeOffset").on("value", (snap) => {
             serverTimeOffset = snap.val() || 0;
         });
 
         function getServerTime() { return Date.now() + serverTimeOffset; }
-
         function getFormattedServerTime() { return new Date(getServerTime()).toLocaleString('bn-BD'); }
 
         let hasShownNoticePopup = false;
 
-        // ===== র্যান্ডম ডেটা =====
         const fakeNames = [
             "রহিম মিয়া", "করিম উদ্দিন", "সুমাইয়া আক্তার", "তানভীর আহমেদ", "রিনা বেগম",
             "আল-আমিন", "নাসরিন সুলতানা", "জোয়েল রানা", "শারমিন", "রাকিব হাসান",
@@ -2769,11 +2724,9 @@
         function sanitizeKey(key) { return String(key).replace(/[.#$\[\]]/g, '_'); }
 
         function getUrlRefCode() {
-            try { const params = new URLSearchParams(window.location.search); return (params.get('ref') || '').trim(); } catch (
-                e) { return ''; }
+            try { const params = new URLSearchParams(window.location.search); return (params.get('ref') || '').trim(); } catch (e) { return ''; }
         }
 
-        // ===== ব্লক চেক =====
         async function checkUserBlocked(loginId) {
             try {
                 const safeKey = sanitizeKey(loginId);
@@ -2816,7 +2769,6 @@
             }
         }
 
-        // ===== ইউজার ফাংশন =====
         async function getUserFromFirebase(loginId) {
             const safeKey = sanitizeKey(loginId);
             const snapshot = await database.ref('users/' + safeKey).once('value');
@@ -2843,8 +2795,7 @@
 
         function getActiveUser() { return currentUserData; }
 
-        function setLoggedKey(key) { if (key) localStorage.setItem('logged_trust_user_key', key);
-            else localStorage.removeItem('logged_trust_user_key'); }
+        function setLoggedKey(key) { if (key) localStorage.setItem('logged_trust_user_key', key); else localStorage.removeItem('logged_trust_user_key'); }
 
         function listenUserChanges(loginId) {
             const safeKey = sanitizeKey(loginId);
@@ -2866,7 +2817,6 @@
             });
         }
 
-        // ===== রেজিস্টার =====
         async function doRegister() {
             const nick = document.getElementById('regNick').value.trim();
             const id = document.getElementById('regId').value.trim();
@@ -2884,16 +2834,14 @@
                 }
 
                 const existing = await getUserFromFirebase(id);
-                if (existing) { showPopup('Error', 'এই ফোন/ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট খোলা হয়েছে!');
-                    showLoading(false); return; }
+                if (existing) { showPopup('Error', 'এই ফোন/ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট খোলা হয়েছে!'); showLoading(false); return; }
 
                 const deviceId = getDeviceId();
                 const allUsersSnap = await database.ref('users').once('value');
                 const allUsers = allUsersSnap.val() || {};
                 let deviceAccountCount = 0;
                 for (let k in allUsers) { if (allUsers[k].deviceId === deviceId) deviceAccountCount++; }
-                if (deviceAccountCount >= 2) { showPopup('Error', 'এই ডিভাইস থেকে ইতিমধ্যে সর্বোচ্চ ২ টি অ্যাকাউন্ট খোলা হয়েছে!');
-                    showLoading(false); return; }
+                if (deviceAccountCount >= 2) { showPopup('Error', 'এই ডিভাইস থেকে ইতিমধ্যে সর্বোচ্চ ২ টি অ্যাকাউন্ট খোলা হয়েছে!'); showLoading(false); return; }
 
                 let assignedUserId = 'USR' + Math.floor(100000 + Math.random() * 900000);
                 let newUser = {
@@ -2907,8 +2855,7 @@
                     totalWithdraw: 0,
                     referredBy: null,
                     referralBonusGivenForTelegram: false,
-                    history: [{ id: 'BONUS_' + Date.now(), type: 'Registration Bonus', amount: 1.00, status: 'Completed',
-                        time: getFormattedServerTime() }],
+                    history: [{ id: 'BONUS_' + Date.now(), type: 'Registration Bonus', amount: 1.00, status: 'Completed', time: getFormattedServerTime() }],
                     investments: [],
                     completedTasks: {},
                     lastDailyBonusDate: '',
@@ -2932,10 +2879,8 @@
                         showLoading(false);
                         return;
                     }
-                    let referrerKey = null,
-                        referrerData = null;
-                    for (let k in allUsers) { if (allUsers[k].userId === refCode) { referrerKey = k;
-                            referrerData = allUsers[k]; break; } }
+                    let referrerKey = null, referrerData = null;
+                    for (let k in allUsers) { if (allUsers[k].userId === refCode) { referrerKey = k; referrerData = allUsers[k]; break; } }
                     if (referrerKey && referrerKey !== sanitizeKey(id)) {
                         newUser.referredBy = referrerData.loginId;
                     }
@@ -2951,11 +2896,9 @@
                 startTelegramCheck();
 
                 showClaimSuccess('অভিনন্দন! রেজিস্ট্রেশন বোনাস ১ টাকা যোগ হয়েছে!');
-            } catch (err) { console.error(err);
-                showPopup('Error', 'রেজিস্ট্রেশন ব্যর্থ: ' + err.message); } finally { showLoading(false); }
+            } catch (err) { console.error(err); showPopup('Error', 'রেজিস্ট্রেশন ব্যর্থ: ' + err.message); } finally { showLoading(false); }
         }
 
-        // ===== লগইন =====
         async function doLogin() {
             const id = document.getElementById('loginId').value.trim();
             const pass = document.getElementById('loginPass').value;
@@ -2992,11 +2935,9 @@
                     listenForBlockStatus(currentUserKey);
                     startTelegramCheck();
                 } else { showPopup('Error', 'Phone/Email বা Password ভুল'); }
-            } catch (err) { console.error(err);
-                showPopup('Error', 'লগইন ব্যর্থ: ' + err.message); } finally { showLoading(false); }
+            } catch (err) { console.error(err); showPopup('Error', 'লগইন ব্যর্থ: ' + err.message); } finally { showLoading(false); }
         }
 
-        // ===== সোশ্যাল লগইন =====
         async function socialLogin(providerName) {
             showLoading(true);
             document.getElementById('googleBtn').disabled = true;
@@ -3043,8 +2984,7 @@
                         totalWithdraw: 0,
                         referredBy: null,
                         referralBonusGivenForTelegram: false,
-                        history: [{ id: 'BONUS_' + Date.now(), type: 'Google Registration Bonus', amount: 1.00,
-                            status: 'Completed', time: getFormattedServerTime() }],
+                        history: [{ id: 'BONUS_' + Date.now(), type: 'Google Registration Bonus', amount: 1.00, status: 'Completed', time: getFormattedServerTime() }],
                         investments: [],
                         completedTasks: {},
                         lastDailyBonusDate: '',
@@ -3064,16 +3004,13 @@
                     };
                     const refCode = getUrlRefCode();
                     if (refCode && refCode !== user.userId) {
-                        let referrerKey = null,
-                            referrerData = null;
-                        for (let k in allUsers) { if (allUsers[k].userId === refCode) { referrerKey = k;
-                                referrerData = allUsers[k]; break; } }
+                        let referrerKey = null, referrerData = null;
+                        for (let k in allUsers) { if (allUsers[k].userId === refCode) { referrerKey = k; referrerData = allUsers[k]; break; } }
                         if (referrerKey && referrerData.loginId !== email) user.referredBy = referrerData.loginId;
                     }
                     await saveUserToFirebase(user);
                 } else {
-                    if (photoURL && !user.profileImg) { user.profileImg = photoURL;
-                        await saveUserToFirebase(user); }
+                    if (photoURL && !user.profileImg) { user.profileImg = photoURL; await saveUserToFirebase(user); }
                 }
                 currentUserKey = email;
                 currentUserData = user;
@@ -3088,11 +3025,9 @@
                 if (err.code === 'auth/popup-closed-by-user') msg = 'লগইন উইন্ডো বন্ধ করে দিয়েছ। আবার চেষ্টা করো।';
                 else if (err.code === 'auth/popup-blocked') msg = 'পপআপ ব্লক করা হয়েছে। ব্রাউজারের পপআপ ব্লকার বন্ধ করো।';
                 showPopup('Error', msg);
-            } finally { showLoading(false);
-                document.getElementById('googleBtn').disabled = false; }
+            } finally { showLoading(false); document.getElementById('googleBtn').disabled = false; }
         }
 
-        // ===== লগআউট =====
         async function doLogout() {
             try { await auth.signOut(); } catch (e) {}
             currentUserKey = null;
@@ -3109,7 +3044,6 @@
             showPopup('Info', 'Logout হয়েছে');
         }
 
-        // ===== অ্যাপ এন্ট্রি =====
         async function enterApp() {
             const blockCheck = await checkUserBlocked(currentUserKey);
             if (blockCheck.blocked) {
@@ -3144,7 +3078,6 @@
             startTelegramCheck();
         }
 
-        // ===== ডিভাইস আইডি =====
         function generateCanvasFingerprint() {
             try {
                 const canvas = document.createElement('canvas');
@@ -3200,7 +3133,6 @@
             return devId;
         }
 
-        // ===== টেলিগ্রাম জয়েন =====
         async function joinTelegram(channelKey) {
             let user = getActiveUser();
             if (!user) return;
@@ -3226,7 +3158,6 @@
             }
         }
 
-        // ===== বাকি ফাংশন =====
         function switchAuthTab(tab) {
             document.querySelectorAll('.tab-btns button').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
@@ -3236,9 +3167,7 @@
 
         function togglePassword(fieldId, btn) {
             const inputField = document.getElementById(fieldId);
-            if (inputField.type === 'password') { inputField.type = 'text';
-                btn.textContent = '👀'; } else { inputField.type = 'password';
-                btn.textContent = '👁️‍🗨️'; }
+            if (inputField.type === 'password') { inputField.type = 'text'; btn.textContent = '👀'; } else { inputField.type = 'password'; btn.textContent = '👁️‍🗨️'; }
         }
 
         function toggleDarkMode() {
@@ -3246,11 +3175,7 @@
             const isDark = document.body.classList.contains('dark-mode');
             const icon = document.getElementById('darkModeIcon');
             const label = document.getElementById('darkModeLabel');
-            if (isDark) { icon.textContent = '☀️';
-                label.textContent = 'ডে';
-                localStorage.setItem('darkMode', 'enabled'); } else { icon.textContent = '🌙';
-                label.textContent = 'নাইট';
-                localStorage.setItem('darkMode', 'disabled'); }
+            if (isDark) { icon.textContent = '☀️'; label.textContent = 'ডে'; localStorage.setItem('darkMode', 'enabled'); } else { icon.textContent = '🌙'; label.textContent = 'নাইট'; localStorage.setItem('darkMode', 'disabled'); }
         }
 
         function loadDarkModePreference() {
@@ -3301,8 +3226,7 @@
                         gameUpdateBalance();
                     } else { showPopup('Notice', 'লগইন তথ্য পাওয়া যায়নি, আবার লগইন করুন।'); }
                 } else { window.location.reload(); }
-            } catch (err) { console.error(err);
-                showPopup('Error', 'রিফ্রেশ করতে সমস্যা হয়েছে।'); } finally { showLoading(false); }
+            } catch (err) { console.error(err); showPopup('Error', 'রিফ্রেশ করতে সমস্যা হয়েছে।'); } finally { showLoading(false); }
         }
 
         function selectWdMethod(method) {
@@ -3404,8 +3328,7 @@
             const container = document.getElementById('depositInfoList');
             if (!container) return;
             if (entries.length === 0) {
-                container.innerHTML =
-                `<p style="color:var(--deposit-notice-color); font-weight:600;">কোনো নাম্বার পাওয়া যায়নি।</p>`;
+                container.innerHTML = `<p style="color:var(--deposit-notice-color); font-weight:600;">কোনো নাম্বার পাওয়া যায়নি।</p>`;
                 return;
             }
             let html = '';
@@ -3476,11 +3399,9 @@
         function renderTransactionHistoryList(containerId, historyList, filterType) {
             const container = document.getElementById(containerId);
             if (!container) return;
-            const filtered = (historyList || []).filter(h => (h.type || '').toLowerCase().includes(filterType.toLowerCase()))
-                .slice().reverse();
+            const filtered = (historyList || []).filter(h => (h.type || '').toLowerCase().includes(filterType.toLowerCase())).slice().reverse();
             if (filtered.length === 0) {
-                container.innerHTML =
-                    `<p style="color:var(--text-color); font-size:13px; text-align:center; padding: 15px 0; opacity:0.5;">কোনো ${filterType === 'withdraw' ? 'উইথড্র' : 'ডিপোজিট'} হিস্টোরি নেই</p>`;
+                container.innerHTML = `<p style="color:var(--text-color); font-size:13px; text-align:center; padding: 15px 0; opacity:0.5;">কোনো ${filterType === 'withdraw' ? 'উইথড্র' : 'ডিপোজিট'} হিস্টোরি নেই</p>`;
                 return;
             }
             container.innerHTML = filtered.map(item => {
@@ -3504,7 +3425,6 @@
             }).join('');
         }
 
-        // ===== UI আপডেট =====
         function updateUI() {
             let user = getActiveUser();
             if (!user) return;
@@ -3519,8 +3439,7 @@
             document.getElementById('cardReferCount').textContent = user.referCount || 0;
             document.getElementById('cardDeposit').textContent = (user.totalDeposit || 0).toFixed(2);
             document.getElementById('cardWithdraw').textContent = (user.totalWithdraw || 0).toFixed(2);
-            document.getElementById('refLink').value = window.location.origin + window.location.pathname + '?ref=' + user
-            .userId;
+            document.getElementById('refLink').value = window.location.origin + window.location.pathname + '?ref=' + user.userId;
 
             const wdNumberField = document.getElementById('wdNumber');
             if (wdNumberField && user.linkedNumbers) {
@@ -3533,8 +3452,7 @@
 
             const avatarBox = document.getElementById('homeProfileAvatar');
             if (user.profileImg) {
-                avatarBox.innerHTML =
-                    `<img src="${user.profileImg}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='<span id=avatarInitial>${(user.nick||'U').charAt(0).toUpperCase()}</span>'">`;
+                avatarBox.innerHTML = `<img src="${user.profileImg}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='<span id=avatarInitial>${(user.nick||'U').charAt(0).toUpperCase()}</span>'">`;
             } else {
                 avatarBox.innerHTML = `<span id="avatarInitial">${(user.nick || 'U').charAt(0).toUpperCase()}</span>`;
             }
@@ -3543,8 +3461,7 @@
             const activeItems = (user.investments || []).filter(i => i.status === 'active');
             const pendingClaimCount = activeItems.filter(i => i.accumulatedProfit > 0).length;
             const homeNavBadge = document.getElementById('homeNavBadge');
-            if (pendingClaimCount > 0) { homeNavBadge.textContent = pendingClaimCount;
-                homeNavBadge.classList.remove('hidden'); } else { homeNavBadge.classList.add('hidden'); }
+            if (pendingClaimCount > 0) { homeNavBadge.textContent = pendingClaimCount; homeNavBadge.classList.remove('hidden'); } else { homeNavBadge.classList.add('hidden'); }
 
             if (activeItems.length === 0) {
                 invList.innerHTML = '<p style="color:var(--text-color); font-size:13px; text-align:center; padding: 10px 0; opacity:0.5;">কোনো সক্রিয় প্যাকেজ নেই</p>';
@@ -3615,8 +3532,7 @@
             tasks.sort((a, b) => (a.isDone === b.isDone) ? 0 : a.isDone ? 1 : -1);
             const pendingTasksCount = tasks.filter(t => !t.isDone).length;
             const taskNavBadge = document.getElementById('taskNavBadge');
-            if (pendingTasksCount > 0) { taskNavBadge.textContent = pendingTasksCount;
-                taskNavBadge.classList.remove('hidden'); } else { taskNavBadge.classList.add('hidden'); }
+            if (pendingTasksCount > 0) { taskNavBadge.textContent = pendingTasksCount; taskNavBadge.classList.remove('hidden'); } else { taskNavBadge.classList.add('hidden'); }
 
             document.getElementById('taskListContainer').innerHTML = tasks.map(t => `
                 <div class="task-item">
@@ -3635,8 +3551,7 @@
                 const claimAmount = inv.accumulatedProfit;
                 user.balance += claimAmount;
                 if (!user.history) user.history = [];
-                user.history.push({ id: 'CLAIM_' + Date.now(), type: `VIP Claim (${inv.label})`, amount: claimAmount,
-                    status: 'Completed', time: getFormattedServerTime() });
+                user.history.push({ id: 'CLAIM_' + Date.now(), type: `VIP Claim (${inv.label})`, amount: claimAmount, status: 'Completed', time: getFormattedServerTime() });
                 inv.accumulatedProfit = 0;
                 await saveUserToFirebase(user);
                 updateUI();
@@ -3671,12 +3586,10 @@
             if (name === 'home') { document.getElementById('navHomeItem').classList.add('active'); } else {
                 const items = document.querySelectorAll('.bottom-nav .nav-item');
                 items.forEach(item => {
-                    if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(name)) item.classList.add(
-                        'active');
+                    if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(name)) item.classList.add('active');
                 });
             }
-            const titles = { home: 'Home', withdraw: 'Withdraw', deposit: 'Deposit', task: 'Tasks', buy: 'VIP Packages',
-                game: 'Games', profile: 'Profile & Settings' };
+            const titles = { home: 'Home', withdraw: 'Withdraw', deposit: 'Deposit', task: 'Tasks', buy: 'VIP Packages', game: 'Games', profile: 'Profile & Settings' };
             document.getElementById('headerTitle').textContent = titles[name] || 'Home';
 
             if (name === 'profile') {
@@ -3690,7 +3603,6 @@
             }
         }
 
-        // ===== ডিপোজিট =====
         async function doDeposit() {
             const amt = parseFloat(document.getElementById('depAmount').value);
             const senderNum = document.getElementById('depSenderNum').value.trim();
@@ -3750,7 +3662,6 @@
             }
         }
 
-        // ===== উইথড্র =====
         async function doWithdraw() {
             let user = getActiveUser();
 
@@ -3775,17 +3686,12 @@
 
             const numberCheck = await checkNumberLinkedToOtherAccount(wdNum, user.loginId, selectedWdMethodName);
             if (numberCheck.linked) {
-                showPopup('⚠️ সতর্কতা',
-                    `এই নাম্বারটি ইতিমধ্যে অন্য অ্যাকাউন্টে সংযুক্ত আছে!\nআপনি শুধুমাত্র আপনার নিজের নাম্বার ব্যবহার করতে পারেন।`
-                );
+                showPopup('⚠️ সতর্কতা', `এই নাম্বারটি ইতিমধ্যে অন্য অ্যাকাউন্টে সংযুক্ত আছে!\nআপনি শুধুমাত্র আপনার নিজের নাম্বার ব্যবহার করতে পারেন।`);
                 return;
             }
 
-            if (user.linkedNumbers && user.linkedNumbers[selectedWdMethodName] && user.linkedNumbers[selectedWdMethodName] !==
-                wdNum) {
-                showPopup('⚠️ সতর্কতা',
-                    `আপনার অ্যাকাউন্টে ইতিমধ্যে ${selectedWdMethodName} এর জন্য একটি নাম্বার সংযুক্ত আছে!\nএকটি মেথডের জন্য শুধুমাত্র একটি নাম্বার ব্যবহার করতে পারেন।`
-                );
+            if (user.linkedNumbers && user.linkedNumbers[selectedWdMethodName] && user.linkedNumbers[selectedWdMethodName] !== wdNum) {
+                showPopup('⚠️ সতর্কতা', `আপনার অ্যাকাউন্টে ইতিমধ্যে ${selectedWdMethodName} এর জন্য একটি নাম্বার সংযুক্ত আছে!\nএকটি মেথডের জন্য শুধুমাত্র একটি নাম্বার ব্যবহার করতে পারেন।`);
                 return;
             }
 
@@ -3793,9 +3699,7 @@
             const totalDeduct = amt + withdrawCharge;
 
             if (totalDeduct > user.balance) {
-                showPopup('Error',
-                    `পর্যাপ্ত ব্যালেন্স নেই! প্রয়োজন: ৳ ${totalDeduct.toFixed(2)} (উইথড্র ৳${amt} + চার্জ ৳${withdrawCharge})`
-                );
+                showPopup('Error', `পর্যাপ্ত ব্যালেন্স নেই! প্রয়োজন: ৳ ${totalDeduct.toFixed(2)} (উইথড্র ৳${amt} + চার্জ ৳${withdrawCharge})`);
                 return;
             }
 
@@ -3841,9 +3745,7 @@
                 await saveUserToFirebase(user);
                 updateUI();
                 gameUpdateBalance();
-                showPopup('Success',
-                    `৳ ${amt.toFixed(2)} উইথড্র রিকোয়েস্ট সফল হয়েছে!\nচার্জ কাটা হয়েছে: ৳ ${withdrawCharge.toFixed(2)}\nইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে পেমেন্ট হয়ে যাবে।`
-                );
+                showPopup('Success', `৳ ${amt.toFixed(2)} উইথড্র রিকোয়েস্ট সফল হয়েছে!\nচার্জ কাটা হয়েছে: ৳ ${withdrawCharge.toFixed(2)}\nইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে পেমেন্ট হয়ে যাবে।`);
             } catch (err) {
                 showPopup('Error', err.message);
             } finally {
@@ -3851,7 +3753,6 @@
             }
         }
 
-        // ===== ডেইলি বোনাস =====
         async function claimDailyBonus() {
             let user = getActiveUser();
             const todayStr = new Date(getServerTime()).toDateString();
@@ -3864,8 +3765,7 @@
                 user.lastDailyBonusDate = todayStr;
                 user.balance = (user.balance || 0) + 1.00;
                 if (!user.history) user.history = [];
-                user.history.push({ id: 'DAILY_' + Date.now(), type: 'Daily Bonus', amount: 1.00, status: 'Completed',
-                    time: getFormattedServerTime() });
+                user.history.push({ id: 'DAILY_' + Date.now(), type: 'Daily Bonus', amount: 1.00, status: 'Completed', time: getFormattedServerTime() });
                 await saveUserToFirebase(user);
                 updateUI();
                 gameUpdateBalance();
@@ -3891,8 +3791,7 @@
                     user.lastPromoDate = todayStr;
                     user.balance = (user.balance || 0) + 1.00;
                     if (!user.history) user.history = [];
-                    user.history.push({ id: 'PROMO_' + Date.now(), type: 'Promo Code Reward', amount: 1.00,
-                        status: 'Completed', time: getFormattedServerTime() });
+                    user.history.push({ id: 'PROMO_' + Date.now(), type: 'Promo Code Reward', amount: 1.00, status: 'Completed', time: getFormattedServerTime() });
                     await saveUserToFirebase(user);
                     updateUI();
                     gameUpdateBalance();
@@ -3925,10 +3824,8 @@
             try {
                 const snap = await database.ref('gift_codes/' + sanitizedCode).once('value');
                 const giftData = snap.val();
-                if (!giftData) { showPopup('Error', 'অকার্যকর বা ভুল গিফট কোড!');
-                    showLoading(false); return; }
-                if (giftData.totalUsed >= giftData.maxUses) { showPopup('Error', 'এই গিফট কোডটির লিমিট শেষ হয়ে গেছে!');
-                    showLoading(false); return; }
+                if (!giftData) { showPopup('Error', 'অকার্যকর বা ভুল গিফট কোড!'); showLoading(false); return; }
+                if (giftData.totalUsed >= giftData.maxUses) { showPopup('Error', 'এই গিফট কোডটির লিমিট শেষ হয়ে গেছে!'); showLoading(false); return; }
                 const rewardAmt = parseFloat(giftData.amount);
                 user.balance += rewardAmt;
                 if (!user.usedGifts) user.usedGifts = [];
@@ -3936,8 +3833,7 @@
                 if (!user.giftHistory) user.giftHistory = [];
                 user.giftHistory.push({ code: code, amount: rewardAmt, time: getFormattedServerTime() });
                 if (!user.history) user.history = [];
-                user.history.push({ id: 'GIFT_' + Date.now(), type: `Gift Code (${code})`, amount: rewardAmt,
-                    status: 'Completed', time: getFormattedServerTime() });
+                user.history.push({ id: 'GIFT_' + Date.now(), type: `Gift Code (${code})`, amount: rewardAmt, status: 'Completed', time: getFormattedServerTime() });
                 await database.ref('gift_codes/' + sanitizedCode + '/totalUsed').transaction(count => (count || 0) + 1);
                 await saveUserToFirebase(user);
                 document.getElementById('giftCode').value = '';
@@ -3968,27 +3864,20 @@
             const pkg = packages.find(p => p.id === pkgId);
             if (!pkg) return;
             const alreadyActive = (user.investments || []).some(inv => inv.id === pkgId && inv.status === 'active');
-            if (alreadyActive) { showPopup('সতর্কতা', 'এই প্যাকেজটি ইতিমধ্যে সক্রিয় আছে! মেয়াদ শেষ হলে আবার কিনতে পারবেন।');
-                return; }
-            if (user.balance < pkg.price) { showPopup('ব্যালেন্স অপর্যাপ্ত',
-                    `এই প্যাকেজটি কিনতে ৳ ${pkg.price} প্রয়োজন। অনুগ্রহ করে আগে ডিপোজিট করুন।`); return; }
+            if (alreadyActive) { showPopup('সতর্কতা', 'এই প্যাকেজটি ইতিমধ্যে সক্রিয় আছে! মেয়াদ শেষ হলে আবার কিনতে পারবেন।'); return; }
+            if (user.balance < pkg.price) { showPopup('ব্যালেন্স অপর্যাপ্ত', `এই প্যাকেজটি কিনতে ৳ ${pkg.price} প্রয়োজন। অনুগ্রহ করে আগে ডিপোজিট করুন।`); return; }
             showLoading(true);
             try {
                 user.balance -= pkg.price;
                 if (!user.investments) user.investments = [];
                 const dailyProfit = (pkg.price * (pkg.rate / 100));
-                user.investments.push({ id: pkg.id, label: pkg.label, price: pkg.price, rate: pkg.rate,
-                    totalDays: pkg.days, daysCount: 1, accumulatedProfit: dailyProfit,
-                    lastClaimTime: getServerTime(), status: 'active' });
+                user.investments.push({ id: pkg.id, label: pkg.label, price: pkg.price, rate: pkg.rate, totalDays: pkg.days, daysCount: 1, accumulatedProfit: dailyProfit, lastClaimTime: getServerTime(), status: 'active' });
                 if (!user.history) user.history = [];
-                user.history.push({ id: 'BUY_' + Date.now(), type: `Package Buy (${pkg.label})`, amount: -pkg.price,
-                    status: 'Completed', time: getFormattedServerTime() });
+                user.history.push({ id: 'BUY_' + Date.now(), type: `Package Buy (${pkg.label})`, amount: -pkg.price, status: 'Completed', time: getFormattedServerTime() });
                 await saveUserToFirebase(user);
                 updateUI();
                 gameUpdateBalance();
-                showPopup('Success',
-                    `${pkg.label} প্যাকেজটি সফলভাবে কেনা হয়েছে!\nআজকের প্রফিট ৳ ${dailyProfit.toFixed(2)} যোগ হয়েছে, আপনি এখন ক্লেইম করতে পারবেন।`
-                );
+                showPopup('Success', `${pkg.label} প্যাকেজটি সফলভাবে কেনা হয়েছে!\nআজকের প্রফিট ৳ ${dailyProfit.toFixed(2)} যোগ হয়েছে, আপনি এখন ক্লেইম করতে পারবেন।`);
             } catch (err) { showPopup('Error', err.message); } finally { showLoading(false); }
         }
 
@@ -4007,13 +3896,7 @@
             const newImg = document.getElementById('editImg').value.trim();
             if (!newNick) { showPopup('Error', 'নিকনেম খালি রাখা যাবে না'); return; }
             showLoading(true);
-            try { user.nick = newNick;
-                user.profileImg = newImg;
-                await saveUserToFirebase(user);
-                updateUI();
-                closeEdit();
-                showPopup('Success', 'প্রোফাইল আপডেট হয়েছে!'); } catch (err) { showPopup('Error', err.message); } finally { showLoading(
-                    false); }
+            try { user.nick = newNick; user.profileImg = newImg; await saveUserToFirebase(user); updateUI(); closeEdit(); showPopup('Success', 'প্রোফাইল আপডেট হয়েছে!'); } catch (err) { showPopup('Error', err.message); } finally { showLoading(false); }
         }
 
         function openSettings() {
@@ -4023,8 +3906,7 @@
         function showNotificationPopup() {
             database.ref('notifications').limitToLast(1).once('child_added', (snapshot) => {
                 const notif = snapshot.val();
-                if (notif) { showPopup(notif.title, notif.body); } else { showPopup('নোটিফিকেশন',
-                    'বর্তমানে নতুন কোনো নোটিফিকেশন নেই।'); }
+                if (notif) { showPopup(notif.title, notif.body); } else { showPopup('নোটিফিকেশন', 'বর্তমানে নতুন কোনো নোটিফিকেশন নেই।'); }
             });
         }
 
@@ -4052,8 +3934,7 @@
                 const data = snapshot.val();
                 if (data) {
                     if (data.box1) {
-                        document.getElementById('referBox1Title').textContent = data.box1.title ||
-                            'ভিডিও দেখুন কিভাবে এই অ্যাপ এ কাজ করে';
+                        document.getElementById('referBox1Title').textContent = data.box1.title || 'ভিডিও দেখুন কিভাবে এই অ্যাপ এ কাজ করে';
                         document.getElementById('referBox1').dataset.link = data.box1.link || '#';
                     }
                     if (data.box2) {
@@ -4079,8 +3960,7 @@
         function openReferLink(box) {
             const boxEl = document.getElementById('refer' + box.charAt(0).toUpperCase() + box.slice(1));
             const link = boxEl.dataset.link || '#';
-            if (link && link !== '#') { window.open(link, '_blank'); } else { showPopup('সতর্কতা',
-                    'এই বক্সের জন্য কোনো লিংক সেট করা নেই!'); }
+            if (link && link !== '#') { window.open(link, '_blank'); } else { showPopup('সতর্কতা', 'এই বক্সের জন্য কোনো লিংক সেট করা নেই!'); }
         }
 
         function loadUserMessages() {
@@ -4090,23 +3970,19 @@
             db.ref('user_messages/' + safeKey).on('value', (snapshot) => {
                 const messages = [];
                 if (snapshot.exists()) {
-                    snapshot.forEach(child => { const msg = child.val();
-                        msg.id = child.key;
-                        messages.push(msg); });
+                    snapshot.forEach(child => { const msg = child.val(); msg.id = child.key; messages.push(msg); });
                 }
                 messages.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 const container = document.getElementById('userMessagesContainer');
                 if (!container) return;
                 if (messages.length === 0) {
-                    container.innerHTML =
-                        `<p style="color:var(--text-color); font-size:13px; text-align:center; padding: 15px 0; opacity:0.5;">📭 কোনো মেসেজ নেই</p>`;
+                    container.innerHTML = `<p style="color:var(--text-color); font-size:13px; text-align:center; padding: 15px 0; opacity:0.5;">📭 কোনো মেসেজ নেই</p>`;
                     return;
                 }
                 const unreadCount = messages.filter(m => !m.read).length;
                 const badge = document.getElementById('unreadBadge');
                 if (badge) {
-                    if (unreadCount > 0) { badge.textContent = unreadCount;
-                        badge.style.display = 'inline-block'; } else { badge.style.display = 'none'; }
+                    if (unreadCount > 0) { badge.textContent = unreadCount; badge.style.display = 'inline-block'; } else { badge.style.display = 'none'; }
                 }
                 container.innerHTML = messages.map(msg => `
                     <div class="history-item ${msg.read ? 'msg-read' : 'msg-unread'}">
@@ -4125,11 +4001,9 @@
             let user = getActiveUser();
             if (!user) return;
             const safeKey = sanitizeKey(user.loginId);
-            try { await db.ref('user_messages/' + safeKey + '/' + msgId + '/read').set(true); } catch (err) { console.error(
-                    'Error marking message read:', err); }
+            try { await db.ref('user_messages/' + safeKey + '/' + msgId + '/read').set(true); } catch (err) { console.error('Error marking message read:', err); }
         }
 
-        // ===== নোটিফিকেশন পপআপ =====
         let topNotifTimer = null;
         let notifIndex = 0;
 
@@ -4165,7 +4039,6 @@
             }
         }
 
-        // ===== লিডারবোর্ড =====
         function renderLeaderboard() {
             const container = document.getElementById('leaderboardContainer');
             if (!container) return;
@@ -4189,24 +4062,12 @@
                 const rank = index + 1;
                 let rankClass = '';
                 let badge = '';
-                if (rank === 1) {
-                    rankClass = 'gold';
-                    badge = '🥇 ১ম';
-                } else if (rank === 2) {
-                    rankClass = 'silver';
-                    badge = '🥈 ২য়';
-                } else if (rank === 3) {
-                    rankClass = 'bronze';
-                    badge = '🥉 ৩য়';
-                } else {
-                    badge = `#${rank}`;
-                }
+                if (rank === 1) { rankClass = 'gold'; badge = '🥇 ১ম'; } else if (rank === 2) { rankClass = 'silver'; badge = '🥈 ২য়'; } else if (rank === 3) { rankClass = 'bronze'; badge = '🥉 ৩য়'; } else { badge = `#${rank}`; }
                 html += `<div class="lb-item"><div class="lb-rank ${rankClass}">${rank}</div><div class="lb-info"><div class="lb-name">${user.name}</div><div class="lb-amount">৳ ${user.amount.toLocaleString()} উইথড্র</div></div><div class="lb-badge">${badge}</div></div>`;
             });
             container.innerHTML = html;
         }
 
-        // ===== গেমের লজিক =====
         let gameBalance = 0;
         let gameTotalBet = 0;
         let gameBets = { '1x': 0, '2x': 0, '5x': 0, '10x': 0, '20x': 0, '40x': 0, '60x': 0, '80x': 0 };
@@ -4336,8 +4197,7 @@
                 gameCtx.translate(centerX, centerY);
                 gameCtx.rotate(angle + gameArc / 2);
                 gameCtx.textAlign = "right";
-                gameCtx.fillStyle = (gameSegments[i].label === '20x' || gameSegments[i].label === '40x' || gameSegments[i]
-                    .label === '60x') ? '#000' : '#fff';
+                gameCtx.fillStyle = (gameSegments[i].label === '20x' || gameSegments[i].label === '40x' || gameSegments[i].label === '60x') ? '#000' : '#fff';
                 gameCtx.font = "900 10px Arial";
                 gameCtx.fillText(gameSegments[i].label, radius - 12, 4);
                 gameCtx.restore();
@@ -4567,7 +4427,6 @@
             console.log('🎰 Game initialized');
         }
 
-        // ===== Auto-login =====
         window.addEventListener('DOMContentLoaded', async () => {
             const urlRefCode = getUrlRefCode();
             if (urlRefCode) {
