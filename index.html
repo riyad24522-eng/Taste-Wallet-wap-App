@@ -1914,7 +1914,7 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 14px; margin-bottom: 4px; font-size: 12px; color: #4f46e5; font-weight: 800;">🎁 প্রতি রেফারে ১ টাকা (রেফার্ড ইউজার টেলিগ্রাম জয়েন করলে) — বন্ধুদের সাথে শেয়ার করো</div>
+                    <div style="margin-top: 14px; margin-bottom: 4px; font-size: 12px; color: #4f46e5; font-weight: 800;">🎁 প্রতি রেফারে ৩ টাকা (রেফার্ড ইউজার টেলিগ্রাম জয়েন করলে) — বন্ধুদের সাথে শেয়ার করো</div>
                     <div style="display:flex; gap:8px;">
                         <input type="text" id="refLink" readonly style="flex:1; padding:8px 12px; border:2px solid var(--input-border); border-radius:10px; font-size:12px; background:var(--input-bg); color:var(--text-color);" />
                         <button class="copy-btn" onclick="copyText('refLink')" style="padding:4px 10px; font-size:11px;">Copy</button>
@@ -1973,8 +1973,8 @@
                     </div>
 
                     <div class="input-group">
-                        <label>Amount (৳) [সর্বনিম্ন ১৫ - সর্বোচ্চ ৫০,০০০]</label>
-                        <input type="number" id="wdAmount" placeholder="১৫ থেকে ৫০০০০ টাকা" />
+                        <label>Amount (৳) [সর্বনিম্ন ২০০ - সর্বোচ্চ ৫০,০০০]</label>
+                        <input type="number" id="wdAmount" placeholder="২০০ থেকে ৫০০০০ টাকা" />
                         <div style="font-size:10px; color:var(--text-color); opacity:0.5; margin-top:4px; font-weight:600;">
                             💰 উইথড্র চার্জ: ৫ টাকা কাটা হবে
                         </div>
@@ -2319,14 +2319,13 @@
         const TELEGRAM_BOT_TOKEN = '8991653191:AAEugNuEYf6NSHRIIMFerZsn6BJ-6WZoCJI';
         const TELEGRAM_BOT_USERNAME = '@bd_international_bot';
 
-        const CHANNEL_USERNAMES = {
-            tg1: '@taste_wallet_chenel1',
-            tg2: '@tasr_wallet_chenel'
+        const CHANNEL_IDS = {
+            tg1: '-1002819430279',
+            tg2: '-1002503095921'
         };
-
         const CHANNEL_LINKS = {
             tg1: 'https://t.me/taste_wallet_chenel1',
-            tg2: 'https://t.me/tasr_wallet_chenel'
+            tg2: 'https://t.me/tasr_wallet_cchenel'
         };
 
         // ===== টেলিগ্রাম API কল =====
@@ -2346,12 +2345,11 @@
             }
         }
 
-        // ===== চ্যানেলের মেম্বার চেক =====
-        async function checkUserInChannel(userId, channelUsername) {
+        // ===== চ্যানেলের মেম্বার চেক (চ্যানেল আইডি ব্যবহার) =====
+        async function checkUserInChannel(userId, channelId) {
             try {
-                const cleanUsername = channelUsername.replace('@', '');
                 const result = await telegramApiCall('getChatMember', {
-                    chat_id: '@' + cleanUsername,
+                    chat_id: channelId,
                     user_id: userId
                 });
                 if (result.ok) {
@@ -2385,20 +2383,32 @@
 
             try {
                 if (currentUser.telegramId) {
-                    for (const [channelKey, username] of Object.entries(CHANNEL_USERNAMES)) {
-                        const isMember = await checkUserInChannel(currentUser.telegramId, username);
+                    let updated = false;
+                    let bothJoined = true;
+
+                    for (const [channelKey, channelId] of Object.entries(CHANNEL_IDS)) {
+                        const isMember = await checkUserInChannel(currentUser.telegramId, channelId);
                         const oldStatus = currentUser.telegramStatus ? currentUser.telegramStatus[channelKey] : false;
 
                         if (oldStatus !== isMember) {
-                            await updateUserTelegramStatus(currentUser.loginId, channelKey, isMember);
-                            const updatedUser = await getUserFromFirebase(currentUser.loginId);
-                            if (updatedUser) {
-                                currentUserData = updatedUser;
-                                updateUI();
-                                gameUpdateBalance();
-                                showClaimSuccess(`রেফারেল স্ট্যাটাস আপডেট হয়েছে! নতুন ব্যালেন্স: ৳ ${updatedUser.balance.toFixed(2)}`);
-                            }
+                            if (!currentUser.telegramStatus) currentUser.telegramStatus = {};
+                            currentUser.telegramStatus[channelKey] = isMember;
+                            updated = true;
                         }
+                        if (!isMember) bothJoined = false;
+                    }
+
+                    if (updated) {
+                        await saveUserToFirebase(currentUser);
+
+                        if (bothJoined && !currentUser.referralBonusGivenForTelegram) {
+                            await giveReferralBonusForTelegram(currentUser.loginId);
+                        } else if (!bothJoined && currentUser.referralBonusGivenForTelegram) {
+                            await removeReferralBonusForTelegram(currentUser.loginId);
+                        }
+
+                        updateUI();
+                        gameUpdateBalance();
                     }
                 }
             } catch (error) {
@@ -2406,32 +2416,7 @@
             }
         }
 
-        // ===== ইউজারের টেলিগ্রাম স্ট্যাটাস আপডেট =====
-        async function updateUserTelegramStatus(loginId, channelKey, isMember) {
-            try {
-                const user = await getUserFromFirebase(loginId);
-                if (!user) return;
-
-                if (!user.telegramStatus) user.telegramStatus = {};
-                const oldStatus = user.telegramStatus[channelKey] || false;
-
-                if (oldStatus !== isMember) {
-                    user.telegramStatus[channelKey] = isMember;
-
-                    if (isMember) {
-                        await giveReferralBonusForTelegram(loginId);
-                    } else {
-                        await removeReferralBonusForTelegram(loginId);
-                    }
-
-                    await saveUserToFirebase(user);
-                }
-            } catch (error) {
-                console.error('Update status error:', error);
-            }
-        }
-
-        // ===== রেফারেল বোনাস দেওয়া (১ টাকা + ১ কাউন্ট) =====
+        // ===== রেফারেল বোনাস দেওয়া (৩ টাকা + ১ কাউন্ট) =====
         async function giveReferralBonusForTelegram(userLoginId) {
             try {
                 const user = await getUserFromFirebase(userLoginId);
@@ -2445,14 +2430,14 @@
                 const referrer = await getUserFromFirebase(referrerLoginId);
                 if (!referrer) return false;
 
-                referrer.balance = (referrer.balance || 0) + 1;
+                referrer.balance = (referrer.balance || 0) + 3;
                 referrer.referCount = (referrer.referCount || 0) + 1;
 
                 if (!referrer.history) referrer.history = [];
                 referrer.history.push({
                     id: 'REFBONUS_TG_' + Date.now(),
-                    type: `রেফারেল বোনাস (${user.nick || user.loginId} টেলিগ্রাম জয়েন করেছে)`,
-                    amount: 1,
+                    type: `রেফারেল বোনাস (${user.nick || user.loginId} টেলিগ্রাম জয়েন করেছে)`,
+                    amount: 3,
                     status: 'Completed',
                     time: getFormattedServerTime()
                 });
@@ -2472,7 +2457,7 @@
                     gameUpdateBalance();
                 }
 
-                console.log(`✅ রেফার বোনাস: ${referrer.nick} পেল ১ টাকা`);
+                console.log(`✅ রেফার বোনাস: ${referrer.nick} পেল ৩ টাকা`);
                 return true;
             } catch (err) {
                 console.error('Referral bonus error:', err);
@@ -2480,7 +2465,7 @@
             }
         }
 
-        // ===== রেফারেল বোনাস কেটে নেওয়া (লিভ নিলে) =====
+        // ===== রেফারেল বোনাস কেটে নেওয়া (লিভ নিলে) =====
         async function removeReferralBonusForTelegram(userLoginId) {
             try {
                 const user = await getUserFromFirebase(userLoginId);
@@ -2494,14 +2479,14 @@
                 const referrer = await getUserFromFirebase(referrerLoginId);
                 if (!referrer) return false;
 
-                referrer.balance = (referrer.balance || 0) - 1;
+                referrer.balance = (referrer.balance || 0) - 3;
                 referrer.referCount = (referrer.referCount || 0) - 1;
 
                 if (!referrer.history) referrer.history = [];
                 referrer.history.push({
                     id: 'REFREMOVE_TG_' + Date.now(),
-                    type: `রেফার বোনাস কেটে নেওয়া (${user.nick || user.loginId} টেলিগ্রাম লিভ নিয়েছে)`,
-                    amount: -1,
+                    type: `রেফার বোনাস কেটে নেওয়া (${user.nick || user.loginId} টেলিগ্রাম লিভ নিয়েছে)`,
+                    amount: -3,
                     status: 'Completed',
                     time: getFormattedServerTime()
                 });
@@ -2520,7 +2505,7 @@
                     gameUpdateBalance();
                 }
 
-                console.log(`❌ রেফার বোনাস কাটা: ${referrer.nick} থেকে ১ টাকা কাটা হলো`);
+                console.log(`❌ রেফার বোনাস কাটা: ${referrer.nick} থেকে ৩ টাকা কাটা হলো`);
                 return true;
             } catch (err) {
                 console.error('Remove referral bonus error:', err);
@@ -3636,8 +3621,9 @@
             const amt = parseFloat(document.getElementById('wdAmount').value);
             const wdNum = document.getElementById('wdNumber').value.trim();
 
-            if (!amt || amt < 15 || amt > 50000) {
-                showPopup('Error', 'উইথড্র অ্যামাউন্ট সর্বনিম্ন ১৫ টাকা থেকে সর্বোচ্চ ৫০,০০০ টাকা হতে হবে!');
+            // মিনিমাম চেক ২০০ টাকা
+            if (!amt || amt < 200 || amt > 50000) {
+                showPopup('Error', 'উইথড্র অ্যামাউন্ট সর্বনিম্ন ২০০ টাকা থেকে সর্বোচ্চ ৫০,০০০ টাকা হতে হবে!');
                 return;
             }
             if (!wdNum || wdNum.length < 11) {
