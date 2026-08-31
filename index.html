@@ -1914,7 +1914,7 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 14px; margin-bottom: 4px; font-size: 12px; color: #4f46e5; font-weight: 800;">🎁 প্রতি রেফারে ৩ টাকা (রেফার্ড ইউজার টেলিগ্রাম জয়েন করলে) — বন্ধুদের সাথে শেয়ার করো</div>
+                    <div style="margin-top: 14px; margin-bottom: 4px; font-size: 12px; color: #4f46e5; font-weight: 800;">🎁 প্রতি রেফারে ৫ টাকা (রেফার্ড ইউজার টেলিগ্রাম জয়েন করলে) — বন্ধুদের সাথে শেয়ার করো</div>
                     <div style="display:flex; gap:8px;">
                         <input type="text" id="refLink" readonly style="flex:1; padding:8px 12px; border:2px solid var(--input-border); border-radius:10px; font-size:12px; background:var(--input-bg); color:var(--text-color);" />
                         <button class="copy-btn" onclick="copyText('refLink')" style="padding:4px 10px; font-size:11px;">Copy</button>
@@ -2315,8 +2315,8 @@
         const db = database;
         try { firebase.analytics(); } catch (e) {}
 
-        // ==================== টেলিগ্রাম কনফিগ (আপডেটেড) ====================
-        const TELEGRAM_BOT_TOKEN = '8991653191:AAEugNuEYf6NSHRIIMFerZsn6BJ-6WZoCJI';
+        // ==================== টেলিগ্রাম কনফিগ (আপডেটেড টোকেন) ====================
+        const TELEGRAM_BOT_TOKEN = '8857883625:AAE2LRoktENoNGsnop0qQWb4Zyp4g8Wtnj0';
         const TELEGRAM_BOT_USERNAME = '@bd_international_bot';
 
         const CHANNEL_IDS = {
@@ -2416,7 +2416,7 @@
             }
         }
 
-        // ===== রেফারেল বোনাস দেওয়া (৩ টাকা + ১ কাউন্ট) =====
+        // ===== রেফারেল বোনাস দেওয়া (৫ টাকা + ১ কাউন্ট) =====
         async function giveReferralBonusForTelegram(userLoginId) {
             try {
                 const user = await getUserFromFirebase(userLoginId);
@@ -2430,14 +2430,15 @@
                 const referrer = await getUserFromFirebase(referrerLoginId);
                 if (!referrer) return false;
 
-                referrer.balance = (referrer.balance || 0) + 3;
+                // রেফার বোনাস ৫ টাকা
+                referrer.balance = (referrer.balance || 0) + 5;
                 referrer.referCount = (referrer.referCount || 0) + 1;
 
                 if (!referrer.history) referrer.history = [];
                 referrer.history.push({
                     id: 'REFBONUS_TG_' + Date.now(),
                     type: `রেফারেল বোনাস (${user.nick || user.loginId} টেলিগ্রাম জয়েন করেছে)`,
-                    amount: 3,
+                    amount: 5,
                     status: 'Completed',
                     time: getFormattedServerTime()
                 });
@@ -2457,7 +2458,7 @@
                     gameUpdateBalance();
                 }
 
-                console.log(`✅ রেফার বোনাস: ${referrer.nick} পেল ৩ টাকা`);
+                console.log(`✅ রেফার বোনাস: ${referrer.nick} পেল ৫ টাকা`);
                 return true;
             } catch (err) {
                 console.error('Referral bonus error:', err);
@@ -2479,14 +2480,15 @@
                 const referrer = await getUserFromFirebase(referrerLoginId);
                 if (!referrer) return false;
 
-                referrer.balance = (referrer.balance || 0) - 3;
+                // রেফার বোনাস কাটা ৫ টাকা
+                referrer.balance = (referrer.balance || 0) - 5;
                 referrer.referCount = (referrer.referCount || 0) - 1;
 
                 if (!referrer.history) referrer.history = [];
                 referrer.history.push({
                     id: 'REFREMOVE_TG_' + Date.now(),
                     type: `রেফার বোনাস কেটে নেওয়া (${user.nick || user.loginId} টেলিগ্রাম লিভ নিয়েছে)`,
-                    amount: -3,
+                    amount: -5,
                     status: 'Completed',
                     time: getFormattedServerTime()
                 });
@@ -2505,7 +2507,7 @@
                     gameUpdateBalance();
                 }
 
-                console.log(`❌ রেফার বোনাস কাটা: ${referrer.nick} থেকে ৩ টাকা কাটা হলো`);
+                console.log(`❌ রেফার বোনাস কাটা: ${referrer.nick} থেকে ৫ টাকা কাটা হলো`);
                 return true;
             } catch (err) {
                 console.error('Remove referral bonus error:', err);
@@ -2795,13 +2797,13 @@
                     loginId: id,
                     password: pass,
                     userId: assignedUserId,
-                    balance: 1.00,
+                    balance: 0,                     // লগইন বোনাস সরানো হয়েছে
                     referCount: 0,
                     totalDeposit: 0,
                     totalWithdraw: 0,
                     referredBy: null,
                     referralBonusGivenForTelegram: false,
-                    history: [{ id: 'BONUS_' + Date.now(), type: 'Registration Bonus', amount: 1.00, status: 'Completed', time: getFormattedServerTime() }],
+                    history: [],                     // কোনো বোনাস এন্ট্রি নেই
                     investments: [],
                     completedTasks: {},
                     lastDailyBonusDate: '',
@@ -2841,7 +2843,7 @@
                 listenForBlockStatus(currentUserKey);
                 startTelegramCheck();
 
-                showClaimSuccess('অভিনন্দন! রেজিস্ট্রেশন বোনাস ১ টাকা যোগ হয়েছে!');
+                showPopup('সফল', 'রেজিস্ট্রেশন সম্পূর্ণ!');
             } catch (err) { console.error(err); showPopup('Error', 'রেজিস্ট্রেশন ব্যর্থ: ' + err.message); } finally { showLoading(false); }
         }
 
@@ -2924,13 +2926,13 @@
                         loginId: email,
                         password: 'social_' + firebaseUser.uid,
                         userId: 'USR' + Math.floor(100000 + Math.random() * 900000),
-                        balance: 1.00,
+                        balance: 0,                     // লগইন বোনাস সরানো হয়েছে
                         referCount: 0,
                         totalDeposit: 0,
                         totalWithdraw: 0,
                         referredBy: null,
                         referralBonusGivenForTelegram: false,
-                        history: [{ id: 'BONUS_' + Date.now(), type: 'Google Registration Bonus', amount: 1.00, status: 'Completed', time: getFormattedServerTime() }],
+                        history: [],                     // কোনো বোনাস এন্ট্রি নেই
                         investments: [],
                         completedTasks: {},
                         lastDailyBonusDate: '',
