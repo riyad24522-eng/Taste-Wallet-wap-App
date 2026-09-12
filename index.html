@@ -102,7 +102,6 @@ body.dark-mode .info-box .ib-icon{background:rgba(255,255,255,.12);border-color:
 body.dark-mode .info-box::before{background:rgba(255,255,255,.06)}
 body.dark-mode .info-box::after{background:rgba(255,255,255,.03)}
 
-/* ===== ✨ Profile Avatar ===== */
 .home-profile-wrap{position:relative;display:inline-block}
 .home-avatar{position:relative;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:900;overflow:hidden;border:3px solid #fff;box-shadow:0 6px 20px rgba(79,70,229,.35),0 0 0 3px rgba(79,70,229,.15);cursor:pointer;transition:transform .2s}
 .home-avatar:hover{transform:scale(1.05)}
@@ -113,7 +112,6 @@ body.dark-mode .info-box::after{background:rgba(255,255,255,.03)}
 body.dark-mode .home-avatar{border-color:#334155;box-shadow:0 6px 20px rgba(79,70,229,.5),0 0 0 3px rgba(129,140,248,.2)}
 body.dark-mode .home-avatar-edit{border-color:#334155}
 
-/* ===== Avatar Picker Popup ===== */
 .avatar-picker-content{display:flex;flex-direction:column;gap:14px;margin:16px 0}
 .avatar-preview-current{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-size:40px;font-weight:900;overflow:hidden;border:4px solid var(--card);box-shadow:0 10px 30px rgba(79,70,229,.3);margin:0 auto}
 .avatar-preview-current img{width:100%;height:100%;object-fit:cover;display:block}
@@ -604,7 +602,6 @@ body.dark-mode .total-user-premium .tu-count{color:#fef3c7}
 <div class="popup-overlay" id="promoPopup"><div class="popup"><h3>Promo Code</h3><input type="text" id="promoCode" placeholder="কোড লিখো" style="width:100%;padding:12px;border:2px solid var(--inputB);border-radius:10px;margin:14px 0;font-size:15px;background:var(--input);color:var(--text);" /><button class="btn btn-orange" style="width:100%;padding:12px;font-size:15px;" onclick="applyPromo()">Apply</button><button class="btn" style="width:100%;margin-top:10px;background:var(--input);color:var(--text);font-size:14px;" onclick="closePromo()">Cancel</button></div></div>
 <div class="popup-overlay" id="editPopup"><div class="popup"><h3>Edit Profile</h3><div class="input-group" style="text-align:left;"><label>Nickname</label><input type="text" id="editNick" style="font-size:14px;padding:10px;" /></div><div class="input-group" style="text-align:left;"><label>Profile Image URL (optional)</label><input type="text" id="editImg" placeholder="https://..." style="font-size:14px;padding:10px;" /></div><button class="btn btn-blue" style="width:100%;padding:12px;font-size:15px;" onclick="saveProfile()">Save</button><button class="btn" style="width:100%;margin-top:10px;background:var(--input);color:var(--text);font-size:14px;" onclick="closeEdit()">Cancel</button></div></div>
 
-<!-- ✨ Avatar Picker Popup (Random Cartoon) -->
 <div class="popup-overlay" id="avatarEditorPopup">
   <div class="popup" style="max-width:420px;">
     <h3>🎨 প্রোফাইল ছবি নির্বাচন করুন</h3>
@@ -664,7 +661,7 @@ firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(),database=firebase.database(),db=database;
 try{firebase.analytics()}catch(e){}
 
-const LB_VERSION = 'v8-cartoon-avatars';
+const LB_VERSION = 'v9-fix-popup-tg-link';
 
 let tgWebApp = null;
 try {
@@ -730,6 +727,26 @@ async function ensureTelegramId(){
     if(autoId){user.telegramId=String(autoId);localStorage.setItem('trust_wallet_tg_id',user.telegramId);await saveUserToFirebase(user);}
 }
 
+// ✅ Telegram app সরাসরি খুলবে
+function openTelegramLink(url){
+    try{
+        if(window.Telegram?.WebApp?.openTelegramLink){
+            window.Telegram.WebApp.openTelegramLink(url);
+            return;
+        }
+    }catch(e){}
+    try{
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+        if(isMobile){
+            window.location.href = url;
+        } else {
+            window.open(url, '_blank');
+        }
+    }catch(e){
+        window.open(url, '_blank');
+    }
+}
+
 function showTelegramIdHelp(){
     const user=getActiveUser();
     if(user && user.telegramId){document.getElementById('manualTgId').value = user.telegramId;}
@@ -743,7 +760,9 @@ function closeTgHelp(){
     if(videoFrame){const currentSrc = videoFrame.src;videoFrame.src = '';setTimeout(()=>{ if(videoFrame) videoFrame.src = currentSrc; }, 200);}
 }
 
-function openUserInfoBot(){window.open('https://t.me/userinfobot','_blank');}
+function openUserInfoBot(){
+    openTelegramLink('https://t.me/userinfobot');
+}
 
 async function saveManualTelegramId(){
     let user=getActiveUser();
@@ -810,7 +829,7 @@ function closeVideoPlayer(){
     document.getElementById('videoPlayerPopup').style.display = 'none';
 }
 
-// ✅ Random Cartoon Avatar Generator (DiceBear API)
+// ✅ Random Cartoon Avatar Generator
 const AVATAR_STYLES = ['adventurer', 'avataaars', 'lorelei', 'micah', 'notionists', 'open-peeps', 'big-ears', 'croodles'];
 const AVATAR_BG = ['b6e3f4','c0aede','d1d4f9','ffd5dc','ffdfbf','c8e6c9','ffecb3','f8bbd0','e1bee7','b2dfdb'];
 
@@ -1065,7 +1084,17 @@ async function saveUserToFirebase(u){
 function getActiveUser(){return currentUserData}
 function setLoggedKey(k){if(k)localStorage.setItem('logged_trust_user_key',k);else localStorage.removeItem('logged_trust_user_key')}
 
-function listenUserChanges(lid){database.ref('users/'+sanitizeKey(lid)).on('value',s=>{if(s.exists()){const u=s.val();if(currentUserData){const ob=currentUserData.balance||0,nb=u.balance||0;if(nb>ob)showClaimSuccess(`সফলভাবে ৳ ${(nb-ob).toFixed(2)} আপনার অ্যাকাউন্টে যোগ হয়েছে!`)}currentUserData=u;updateUI();gameUpdateBalance()}})}
+// ✅ UPDATED: No auto-popup on balance change
+function listenUserChanges(lid){
+    database.ref('users/'+sanitizeKey(lid)).on('value',s=>{
+        if(s.exists()){
+            const u=s.val();
+            currentUserData=u;
+            updateUI();
+            gameUpdateBalance();
+        }
+    });
+}
 
 async function doRegister(){
 const nick=document.getElementById('regNick').value.trim(),id=document.getElementById('regId').value.trim(),pass=document.getElementById('regPass').value,refCode=document.getElementById('regRefCode').value.trim();
@@ -1151,13 +1180,14 @@ function getCookie(n){const v=`; ${document.cookie}`,p=v.split(`; ${n}=`);return
 function setCookie(n,v,d=365){const dt=new Date();dt.setTime(dt.getTime()+d*24*60*60*1000);document.cookie=`${n}=${v};expires=${dt.toUTCString()};path=/`}
 function getDeviceId(){const fpHash=generateCanvasFingerprint();let devId=localStorage.getItem('trust_wallet_device_id')||getCookie('trust_wallet_device_id');if(!devId){devId='DEV_'+fpHash+'_'+Math.random().toString(36).substring(2,9);localStorage.setItem('trust_wallet_device_id',devId);setCookie('trust_wallet_device_id',devId)}else{localStorage.setItem('trust_wallet_device_id',devId);setCookie('trust_wallet_device_id',devId)}return devId}
 
+// ✅ UPDATED: Join uses openTelegramLink helper
 async function joinTelegram(k){
     let user=getActiveUser();
     if(!user)return;
     if(!user.telegramId){showPopup('⚠️ Telegram ID দরকার','প্রথমে Home পেজে "📖 কিভাবে পাব?" বাটনে ক্লিক করে আপনার Telegram User ID সেট করুন।');return;}
     const link=CHANNEL_LINKS[k];if(!link)return;
     const channelName = k==='tg1' ? 'Channel 1' : 'Channel 2';
-    window.open(link,'_blank');
+    openTelegramLink(link);
     showPopup('📢 '+channelName+' খোলা হয়েছে','Telegram এ সত্যি Join করুন, তারপর অ্যাপে ফিরে আসুন।\n\n⏳ ১৫ সেকেন্ডের মধ্যে যাচাই করা হবে।\n\n⚠️ সত্যি Join না করলে ২০ টাকা বোনাস পাবেন না!');
     setTimeout(async()=>{
         try{
