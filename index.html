@@ -661,7 +661,7 @@ firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(),database=firebase.database(),db=database;
 try{firebase.analytics()}catch(e){}
 
-const LB_VERSION = 'v9-fix-popup-tg-link';
+const LB_VERSION = 'v10-final-fix';
 
 let tgWebApp = null;
 try {
@@ -727,7 +727,6 @@ async function ensureTelegramId(){
     if(autoId){user.telegramId=String(autoId);localStorage.setItem('trust_wallet_tg_id',user.telegramId);await saveUserToFirebase(user);}
 }
 
-// ✅ Telegram app সরাসরি খুলবে
 function openTelegramLink(url){
     try{
         if(window.Telegram?.WebApp?.openTelegramLink){
@@ -737,14 +736,9 @@ function openTelegramLink(url){
     }catch(e){}
     try{
         const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-        if(isMobile){
-            window.location.href = url;
-        } else {
-            window.open(url, '_blank');
-        }
-    }catch(e){
-        window.open(url, '_blank');
-    }
+        if(isMobile){window.location.href = url;}
+        else {window.open(url, '_blank');}
+    }catch(e){window.open(url, '_blank');}
 }
 
 function showTelegramIdHelp(){
@@ -760,9 +754,7 @@ function closeTgHelp(){
     if(videoFrame){const currentSrc = videoFrame.src;videoFrame.src = '';setTimeout(()=>{ if(videoFrame) videoFrame.src = currentSrc; }, 200);}
 }
 
-function openUserInfoBot(){
-    openTelegramLink('https://t.me/userinfobot');
-}
+function openUserInfoBot(){openTelegramLink('https://t.me/userinfobot');}
 
 async function saveManualTelegramId(){
     let user=getActiveUser();
@@ -829,7 +821,6 @@ function closeVideoPlayer(){
     document.getElementById('videoPlayerPopup').style.display = 'none';
 }
 
-// ✅ Random Cartoon Avatar Generator
 const AVATAR_STYLES = ['adventurer', 'avataaars', 'lorelei', 'micah', 'notionists', 'open-peeps', 'big-ears', 'croodles'];
 const AVATAR_BG = ['b6e3f4','c0aede','d1d4f9','ffd5dc','ffdfbf','c8e6c9','ffecb3','f8bbd0','e1bee7','b2dfdb'];
 
@@ -875,14 +866,8 @@ async function selectAvatar(url, el){
         updateUI();
         document.getElementById('avatarPreview').innerHTML = `<img src="${url}">`;
         showLoading(false);
-        setTimeout(()=>{
-            closeAvatarEditor();
-            showPopup('✅ সফল','আপনার প্রোফাইল ছবি আপডেট হয়েছে!');
-        }, 400);
-    }catch(e){
-        showLoading(false);
-        showPopup('Error','সেভ করতে সমস্যা: '+e.message);
-    }
+        setTimeout(()=>{closeAvatarEditor();showPopup('✅ সফল','আপনার প্রোফাইল ছবি আপডেট হয়েছে!');}, 400);
+    }catch(e){showLoading(false);showPopup('Error','সেভ করতে সমস্যা: '+e.message);}
 }
 
 async function removeAvatar(){
@@ -896,16 +881,11 @@ async function removeAvatar(){
         updateUI();
         document.getElementById('avatarPreview').innerHTML = `<span>${(user.nick||'U').charAt(0).toUpperCase()}</span>`;
         showLoading(false);
-        setTimeout(()=>{
-            closeAvatarEditor();
-            showPopup('✅ সফল','প্রোফাইল ছবি মুছে ফেলা হয়েছে!');
-        }, 400);
+        setTimeout(()=>{closeAvatarEditor();showPopup('✅ সফল','প্রোফাইল ছবি মুছে ফেলা হয়েছে!');}, 400);
     }catch(e){ showLoading(false); showPopup('Error', e.message); }
 }
 
-function closeAvatarEditor(){
-    document.getElementById('avatarEditorPopup').style.display = 'none';
-}
+function closeAvatarEditor(){document.getElementById('avatarEditorPopup').style.display = 'none';}
 
 let telegramCheckInterval=null;
 
@@ -916,76 +896,93 @@ async function startTelegramCheck(){
     await checkAllTelegramMembers();
 }
 
+// ===== ✅ FIXED: Auto-refer bug solved =====
+let tgCheckInProgress = false;
+
 async function checkAllTelegramMembers(){
-    const cu=getActiveUser();
-    if(!cu||!cu.telegramId)return;
+    if(tgCheckInProgress) return;
+    tgCheckInProgress = true;
     try{
-        if(!cu.telegramStatus)cu.telegramStatus={tg1:false,tg2:false};
-        if(!cu.telegramJoinBonuses)cu.telegramJoinBonuses={tg1:false,tg2:false};
-        let updated=false,bothJoined=true;
-        for(const[k,cid]of Object.entries(CHANNEL_IDS)){
-            const isM=await checkUserInChannel(cu.telegramId,cid);
-            const old=cu.telegramStatus[k]||false;
-            if(old!==isM){cu.telegramStatus[k]=isM;updated=true}
-            if(!isM)bothJoined=false;
-            if(isM&&!cu.telegramJoinBonuses[k]){
-                cu.telegramJoinBonuses[k]=true;
-                cu.balance=(cu.balance||0)+TG_JOIN_BONUS;
-                if(!cu.history)cu.history=[];
-                cu.history.push({id:'TGJOIN_'+k+'_'+Date.now(),type:`Telegram Join Bonus (Channel ${k==='tg1'?'1':'2'})`,amount:TG_JOIN_BONUS,status:'Completed',time:getFormattedServerTime()});
-                updated=true;
+        const active = getActiveUser();
+        if(!active || !active.telegramId) return;
+        
+        // ✅ Fresh data fetch from Firebase
+        const freshSnap = await database.ref('users/'+sanitizeKey(active.loginId)).once('value');
+        if(!freshSnap.exists()) return;
+        const user = {...freshSnap.val()};
+        if(!user.telegramStatus) user.telegramStatus = {tg1:false, tg2:false};
+        if(!user.telegramJoinBonuses) user.telegramJoinBonuses = {tg1:false, tg2:false};
+        
+        let userChanged = false;
+        let bothJoined = true;
+        
+        for(const [k, cid] of Object.entries(CHANNEL_IDS)){
+            const isM = await checkUserInChannel(user.telegramId, cid);
+            const old = user.telegramStatus[k] || false;
+            
+            if(old !== isM){ user.telegramStatus[k] = isM; userChanged = true; }
+            if(!isM) bothJoined = false;
+            
+            if(isM && !user.telegramJoinBonuses[k]){
+                user.telegramJoinBonuses[k] = true;
+                user.balance = (user.balance || 0) + TG_JOIN_BONUS;
+                if(!user.history) user.history = [];
+                user.history.push({id:'TGJOIN_'+k+'_'+Date.now(),type:`Telegram Join Bonus (Channel ${k==='tg1'?'1':'2'})`,amount:TG_JOIN_BONUS,status:'Completed',time:getFormattedServerTime()});
+                userChanged = true;
             }
-            if(!isM&&cu.telegramJoinBonuses[k]){
-                cu.telegramJoinBonuses[k]=false;
-                cu.balance=(cu.balance||0)-TG_JOIN_BONUS;
-                if(!cu.history)cu.history=[];
-                cu.history.push({id:'TGREMOVE_'+k+'_'+Date.now(),type:`Telegram Leave (Channel ${k==='tg1'?'1':'2'} থেকে বের হয়ে গেছে)`,amount:-TG_JOIN_BONUS,status:'Completed',time:getFormattedServerTime()});
-                updated=true;
+            
+            if(!isM && user.telegramJoinBonuses[k]){
+                user.telegramJoinBonuses[k] = false;
+                user.balance = (user.balance || 0) - TG_JOIN_BONUS;
+                if(!user.history) user.history = [];
+                user.history.push({id:'TGREMOVE_'+k+'_'+Date.now(),type:`Telegram Leave (Channel ${k==='tg1'?'1':'2'} থেকে বের হয়ে গেছে)`,amount:-TG_JOIN_BONUS,status:'Completed',time:getFormattedServerTime()});
+                userChanged = true;
             }
         }
-        if(bothJoined&&!cu.referralBonusGivenForTelegram){await giveReferralBonusForTelegram(cu.loginId);updated=true;}
-        else if(!bothJoined&&cu.referralBonusGivenForTelegram){await removeReferralBonusForTelegram(cu.loginId);updated=true;}
-        if(updated){await saveUserToFirebase(cu);updateUI();gameUpdateBalance();}
-    }catch(e){console.error('TG check error:',e)}
-}
-
-async function giveReferralBonusForTelegram(lid){
-    try{
-        const u=await getUserFromFirebase(lid);
-        if(!u||!u.referredBy||u.referralBonusGivenForTelegram)return false;
-        const ref=await getUserFromFirebase(u.referredBy);
-        if(!ref)return false;
-        ref.balance=(ref.balance||0)+TG_REF_BONUS;
-        ref.referCount=(ref.referCount||0)+1;
-        if(!ref.history)ref.history=[];
-        ref.history.push({id:'REFBONUS_TG_'+Date.now(),type:`রেফারেল বোনাস ৳${TG_REF_BONUS} (${u.nick||u.loginId} ২ চ্যানেলে জয়েন করেছে)`,amount:TG_REF_BONUS,status:'Completed',time:getFormattedServerTime()});
-        if(!ref.referredUsers)ref.referredUsers=[];
-        if(!ref.referredUsers.includes(u.userId))ref.referredUsers.push(u.userId);
-        await saveUserToFirebase(ref);
-        u.referralBonusGivenForTelegram=true;
-        await saveUserToFirebase(u);
-        if(currentUserKey===ref.loginId){updateUI();gameUpdateBalance()}
-        return true;
-    }catch(e){console.error(e);return false}
-}
-
-async function removeReferralBonusForTelegram(lid){
-    try{
-        const u=await getUserFromFirebase(lid);
-        if(!u||!u.referredBy||!u.referralBonusGivenForTelegram)return false;
-        const ref=await getUserFromFirebase(u.referredBy);
-        if(!ref)return false;
-        ref.balance=(ref.balance||0)-TG_REF_BONUS;
-        ref.referCount=Math.max(0,(ref.referCount||0)-1);
-        if(!ref.history)ref.history=[];
-        ref.history.push({id:'REFREMOVE_TG_'+Date.now(),type:`রেফার বোনাস ৳${TG_REF_BONUS} কেটে নেওয়া (${u.nick||u.loginId} Telegram লিভ নিয়েছে)`,amount:-TG_REF_BONUS,status:'Completed',time:getFormattedServerTime()});
-        if(ref.referredUsers)ref.referredUsers=ref.referredUsers.filter(id=>id!==u.userId);
-        await saveUserToFirebase(ref);
-        u.referralBonusGivenForTelegram=false;
-        await saveUserToFirebase(u);
-        if(currentUserKey===ref.loginId){updateUI();gameUpdateBalance()}
-        return true;
-    }catch(e){return false}
+        
+        // ✅ Referral bonus handled directly - NO duplicate
+        if(bothJoined && !user.referralBonusGivenForTelegram && user.referredBy){
+            const refSnap = await database.ref('users/'+sanitizeKey(user.referredBy)).once('value');
+            if(refSnap.exists()){
+                const ref = {...refSnap.val()};
+                ref.balance = (ref.balance || 0) + TG_REF_BONUS;
+                ref.referCount = (ref.referCount || 0) + 1;
+                if(!ref.history) ref.history = [];
+                ref.history.push({id:'REFBONUS_TG_'+Date.now(),type:`রেফারেল বোনাস ৳${TG_REF_BONUS} (${user.nick||user.loginId} ২ চ্যানেলে জয়েন করেছে)`,amount:TG_REF_BONUS,status:'Completed',time:getFormattedServerTime()});
+                if(!ref.referredUsers) ref.referredUsers = [];
+                if(!ref.referredUsers.includes(user.userId)) ref.referredUsers.push(user.userId);
+                await database.ref('users/'+sanitizeKey(ref.loginId)).set(ref);
+                user.referralBonusGivenForTelegram = true;
+                userChanged = true;
+                console.log('✅ Referral bonus given to', ref.loginId);
+            }
+        } else if(!bothJoined && user.referralBonusGivenForTelegram && user.referredBy){
+            const refSnap = await database.ref('users/'+sanitizeKey(user.referredBy)).once('value');
+            if(refSnap.exists()){
+                const ref = {...refSnap.val()};
+                ref.balance = (ref.balance || 0) - TG_REF_BONUS;
+                ref.referCount = Math.max(0, (ref.referCount || 0) - 1);
+                if(!ref.history) ref.history = [];
+                ref.history.push({id:'REFREMOVE_TG_'+Date.now(),type:`রেফার বোনাস ৳${TG_REF_BONUS} কেটে নেওয়া (${user.nick||user.loginId} Telegram লিভ নিয়েছে)`,amount:-TG_REF_BONUS,status:'Completed',time:getFormattedServerTime()});
+                if(ref.referredUsers) ref.referredUsers = ref.referredUsers.filter(id => id !== user.userId);
+                await database.ref('users/'+sanitizeKey(ref.loginId)).set(ref);
+                user.referralBonusGivenForTelegram = false;
+                userChanged = true;
+                console.log('❌ Referral bonus removed from', ref.loginId);
+            }
+        }
+        
+        if(userChanged){
+            await database.ref('users/'+sanitizeKey(user.loginId)).set(user);
+            currentUserData = user;
+            updateUI();
+            gameUpdateBalance();
+        }
+    } catch(e){
+        console.error('TG check error:', e);
+    } finally {
+        tgCheckInProgress = false;
+    }
 }
 
 function showNoticePopup(){db.ref('admin_notices').orderByChild('timestamp').limitToLast(20).once('value',s=>{const notices=[];if(s.exists())s.forEach(c=>{const n=c.val();n.id=c.key;notices.push(n)});notices.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));const popup=document.getElementById('popup'),title=document.getElementById('popupTitle'),content=document.getElementById('popupContent');title.textContent='📢 সকল নোটিশ';if(notices.length===0)content.innerHTML=`<p style="color:var(--text);opacity:.6;text-align:center;padding:20px 0;">📭 কোন নোটিশ নেই</p>`;else content.innerHTML=notices.map(n=>`<div class="notice-item"><div class="notice-title">${n.title||'নোটিশ'}</div><div class="notice-body">${n.body||''}</div><div class="notice-time">📅 ${n.time||''}</div></div>`).join('');popup.style.display='flex'})}
@@ -1075,21 +1072,24 @@ function showBlockedScreen(reason){document.getElementById('blockReason').textCo
 function hideBlockedScreen(){document.getElementById('blockedScreen').classList.remove('active');if(currentUserData){document.getElementById('app').style.display='flex';document.getElementById('loginScreen').style.display='none'}}
 
 async function getUserFromFirebase(lid){return(await database.ref('users/'+sanitizeKey(lid)).once('value')).val()}
+
+// ✅ FIXED: saveUserToFirebase - currentUserData only for own account
 async function saveUserToFirebase(u){
     const k=sanitizeKey(u.loginId),o={...u};
     o.history=o.history||[];o.investments=o.investments||[];o.usedGifts=o.usedGifts||[];o.giftHistory=o.giftHistory||[];o.completedTasks=o.completedTasks||{};o.linkedWithdrawNumber=o.linkedWithdrawNumber||'';o.linkedNumbers=o.linkedNumbers||{bKash:'',Nagad:''};o.referralBonusesGiven=o.referralBonusesGiven||[];o.referredUsers=o.referredUsers||[];o.telegramStatus=o.telegramStatus||{tg1:false,tg2:false};o.telegramId=o.telegramId||null;o.telegramJoinBonuses=o.telegramJoinBonuses||{tg1:false,tg2:false};
     await database.ref('users/'+k).set(o);
-    currentUserData=o;
+    if(currentUserData && currentUserData.loginId === u.loginId){
+        currentUserData = o;
+    }
 }
 function getActiveUser(){return currentUserData}
 function setLoggedKey(k){if(k)localStorage.setItem('logged_trust_user_key',k);else localStorage.removeItem('logged_trust_user_key')}
 
-// ✅ UPDATED: No auto-popup on balance change
+// ✅ FIXED: No auto-popup on balance change
 function listenUserChanges(lid){
     database.ref('users/'+sanitizeKey(lid)).on('value',s=>{
         if(s.exists()){
-            const u=s.val();
-            currentUserData=u;
+            currentUserData = s.val();
             updateUI();
             gameUpdateBalance();
         }
@@ -1180,7 +1180,6 @@ function getCookie(n){const v=`; ${document.cookie}`,p=v.split(`; ${n}=`);return
 function setCookie(n,v,d=365){const dt=new Date();dt.setTime(dt.getTime()+d*24*60*60*1000);document.cookie=`${n}=${v};expires=${dt.toUTCString()};path=/`}
 function getDeviceId(){const fpHash=generateCanvasFingerprint();let devId=localStorage.getItem('trust_wallet_device_id')||getCookie('trust_wallet_device_id');if(!devId){devId='DEV_'+fpHash+'_'+Math.random().toString(36).substring(2,9);localStorage.setItem('trust_wallet_device_id',devId);setCookie('trust_wallet_device_id',devId)}else{localStorage.setItem('trust_wallet_device_id',devId);setCookie('trust_wallet_device_id',devId)}return devId}
 
-// ✅ UPDATED: Join uses openTelegramLink helper
 async function joinTelegram(k){
     let user=getActiveUser();
     if(!user)return;
@@ -1317,9 +1316,17 @@ showClaimSuccess(`ডিপোজিট রিকোয়েস্ট সফল
 }catch(err){showPopup('Error',err.message)}finally{showLoading(false)}
 }
 
+// ✅ UPDATED: Deposit required for withdraw
 async function doWithdraw(){
     if(!requireBothJoined('Withdraw'))return;
     let user=getActiveUser();
+    
+    // ✅ ডিপোজিট না করলে উইথড্র ব্লক
+    if(!user.totalDeposit || Number(user.totalDeposit) < 1){
+        showPopup('⚠️ প্রথমে ডিপোজিট করুন!','আপনি এখনো কোনো ডিপোজিট করেননি!\n\n📌 উইথড্র করার জন্য প্রথমে ডিপোজিট করা জরুরি।\n\n💳 Deposit পেজে গিয়ে ডিপোজিট করুন।\n\n✅ ডিপোজিট করার পর উইথড্র করতে পারবেন।');
+        return;
+    }
+    
     const amt=parseFloat(document.getElementById('wdAmount').value),wn=document.getElementById('wdNumber').value.trim();
     if(!amt||amt<MIN_WITHDRAW||amt>50000){showPopup('Error','উইথড্র অ্যামাউন্ট সর্বনিম্ন ৫০০ টাকা থেকে সর্বোচ্চ ৫০,০০০ টাকা হতে হবে!');return}
     if(!wn||wn.length<11){showPopup('Error','সঠিক পার্সোনাল নম্বর (11 digit) দিন');return}
