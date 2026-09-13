@@ -385,8 +385,8 @@ body.dark-mode .total-user-premium .tu-count{color:#fef3c7}
       <div class="input-group"><label>Refer Code (Optional)</label><input type="text" id="regRefCode" placeholder="রেফারকারীর ইউজার আইডি" /></div>
       <button class="btn-primary" id="regBtn" onclick="doRegister()">Register</button>
     </div>
-    <div class="auth-divider">অথবা সোশ্যাল লগইন</div>
-    <div class="social-login-grid">
+    <div class="auth-divider" id="socialLoginDivider">অথবা সোশ্যাল লগইন</div>
+    <div class="social-login-grid" id="socialLoginGrid">
       <button class="social-btn" id="googleBtn" onclick="socialLogin('google')">
         <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.15C3.15 21.32 7.23 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.6H1.18C.43 8.12 0 9.81 0 12s.43 3.88 1.18 5.4l4.09-3.16z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.15 2.68 1.18 6.6l4.09 3.15c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>
         Google দিয়ে লগইন করুন
@@ -700,7 +700,6 @@ async function checkUserInChannel(uid,cid){
             const s=r.result.status;
             return s==='member'||s==='administrator'||s==='creator'||s==='restricted';
         }
-        // যদি বটে Start না করা থাকে বা ইউজার খুঁজে না পাওয়া যায়
         if(r.description && r.description.includes('user not found')){
             console.warn('User has not started the bot yet.');
         }
@@ -731,26 +730,80 @@ function autoDetectTelegramId(){
     return localStorage.getItem('trust_wallet_tg_id')||null;
 }
 
+// ===== 🚀 NEW: AUTO TELEGRAM LOGIN & PROFILE SYNC =====
+async function autoLoginViaTelegram() {
+    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    if (!tgUser || !tgUser.id) return false;
+    
+    const tgId = String(tgUser.id);
+    const tgNick = tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "");
+    const tgPhoto = tgUser.photo_url || "";
+    
+    showLoading(true);
+    try {
+        // ডাটাবেজে টেলিগ্রাম আইডি খুঁজুন
+        const snapshot = await database.ref('users').orderByChild('telegramId').equalTo(tgId).once('value');
+        
+        if (snapshot.exists()) {
+            let foundUser = null;
+            snapshot.forEach(child => {
+                foundUser = child.val();
+            });
+            
+            if (foundUser) {
+                // অটো লগইন সফল
+                currentUserKey = foundUser.loginId;
+                currentUserData = foundUser;
+                setLoggedKey(currentUserKey);
+                
+                // যদি ইউজারের প্রোফাইল ছবি না থাকে, টেলিগ্রামের ছবি বসিয়ে দিন
+                if (!currentUserData.profileImg && tgPhoto) {
+                    currentUserData.profileImg = tgPhoto;
+                    await saveUserToFirebase(currentUserData);
+                }
+                // যদি নাম না থাকে, টেলিগ্রামের নাম বসিয়ে দিন
+                if (!currentUserData.nick && tgNick) {
+                    currentUserData.nick = tgNick;
+                    await saveUserToFirebase(currentUserData);
+                }
+                
+                // অ্যাপে প্রবেশ করান
+                await enterApp();
+                listenUserChanges(currentUserKey);
+                listenForBlockStatus(currentUserKey);
+                startTelegramCheck();
+                showLoading(false);
+                return true;
+            }
+        }
+    } catch (e) { 
+        console.error("Auto login error", e); 
+    }
+    showLoading(false);
+    return false;
+}
+
 async function ensureTelegramId(){
     let user=getActiveUser();
     if(!user)return;
-    if(user.telegramId){localStorage.setItem('trust_wallet_tg_id',String(user.telegramId));return;}
-    const autoId=autoDetectTelegramId();
-    if(autoId){
-        // Check if this ID is already used by someone else
+    
+    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    
+    // যদি টেলিগ্রাম আইডি না থাকে, অটো ডিটেক্ট করে বসিয়ে দিন
+    if(!user.telegramId && tgUser && tgUser.id){
+        const autoId = String(tgUser.id);
         const isUsed = await isTelegramIdUsed(autoId, user.loginId);
-        if(isUsed){
-            console.warn("Auto-detected Telegram ID is already used by another account.");
-            user.telegramId = null; // Prevent using stolen ID
-        } else {
-            user.telegramId=String(autoId);
-            localStorage.setItem('trust_wallet_tg_id',user.telegramId);
+        if(!isUsed){
+            user.telegramId = autoId;
+            if(!user.profileImg && tgUser.photo_url) user.profileImg = tgUser.photo_url;
+            if(!user.nick && tgUser.first_name) user.nick = tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "");
+            localStorage.setItem('trust_wallet_tg_id', user.telegramId);
             await saveUserToFirebase(user);
+            console.log("✅ Auto Telegram ID saved:", autoId);
         }
     }
 }
 
-// 🛑 NEW: Prevent multiple accounts from using the same Telegram ID
 async function isTelegramIdUsed(tgId, currentLoginId) {
     try {
         const snapshot = await database.ref('users').once('value');
@@ -758,7 +811,7 @@ async function isTelegramIdUsed(tgId, currentLoginId) {
         for (let key in users) {
             if (users[key].telegramId && String(users[key].telegramId) === String(tgId)) {
                 if (users[key].loginId !== currentLoginId) {
-                    return true; // Found in another account
+                    return true;
                 }
             }
         }
@@ -806,7 +859,6 @@ async function saveManualTelegramId(){
     
     showLoading(true);
     try{
-        // 🛑 CRITICAL FIX: Check if this ID is already used by another account
         const alreadyUsed = await isTelegramIdUsed(input, user.loginId);
         if(alreadyUsed) {
             showPopup('⚠️ টেলিগ্রাম আইডি ইতিমধ্যে ব্যবহৃত!', 'এই টেলিগ্রাম আইডিটি ইতিমধ্যে অন্য একটি অ্যাকাউন্টের সাথে সংযুক্ত করা হয়েছে।\n\nআপনি আপনার নিজের টেলিগ্রাম আইডি ব্যবহার করুন।');
@@ -1159,8 +1211,12 @@ const allUsers=(await database.ref('users').once('value')).val()||{};
 let dc=0;for(let k in allUsers)if(allUsers[k].deviceId===deviceId)dc++;
 if(dc>=2){showPopup('Error','এই ডিভাইস থেকে ইতিমধ্যে সর্বোচ্চ ২ টি অ্যাকাউন্ট খোলা হয়েছে!');showLoading(false);return}
 const assignedUserId='USR'+Math.floor(100000+Math.random()*900000);
-const autoTgId=autoDetectTelegramId();
-let newUser={nick,loginId:id,password:pass,userId:assignedUserId,balance:0,referCount:0,totalDeposit:0,totalWithdraw:0,referredBy:null,referralBonusGivenForTelegram:false,history:[],investments:[],completedTasks:{},lastDailyBonusDate:'',lastPromoDate:'',usedGifts:[],giftHistory:[],profileImg:'',authProvider:'email',deviceId,linkedWithdrawNumber:'',linkedNumbers:{bKash:'',Nagad:''},referralBonusesGiven:[],referredUsers:[],telegramStatus:{tg1:false,tg2:false},telegramId:autoTgId?String(autoTgId):null,telegramJoinBonuses:{tg1:false,tg2:false}};
+const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+const autoTgId = tgUser && tgUser.id ? String(tgUser.id) : null;
+const autoTgPhoto = tgUser && tgUser.photo_url ? tgUser.photo_url : '';
+const autoTgNick = tgUser ? (tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "")) : '';
+
+let newUser={nick: nick || autoTgNick,loginId:id,password:pass,userId:assignedUserId,balance:0,referCount:0,totalDeposit:0,totalWithdraw:0,referredBy:null,referralBonusGivenForTelegram:false,history:[],investments:[],completedTasks:{},lastDailyBonusDate:'',lastPromoDate:'',usedGifts:[],giftHistory:[],profileImg:autoTgPhoto || '',authProvider:'email',deviceId,linkedWithdrawNumber:'',linkedNumbers:{bKash:'',Nagad:''},referralBonusesGiven:[],referredUsers:[],telegramStatus:{tg1:false,tg2:false},telegramId:autoTgId || null,telegramJoinBonuses:{tg1:false,tg2:false}};
 
 // 🛑 Check if Auto-detected Telegram ID is already used by someone else
 if(autoTgId) {
@@ -1201,57 +1257,65 @@ const user=await getUserFromFirebase(id);
 if(user&&user.password===pass){
 currentUserKey=id;currentUserData=user;
 user.investments=user.investments||[];user.referCount=user.referCount||0;user.totalDeposit=user.totalDeposit||0;user.totalWithdraw=user.totalWithdraw||0;user.completedTasks=user.completedTasks||{};user.usedGifts=user.usedGifts||[];user.giftHistory=user.giftHistory||[];user.history=user.history||[];user.linkedWithdrawNumber=user.linkedWithdrawNumber||'';user.linkedNumbers=user.linkedNumbers||{bKash:'',Nagad:''};user.referralBonusesGiven=user.referralBonusesGiven||[];user.referredUsers=user.referredUsers||[];user.telegramStatus=user.telegramStatus||{tg1:false,tg2:false};user.telegramJoinBonuses=user.telegramJoinBonuses||{tg1:false,tg2:false};
-if(!user.telegramId){const autoTgId=autoDetectTelegramId();if(autoTgId)user.telegramId=String(autoTgId)}
+if(!user.telegramId){
+    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    if(tgUser && tgUser.id) user.telegramId = String(tgUser.id);
+}
 setLoggedKey(currentUserKey);enterApp();listenUserChanges(currentUserKey);listenForBlockStatus(currentUserKey);startTelegramCheck();
 }else showPopup('Error','Phone/Email বা Password ভুল');
 }catch(err){showPopup('Error','লগইন ব্যর্থ: '+err.message)}finally{showLoading(false)}
 }
 
 async function socialLogin(p){
-showLoading(true);document.getElementById('googleBtn').disabled=true;
-try{
-const provider=new firebase.auth.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});
-const result=await auth.signInWithPopup(provider),fu=result.user;
-const email=fu.email||('google_'+fu.uid+'@social.com'),displayName=fu.displayName||'Google User',photoURL=fu.photoURL||'';
-const bc=await checkUserBlocked(email);if(bc.blocked){showPopup('⚠️ ব্লক','এই অ্যাকাউন্টটি ব্লক করা আছে!');showLoading(false);document.getElementById('googleBtn').disabled=false;return}
-let user=await getUserFromFirebase(email);const deviceId=getDeviceId();
-if(!user){
-const allUsers=(await database.ref('users').once('value')).val()||{};
-let dc=0;for(let k in allUsers)if(allUsers[k].deviceId===deviceId)dc++;
-if(dc>=2){showPopup('Error','এই ডিভাইস থেকে ইতিমধ্যে সর্বোচ্চ ২ টি অ্যাকাউন্ট খোলা হয়েছে!');showLoading(false);document.getElementById('googleBtn').disabled=false;return}
-const autoTgId=autoDetectTelegramId();
-user={nick:displayName,loginId:email,password:'social_'+fu.uid,userId:'USR'+Math.floor(100000+Math.random()*900000),balance:0,referCount:0,totalDeposit:0,totalWithdraw:0,referredBy:null,referralBonusGivenForTelegram:false,history:[],investments:[],completedTasks:{},lastDailyBonusDate:'',lastPromoDate:'',usedGifts:[],giftHistory:[],profileImg:photoURL,authProvider:'google',firebaseUid:fu.uid,deviceId,linkedWithdrawNumber:'',linkedNumbers:{bKash:'',Nagad:''},referralBonusesGiven:[],referredUsers:[],telegramStatus:{tg1:false,tg2:false},telegramId:autoTgId?String(autoTgId):null,telegramJoinBonuses:{tg1:false,tg2:false}};
-
-// 🛑 Check if Auto-detected Telegram ID is already used
-if(autoTgId) {
-    const isUsed = await isTelegramIdUsed(autoTgId, email);
-    if(isUsed) {
-        user.telegramId = null;
-        console.warn("Auto-detected TG ID already used. Won't assign.");
+    // 🛑 CRITICAL FIX: Telegram WebView-এ Google Login ব্লক করা হয়েছে
+    if(window.Telegram?.WebApp?.initDataUnsafe?.user){
+        showPopup('⚠️ সাপোর্ট নেই', 'টেলিগ্রাম অ্যাপের ভেতরে Google Login কাজ করে না।\n\nঅনুগ্রহ করে ফোন/ইমেইল এবং পাসওয়ার্ড দিয়ে লগইন করুন।');
+        return;
     }
-}
+    
+    showLoading(true);document.getElementById('googleBtn').disabled=true;
+    try{
+        const provider=new firebase.auth.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});
+        const result=await auth.signInWithPopup(provider),fu=result.user;
+        const email=fu.email||('google_'+fu.uid+'@social.com'),displayName=fu.displayName||'Google User',photoURL=fu.photoURL||'';
+        const bc=await checkUserBlocked(email);if(bc.blocked){showPopup('⚠️ ব্লক','এই অ্যাকাউন্টটি ব্লক করা আছে!');showLoading(false);document.getElementById('googleBtn').disabled=false;return}
+        let user=await getUserFromFirebase(email);const deviceId=getDeviceId();
+        if(!user){
+            const allUsers=(await database.ref('users').once('value')).val()||{};
+            let dc=0;for(let k in allUsers)if(allUsers[k].deviceId===deviceId)dc++;
+            if(dc>=2){showPopup('Error','এই ডিভাইস থেকে ইতিমধ্যে সর্বোচ্চ ২ টি অ্যাকাউন্ট খোলা হয়েছে!');showLoading(false);document.getElementById('googleBtn').disabled=false;return}
+            const autoTgId=autoDetectTelegramId();
+            user={nick:displayName,loginId:email,password:'social_'+fu.uid,userId:'USR'+Math.floor(100000+Math.random()*900000),balance:0,referCount:0,totalDeposit:0,totalWithdraw:0,referredBy:null,referralBonusGivenForTelegram:false,history:[],investments:[],completedTasks:{},lastDailyBonusDate:'',lastPromoDate:'',usedGifts:[],giftHistory:[],profileImg:photoURL,authProvider:'google',firebaseUid:fu.uid,deviceId,linkedWithdrawNumber:'',linkedNumbers:{bKash:'',Nagad:''},referralBonusesGiven:[],referredUsers:[],telegramStatus:{tg1:false,tg2:false},telegramId:autoTgId?String(autoTgId):null,telegramJoinBonuses:{tg1:false,tg2:false}};
 
-const refCode=getUrlRefCode();
-if(refCode){
-    const upperRefCode = refCode.toUpperCase();
-    if(upperRefCode !== user.userId.toUpperCase()){
-        for(let k in allUsers){
-            if(allUsers[k].userId && allUsers[k].userId.toUpperCase() === upperRefCode){
-                if(allUsers[k].loginId !== email) user.referredBy = allUsers[k].loginId;
-                break;
+            if(autoTgId) {
+                const isUsed = await isTelegramIdUsed(autoTgId, email);
+                if(isUsed) {
+                    user.telegramId = null;
+                    console.warn("Auto-detected TG ID already used. Won't assign.");
+                }
             }
+
+            const refCode=getUrlRefCode();
+            if(refCode){
+                const upperRefCode = refCode.toUpperCase();
+                if(upperRefCode !== user.userId.toUpperCase()){
+                    for(let k in allUsers){
+                        if(allUsers[k].userId && allUsers[k].userId.toUpperCase() === upperRefCode){
+                            if(allUsers[k].loginId !== email) user.referredBy = allUsers[k].loginId;
+                            break;
+                        }
+                    }
+                }
+            }
+            await saveUserToFirebase(user);
+        }else{
+            if(photoURL&&!user.profileImg){user.profileImg=photoURL;await saveUserToFirebase(user)}
+            if(!user.telegramId){const autoTgId=autoDetectTelegramId();if(autoTgId){user.telegramId=String(autoTgId);await saveUserToFirebase(user)}}
         }
-    }
-}
-await saveUserToFirebase(user);
-}else{
-if(photoURL&&!user.profileImg){user.profileImg=photoURL;await saveUserToFirebase(user)}
-if(!user.telegramId){const autoTgId=autoDetectTelegramId();if(autoTgId){user.telegramId=String(autoTgId);await saveUserToFirebase(user)}}
-}
-currentUserKey=email;currentUserData=user;setLoggedKey(currentUserKey);
-enterApp();listenUserChanges(currentUserKey);listenForBlockStatus(currentUserKey);startTelegramCheck();
-}catch(err){let msg=err.message||'লগইন ব্যর্থ';if(err.code==='auth/popup-closed-by-user')msg='লগইন উইন্ডো বন্ধ করে দিয়েছ। আবার চেষ্টা করো।';else if(err.code==='auth/popup-blocked')msg='পপআপ ব্লক করা হয়েছে। ব্রাউজারের পপআপ ব্লকার বন্ধ করো।';showPopup('Error',msg)}
-finally{showLoading(false);document.getElementById('googleBtn').disabled=false}
+        currentUserKey=email;currentUserData=user;setLoggedKey(currentUserKey);
+        enterApp();listenUserChanges(currentUserKey);listenForBlockStatus(currentUserKey);startTelegramCheck();
+    }catch(err){let msg=err.message||'লগইন ব্যর্থ';if(err.code==='auth/popup-closed-by-user')msg='লগইন উইন্ডো বন্ধ করে দিয়েছ। আবার চেষ্টা করো।';else if(err.code==='auth/popup-blocked')msg='পপআপ ব্লক করা হয়েছে। ব্রাউজারের পপআপ ব্লকার বন্ধ করো।';showPopup('Error',msg)}
+    finally{showLoading(false);document.getElementById('googleBtn').disabled=false}
 }
 
 async function doLogout(){try{await auth.signOut()}catch(e){}currentUserKey=null;currentUserData=null;hasShownNoticePopup=false;setLoggedKey(null);if(telegramCheckInterval){clearInterval(telegramCheckInterval);telegramCheckInterval=null}document.getElementById('app').style.display='none';document.getElementById('loginScreen').style.display='flex';hideBlockedScreen();showPopup('Info','Logout হয়েছে')}
@@ -1279,7 +1343,6 @@ async function joinTelegram(k){
     const channelName = k==='tg1' ? 'Channel 1' : 'Channel 2';
     openTelegramLink(link);
     
-    // ⚠️ UPDATE: Add a strong reminder to START the bot
     showPopup('📢 '+channelName+' খোলা হয়েছে','Telegram এ সত্যি Join করুন, তারপর অ্যাপে ফিরে আসুন।\n\n⏳ ১৫ সেকেন্ডের মধ্যে যাচাই করা হবে।\n\n⚠️ সত্যি Join না করলে ২০ টাকা বোনাস পাবেন না!\n\n🛑 জয়েন করার পর অবশ্যই আমাদের Telegram বটে গিয়ে "START" বাটনে ক্লিক করুন। নাহলে সিস্টেম আপনার জয়েন কনফার্ম করতে পারবে না।');
     
     setTimeout(async()=>{
@@ -1415,7 +1478,6 @@ async function doWithdraw(){
     if(!requireBothJoined('Withdraw'))return;
     let user=getActiveUser();
     
-    // ✅ ডিপোজিট না করলে উইথড্র ব্লক
     if(!user.totalDeposit || Number(user.totalDeposit) < 1){
         showPopup('⚠️ প্রথমে ডিপোজিট করুন!','আপনি এখনো কোনো ডিপোজিট করেননি!\n\n📌 উইথড্র করার জন্য প্রথমে ডিপোজিট করা জরুরি।\n\n💳 Deposit পেজে গিয়ে ডিপোজিট করুন।\n\n✅ ডিপোজিট করার পর উইথড্র করতে পারবেন।');
         return;
@@ -1650,12 +1712,25 @@ window.addEventListener('DOMContentLoaded',async()=>{
         if(window.Telegram?.WebApp){
             window.Telegram.WebApp.ready();
             window.Telegram.WebApp.expand();
+            
+            // 🛑 Google Login বাটন লুকিয়ে ফেলা (Telegram WebView-এ কাজ করে না)
+            const socialDivider = document.getElementById('socialLoginDivider');
+            const socialGrid = document.getElementById('socialLoginGrid');
+            if(socialDivider) socialDivider.style.display = 'none';
+            if(socialGrid) socialGrid.style.display = 'none';
+            
             const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
             if(tgUser && tgUser.id){localStorage.setItem('trust_wallet_tg_id', String(tgUser.id));console.log('✅ Telegram user auto-detected:', tgUser.id, tgUser.first_name);}
         }
     }catch(e){console.log('Not in Telegram WebApp');}
+    
     const urlRef=getUrlRefCode();
     if(urlRef){const ri=document.getElementById('regRefCode');if(ri)ri.value=urlRef}
+    
+    // 🚀 Auto Login via Telegram ID (সবচেয়ে গুরুত্বপূর্ণ)
+    const autoLoggedIn = await autoLoginViaTelegram();
+    if(autoLoggedIn) return; // অটো লগইন সফল হলে আর লগইন স্ক্রিন দেখাবে না
+
     const sk=localStorage.getItem('logged_trust_user_key');
     if(sk){
         showLoading(true);
