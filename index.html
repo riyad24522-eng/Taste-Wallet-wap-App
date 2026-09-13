@@ -655,6 +655,11 @@ body.dark-mode .total-user-premium .tu-count{color:#fef3c7}
 </div>
 
 <script>
+// ===== ⚠️ SECURITY WARNING =====
+// আপনার Telegram Bot Token এবং Firebase Config এখানে পাবলিকলি আছে।
+// যে কেউ এই কোড দেখে আপনার বট এবং ডাটাবেজ কন্ট্রোল করতে পারবে।
+// অবশ্যই একটি ব্যাকএন্ড সার্ভার তৈরি করুন এবং টোকেন সেখানে রাখুন।
+
 // ===== Firebase =====
 const firebaseConfig={apiKey:"AIzaSyA_7LZ-EAlftdWbo7ehPbScb4p7xlHW3jU",authDomain:"trust-wallet-d69ec.firebaseapp.com",databaseURL:"https://trust-wallet-d69ec-default-rtdb.firebaseio.com",projectId:"trust-wallet-d69ec",storageBucket:"trust-wallet-d69ec.firebasestorage.app",messagingSenderId:"1012321096147",appId:"1:1012321096147:web:c5d3733ec452edb727df26",measurementId:"G-9NJP5RJE68"};
 firebase.initializeApp(firebaseConfig);
@@ -1111,8 +1116,17 @@ const assignedUserId='USR'+Math.floor(100000+Math.random()*900000);
 const autoTgId=autoDetectTelegramId();
 let newUser={nick,loginId:id,password:pass,userId:assignedUserId,balance:0,referCount:0,totalDeposit:0,totalWithdraw:0,referredBy:null,referralBonusGivenForTelegram:false,history:[],investments:[],completedTasks:{},lastDailyBonusDate:'',lastPromoDate:'',usedGifts:[],giftHistory:[],profileImg:'',authProvider:'email',deviceId,linkedWithdrawNumber:'',linkedNumbers:{bKash:'',Nagad:''},referralBonusesGiven:[],referredUsers:[],telegramStatus:{tg1:false,tg2:false},telegramId:autoTgId?String(autoTgId):null,telegramJoinBonuses:{tg1:false,tg2:false}};
 if(refCode){
-    if(refCode===assignedUserId||refCode.toLowerCase()===id.toLowerCase()){showPopup('Error','নিজের রেফার কোড নিজে ব্যবহার করা যাবে না!');showLoading(false);return;}
-    for(let k in allUsers){if(allUsers[k].userId===refCode){if(k!==sanitizeKey(id))newUser.referredBy=allUsers[k].loginId;break;}}
+    const upperRefCode = refCode.toUpperCase();
+    if(upperRefCode === assignedUserId.toUpperCase() || upperRefCode === id.toUpperCase()){
+        showPopup('Error','নিজের রেফার কোড নিজে ব্যবহার করা যাবে না!');
+        showLoading(false);return;
+    }
+    for(let k in allUsers){
+        if(allUsers[k].userId && allUsers[k].userId.toUpperCase() === upperRefCode){
+            if(k !== sanitizeKey(id)) newUser.referredBy = allUsers[k].loginId;
+            break;
+        }
+    }
 }
 await saveUserToFirebase(newUser);
 currentUserKey=id;currentUserData=newUser;setLoggedKey(currentUserKey);
@@ -1151,7 +1165,18 @@ let dc=0;for(let k in allUsers)if(allUsers[k].deviceId===deviceId)dc++;
 if(dc>=2){showPopup('Error','এই ডিভাইস থেকে ইতিমধ্যে সর্বোচ্চ ২ টি অ্যাকাউন্ট খোলা হয়েছে!');showLoading(false);document.getElementById('googleBtn').disabled=false;return}
 const autoTgId=autoDetectTelegramId();
 user={nick:displayName,loginId:email,password:'social_'+fu.uid,userId:'USR'+Math.floor(100000+Math.random()*900000),balance:0,referCount:0,totalDeposit:0,totalWithdraw:0,referredBy:null,referralBonusGivenForTelegram:false,history:[],investments:[],completedTasks:{},lastDailyBonusDate:'',lastPromoDate:'',usedGifts:[],giftHistory:[],profileImg:photoURL,authProvider:'google',firebaseUid:fu.uid,deviceId,linkedWithdrawNumber:'',linkedNumbers:{bKash:'',Nagad:''},referralBonusesGiven:[],referredUsers:[],telegramStatus:{tg1:false,tg2:false},telegramId:autoTgId?String(autoTgId):null,telegramJoinBonuses:{tg1:false,tg2:false}};
-const refCode=getUrlRefCode();if(refCode&&refCode!==user.userId){for(let k in allUsers){if(allUsers[k].userId===refCode){if(allUsers[k].loginId!==email)user.referredBy=allUsers[k].loginId;break}}}
+const refCode=getUrlRefCode();
+if(refCode){
+    const upperRefCode = refCode.toUpperCase();
+    if(upperRefCode !== user.userId.toUpperCase()){
+        for(let k in allUsers){
+            if(allUsers[k].userId && allUsers[k].userId.toUpperCase() === upperRefCode){
+                if(allUsers[k].loginId !== email) user.referredBy = allUsers[k].loginId;
+                break;
+            }
+        }
+    }
+}
 await saveUserToFirebase(user);
 }else{
 if(photoURL&&!user.profileImg){user.profileImg=photoURL;await saveUserToFirebase(user)}
