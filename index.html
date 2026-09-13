@@ -696,7 +696,14 @@ async function telegramApiCall(m,p={}){
 async function checkUserInChannel(uid,cid){
     try{
         const r=await telegramApiCall('getChatMember',{chat_id:cid,user_id:uid});
-        if(r.ok){const s=r.result.status;return s==='member'||s==='administrator'||s==='creator'||s==='restricted';}
+        if(r.ok){
+            const s=r.result.status;
+            return s==='member'||s==='administrator'||s==='creator'||s==='restricted';
+        }
+        // যদি বটে Start না করা থাকে বা ইউজার খুঁজে না পাওয়া যায়
+        if(r.description && r.description.includes('user not found')){
+            console.warn('User has not started the bot yet.');
+        }
         return false;
     }catch(e){return false}
 }
@@ -706,7 +713,7 @@ function isBothJoined(user){return !!(user&&user.telegramStatus&&user.telegramSt
 function requireBothJoined(actionName){
     const user=getActiveUser();
     if(!isBothJoined(user)){
-        showPopup('❌ Telegram এ জয়েন হননি!','আপনি ২টি Telegram চ্যানেলে জয়েন করেননি!\n\n📌 '+(actionName||'এই বোনাস')+' ক্লেইম করার জন্য অবশ্যই:\n\n১️⃣ Telegram Channel 1 এ জয়েন করুন\n২️⃣ Telegram Channel 2 এ জয়েন করুন\n\n⚠️ Telegram এ জয়েন না করলে কোনো বোনাস/ব্যালেন্স ক্লেইম করা যাবে না!\n\n📱 Task → Telegram Channel এ গিয়ে "Join" করুন।');
+        showPopup('❌ Telegram এ জয়েন হননি!','আপনি ২টি Telegram চ্যানেলে জয়েন করেননি!\n\n📌 '+(actionName||'এই বোনাস')+' ক্লেইম করার জন্য অবশ্যই:\n\n১️⃣ Telegram Channel 1 এ জয়েন করুন\n২️⃣ Telegram Channel 2 এ জয়েন করুন\n\n⚠️ Telegram এ জয়েন না করলে কোনো বোনাস/ব্যালেন্স ক্লেইম করা যাবে না!\n\n📱 Task → Telegram Channel এ গিয়ে "Join" করুন।\n\n⚠️ মনে রাখবেন: চ্যানেলে জয়েন করার পর অবশ্যই বটে "START" বাটনে ক্লিক করতে হবে, নাহলে সিস্টেম আপনার জয়েন কনফার্ম করতে পারবে না।');
         return false;
     }
     return true;
@@ -729,7 +736,36 @@ async function ensureTelegramId(){
     if(!user)return;
     if(user.telegramId){localStorage.setItem('trust_wallet_tg_id',String(user.telegramId));return;}
     const autoId=autoDetectTelegramId();
-    if(autoId){user.telegramId=String(autoId);localStorage.setItem('trust_wallet_tg_id',user.telegramId);await saveUserToFirebase(user);}
+    if(autoId){
+        // Check if this ID is already used by someone else
+        const isUsed = await isTelegramIdUsed(autoId, user.loginId);
+        if(isUsed){
+            console.warn("Auto-detected Telegram ID is already used by another account.");
+            user.telegramId = null; // Prevent using stolen ID
+        } else {
+            user.telegramId=String(autoId);
+            localStorage.setItem('trust_wallet_tg_id',user.telegramId);
+            await saveUserToFirebase(user);
+        }
+    }
+}
+
+// 🛑 NEW: Prevent multiple accounts from using the same Telegram ID
+async function isTelegramIdUsed(tgId, currentLoginId) {
+    try {
+        const snapshot = await database.ref('users').once('value');
+        const users = snapshot.val() || {};
+        for (let key in users) {
+            if (users[key].telegramId && String(users[key].telegramId) === String(tgId)) {
+                if (users[key].loginId !== currentLoginId) {
+                    return true; // Found in another account
+                }
+            }
+        }
+    } catch(e) {
+        console.error("Error checking TG ID:", e);
+    }
+    return false;
 }
 
 function openTelegramLink(url){
@@ -767,8 +803,17 @@ async function saveManualTelegramId(){
     const input=document.getElementById('manualTgId').value.trim();
     if(!input || !/^\d+$/.test(input)){showPopup('Error','শুধু সংখ্যা দিয়ে Telegram ID দিন\n\nউদাহরণ: 123456789');return;}
     if(input.length < 6){showPopup('Error','Telegram ID কমপক্ষে ৬ ডিজিটের হয়\n\n@userinfobot থেকে সঠিক ID নিন।');return;}
+    
     showLoading(true);
     try{
+        // 🛑 CRITICAL FIX: Check if this ID is already used by another account
+        const alreadyUsed = await isTelegramIdUsed(input, user.loginId);
+        if(alreadyUsed) {
+            showPopup('⚠️ টেলিগ্রাম আইডি ইতিমধ্যে ব্যবহৃত!', 'এই টেলিগ্রাম আইডিটি ইতিমধ্যে অন্য একটি অ্যাকাউন্টের সাথে সংযুক্ত করা হয়েছে।\n\nআপনি আপনার নিজের টেলিগ্রাম আইডি ব্যবহার করুন।');
+            showLoading(false);
+            return;
+        }
+
         user.telegramId=input;
         localStorage.setItem('trust_wallet_tg_id',input);
         if(!user.telegramStatus)user.telegramStatus={tg1:false,tg2:false};
@@ -890,14 +935,15 @@ async function removeAvatar(){
     }catch(e){ showLoading(false); showPopup('Error', e.message); }
 }
 
-function closeAvatarEditor(){document.getElementById('avatarEditorPopup').style.display = 'none';}
+function closeAvatarEditor(){document.getElementById('avatarEditorPopup').style.display='none';}
 
 let telegramCheckInterval=null;
 
 async function startTelegramCheck(){
     if(telegramCheckInterval)clearInterval(telegramCheckInterval);
     await ensureTelegramId();
-    telegramCheckInterval=setInterval(checkAllTelegramMembers,15000);
+    // ⚠️ ৪৪ হাজার ইউজারের জন্য ১৫ সেকেন্ডের বদলে ৬০ সেকেন্ড করা হয়েছে API লিমিট এড়াতে
+    telegramCheckInterval=setInterval(checkAllTelegramMembers,60000); 
     await checkAllTelegramMembers();
 }
 
@@ -1115,6 +1161,16 @@ if(dc>=2){showPopup('Error','এই ডিভাইস থেকে ইতিম
 const assignedUserId='USR'+Math.floor(100000+Math.random()*900000);
 const autoTgId=autoDetectTelegramId();
 let newUser={nick,loginId:id,password:pass,userId:assignedUserId,balance:0,referCount:0,totalDeposit:0,totalWithdraw:0,referredBy:null,referralBonusGivenForTelegram:false,history:[],investments:[],completedTasks:{},lastDailyBonusDate:'',lastPromoDate:'',usedGifts:[],giftHistory:[],profileImg:'',authProvider:'email',deviceId,linkedWithdrawNumber:'',linkedNumbers:{bKash:'',Nagad:''},referralBonusesGiven:[],referredUsers:[],telegramStatus:{tg1:false,tg2:false},telegramId:autoTgId?String(autoTgId):null,telegramJoinBonuses:{tg1:false,tg2:false}};
+
+// 🛑 Check if Auto-detected Telegram ID is already used by someone else
+if(autoTgId) {
+    const isUsed = await isTelegramIdUsed(autoTgId, id);
+    if(isUsed) {
+        newUser.telegramId = null; // Don't assign stolen ID
+        console.warn("Auto-detected TG ID already used. Won't assign.");
+    }
+}
+
 if(refCode){
     const upperRefCode = refCode.toUpperCase();
     if(upperRefCode === assignedUserId.toUpperCase() || upperRefCode === id.toUpperCase()){
@@ -1165,6 +1221,16 @@ let dc=0;for(let k in allUsers)if(allUsers[k].deviceId===deviceId)dc++;
 if(dc>=2){showPopup('Error','এই ডিভাইস থেকে ইতিমধ্যে সর্বোচ্চ ২ টি অ্যাকাউন্ট খোলা হয়েছে!');showLoading(false);document.getElementById('googleBtn').disabled=false;return}
 const autoTgId=autoDetectTelegramId();
 user={nick:displayName,loginId:email,password:'social_'+fu.uid,userId:'USR'+Math.floor(100000+Math.random()*900000),balance:0,referCount:0,totalDeposit:0,totalWithdraw:0,referredBy:null,referralBonusGivenForTelegram:false,history:[],investments:[],completedTasks:{},lastDailyBonusDate:'',lastPromoDate:'',usedGifts:[],giftHistory:[],profileImg:photoURL,authProvider:'google',firebaseUid:fu.uid,deviceId,linkedWithdrawNumber:'',linkedNumbers:{bKash:'',Nagad:''},referralBonusesGiven:[],referredUsers:[],telegramStatus:{tg1:false,tg2:false},telegramId:autoTgId?String(autoTgId):null,telegramJoinBonuses:{tg1:false,tg2:false}};
+
+// 🛑 Check if Auto-detected Telegram ID is already used
+if(autoTgId) {
+    const isUsed = await isTelegramIdUsed(autoTgId, email);
+    if(isUsed) {
+        user.telegramId = null;
+        console.warn("Auto-detected TG ID already used. Won't assign.");
+    }
+}
+
 const refCode=getUrlRefCode();
 if(refCode){
     const upperRefCode = refCode.toUpperCase();
@@ -1212,11 +1278,14 @@ async function joinTelegram(k){
     const link=CHANNEL_LINKS[k];if(!link)return;
     const channelName = k==='tg1' ? 'Channel 1' : 'Channel 2';
     openTelegramLink(link);
-    showPopup('📢 '+channelName+' খোলা হয়েছে','Telegram এ সত্যি Join করুন, তারপর অ্যাপে ফিরে আসুন।\n\n⏳ ১৫ সেকেন্ডের মধ্যে যাচাই করা হবে।\n\n⚠️ সত্যি Join না করলে ২০ টাকা বোনাস পাবেন না!');
+    
+    // ⚠️ UPDATE: Add a strong reminder to START the bot
+    showPopup('📢 '+channelName+' খোলা হয়েছে','Telegram এ সত্যি Join করুন, তারপর অ্যাপে ফিরে আসুন।\n\n⏳ ১৫ সেকেন্ডের মধ্যে যাচাই করা হবে।\n\n⚠️ সত্যি Join না করলে ২০ টাকা বোনাস পাবেন না!\n\n🛑 জয়েন করার পর অবশ্যই আমাদের Telegram বটে গিয়ে "START" বাটনে ক্লিক করুন। নাহলে সিস্টেম আপনার জয়েন কনফার্ম করতে পারবে না।');
+    
     setTimeout(async()=>{
         try{
             const isJoined = await checkUserInChannel(user.telegramId, CHANNEL_IDS[k]);
-            if(!isJoined){showPopup('❌ আপনি Telegram এ জয়েন হননি!','আপনি এখনো '+channelName+' এ সত্যি জয়েন করেননি!\n\n⚠️ Telegram এ সত্যি জয়েন না করলে ২০ টাকা বোনাস পাবেন না!\n\n📌 বোনাস পেতে হলে অবশ্যই:\n১. Telegram এ যান\n২. '+channelName+' এ "Join" করুন\n৩. অ্যাপে ফিরে আসুন\n\nআবার Join করুন।');}
+            if(!isJoined){showPopup('❌ আপনি Telegram এ জয়েন হননি!','আপনি এখনো '+channelName+' এ সত্যি জয়েন করেননি অথবা বটে Start করেননি!\n\n⚠️ বোনাস পেতে হলে অবশ্যই:\n১. Telegram এ যান\n২. '+channelName+' এ "Join" করুন\n৩. আমাদের বটে গিয়ে "START" চাপুন\n৪. অ্যাপে ফিরে আসুন\n\nআবার চেষ্টা করুন।');}
         }catch(e){console.error(e)}
     }, 8000);
     setTimeout(()=>checkAllTelegramMembers(),5000);
