@@ -452,7 +452,7 @@ body.dark-mode .total-user-premium .tu-count{color:#fef3c7}
             <div class="box-value">৳ <span id="cardWithdraw">0.00</span></div>
           </div>
         </div>
-        <div style="margin-top:14px;margin-bottom:8px;font-size:12px;color:#4f46e5;font-weight:800;">🎁 প্রতি রেফারে ৩০ টাকা + প্রতি Telegram চ্যানেলে সত্যি জয়েন করলে ২০ টাকা (২টিতে জয়েন বাধ্যতামূলক)</div>
+        <div style="margin-top:14px;margin-bottom:8px;font-size:12px;color:#4f46e5;font-weight:800;">🎁 প্রতি রেফারে ৩০ টাকা + প্রতি Telegram চ্যানেলে সত্যি জয়েন করলে ২৫ টাকা (২টিতে জয়েন বাধ্যতামূলক)</div>
         <div style="display:flex;gap:8px;">
           <input type="text" id="refLink" readonly style="flex:1;padding:8px 12px;border:2px solid var(--inputB);border-radius:10px;font-size:12px;background:var(--input);color:var(--text);" />
           <button class="copy-btn" onclick="copyText('refLink')" style="padding:4px 10px;font-size:11px;">Copy</button>
@@ -674,11 +674,15 @@ try {
     if(tgWebApp){tgWebApp.ready();tgWebApp.expand();console.log('✅ Telegram WebApp detected');}
 } catch(e) { console.log('Not in Telegram WebApp'); }
 
+// 🚀 আপনার বটের ইউজারনেম
+const BOT_USERNAME = 'trueplay1_bot'; 
 const TELEGRAM_BOT_TOKEN='8206830214:AAGk4D2g3SedmiC-cjjwbavXkXzys3HQmYo';
 const CHANNEL_IDS={tg1:'-1002819430279',tg2:'-1002503095921'};
 const CHANNEL_LINKS={tg1:'https://t.me/taste_wallet_chenel1',tg2:'https://t.me/tasr_wallet_cchenel'};
-const TG_JOIN_BONUS=20;
-const TG_REF_BONUS=30;
+
+// 🚀 বোনাস আপডেট করা হয়েছে
+const TG_JOIN_BONUS=25; // প্রতি চ্যানেলে ২৫ টাকা
+const TG_REF_BONUS=30;  // প্রতি রেফারে ৩০ টাকা
 const MIN_DEPOSIT=500;
 const MIN_WITHDRAW=500;
 
@@ -699,9 +703,6 @@ async function checkUserInChannel(uid,cid){
         if(r.ok){
             const s=r.result.status;
             return s==='member'||s==='administrator'||s==='creator'||s==='restricted';
-        }
-        if(r.description && r.description.includes('user not found')){
-            console.warn('User has not started the bot yet.');
         }
         return false;
     }catch(e){return false}
@@ -730,7 +731,7 @@ function autoDetectTelegramId(){
     return localStorage.getItem('trust_wallet_tg_id')||null;
 }
 
-// ===== 🚀 NEW: AUTO TELEGRAM LOGIN & PROFILE SYNC =====
+// ===== 🚀 AUTO TELEGRAM LOGIN & PROFILE SYNC =====
 async function autoLoginViaTelegram() {
     const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
     if (!tgUser || !tgUser.id) return false;
@@ -1167,7 +1168,19 @@ const packages=[
 
 function showLoading(show=true){document.getElementById('loadingOverlay').classList.toggle('active',show)}
 function sanitizeKey(k){return String(k).replace(/[.#$\[\]]/g,'_')}
-function getUrlRefCode(){try{return(new URLSearchParams(window.location.search).get('ref')||'').trim()}catch(e){return''}}
+
+// 🚀 FIXED: রেফার লিংক এখন টেলিগ্রাম ডিপ লিংক হবে
+function getUrlRefCode(){
+    try {
+        // টেলিগ্রামের start_param থেকে রেফার কোড পড়া
+        const tg = window.Telegram?.WebApp;
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
+            return tg.initDataUnsafe.start_param.trim();
+        }
+        // ব্যাকআপ হিসেবে URL থেকে পড়া (যদি টেলিগ্রামের বাইরে থেকে ওপেন হয়)
+        return(new URLSearchParams(window.location.search).get('ref')||'').trim()
+    } catch(e) { return '' }
+}
 
 async function checkUserBlocked(lid){try{const s=await db.ref('blocked_users/'+sanitizeKey(lid)).once('value');const d=s.val();if(d&&d.blocked===true)return{blocked:true,reason:d.reason||'নিয়ম লঙ্ঘন'};return{blocked:false}}catch(e){return{blocked:false}}}
 function listenForBlockStatus(lid){db.ref('blocked_users/'+sanitizeKey(lid)).on('value',s=>{const d=s.val();if(d&&d.blocked===true)showBlockedScreen(d.reason||'নিয়ম লঙ্ঘন');else hideBlockedScreen()})}
@@ -1343,7 +1356,7 @@ async function joinTelegram(k){
     const channelName = k==='tg1' ? 'Channel 1' : 'Channel 2';
     openTelegramLink(link);
     
-    showPopup('📢 '+channelName+' খোলা হয়েছে','Telegram এ সত্যি Join করুন, তারপর অ্যাপে ফিরে আসুন।\n\n⏳ ১৫ সেকেন্ডের মধ্যে যাচাই করা হবে।\n\n⚠️ সত্যি Join না করলে ২০ টাকা বোনাস পাবেন না!\n\n🛑 জয়েন করার পর অবশ্যই আমাদের Telegram বটে গিয়ে "START" বাটনে ক্লিক করুন। নাহলে সিস্টেম আপনার জয়েন কনফার্ম করতে পারবে না।');
+    showPopup('📢 '+channelName+' খোলা হয়েছে','Telegram এ সত্যি Join করুন, তারপর অ্যাপে ফিরে আসুন।\n\n⏳ ১৫ সেকেন্ডের মধ্যে যাচাই করা হবে।\n\n⚠️ সত্যি Join না করলে ২৫ টাকা বোনাস পাবেন না!\n\n🛑 জয়েন করার পর অবশ্যই আমাদের Telegram বটে গিয়ে "START" বাটনে ক্লিক করুন। নাহলে সিস্টেম আপনার জয়েন কনফার্ম করতে পারবে না।');
     
     setTimeout(async()=>{
         try{
@@ -1397,7 +1410,10 @@ document.getElementById('cardBalance').textContent=(user.balance||0).toFixed(2);
 document.getElementById('cardReferCount').textContent=user.referCount||0;
 document.getElementById('cardDeposit').textContent=(user.totalDeposit||0).toFixed(2);
 document.getElementById('cardWithdraw').textContent=(user.totalWithdraw||0).toFixed(2);
-document.getElementById('refLink').value=window.location.origin+window.location.pathname+'?ref='+user.userId;
+
+// 🚀 FIXED: রেফার লিংক এখন টেলিগ্রাম ডিপ লিংক
+document.getElementById('refLink').value = `https://t.me/${BOT_USERNAME}?start=${user.userId}`;
+
 const wf=document.getElementById('wdNumber');if(wf&&user.linkedNumbers)wf.value=user.linkedNumbers[selectedWdMethodName]||'';
 const av=document.getElementById('homeProfileAvatar');if(user.profileImg)av.innerHTML=`<img src="${user.profileImg}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span>${(user.nick||'U').charAt(0).toUpperCase()}</span>'">`;else av.innerHTML=`<span>${(user.nick||'U').charAt(0).toUpperCase()}</span>`;
 
@@ -1427,8 +1443,8 @@ const t1=user.telegramStatus&&user.telegramStatus['tg1']===true;
 const t2=user.telegramStatus&&user.telegramStatus['tg2']===true;
 const tasks=[
 {key:'daily',title:'Daily Bonus',desc:'ডেইলি বোনাস ১ টাকা (২ চ্যানেলে জয়েন বাধ্যতামূলক)',icon:'🎁',isDone:isD,actionBtn:`<button class="btn ${!isD?'btn-green':'btn-disabled'}" style="padding:6px 12px;font-size:12px;" ${isD?'disabled':''} onclick="claimDailyBonus()">${!isD?'Claim':'Claimed'}</button>`},
-{key:'tg1',title:'Telegram Channel 1',desc:'সত্যি জয়েন করলে ২০ টাকা বোনাস',icon:TG_LOGO_SVG,isDone:t1,actionBtn:`<button class="btn ${!t1?'btn-blue':'btn-disabled'}" style="padding:6px 12px;font-size:12px;" ${t1?'disabled':''} onclick="joinTelegram('tg1')">${!t1?'Join':'Joined'}</button>`},
-{key:'tg2',title:'Telegram Channel 2',desc:'সত্যি জয়েন করলে ২০ টাকা বোনাস',icon:TG_LOGO_SVG,isDone:t2,actionBtn:`<button class="btn ${!t2?'btn-blue':'btn-disabled'}" style="padding:6px 12px;font-size:12px;" ${t2?'disabled':''} onclick="joinTelegram('tg2')">${!t2?'Join':'Joined'}</button>`},
+{key:'tg1',title:'Telegram Channel 1',desc:'সত্যি জয়েন করলে ২৫ টাকা বোনাস',icon:TG_LOGO_SVG,isDone:t1,actionBtn:`<button class="btn ${!t1?'btn-blue':'btn-disabled'}" style="padding:6px 12px;font-size:12px;" ${t1?'disabled':''} onclick="joinTelegram('tg1')">${!t1?'Join':'Joined'}</button>`},
+{key:'tg2',title:'Telegram Channel 2',desc:'সত্যি জয়েন করলে ২৫ টাকা বোনাস',icon:TG_LOGO_SVG,isDone:t2,actionBtn:`<button class="btn ${!t2?'btn-blue':'btn-disabled'}" style="padding:6px 12px;font-size:12px;" ${t2?'disabled':''} onclick="joinTelegram('tg2')">${!t2?'Join':'Joined'}</button>`},
 {key:'promo',title:'Promo Code',desc:'কোড দিয়ে ১ টাকা (২ চ্যানেলে জয়েন বাধ্যতামূলক)',icon:'🎁',isDone:isP,actionBtn:`<button class="btn ${!isP?'btn-orange':'btn-disabled'}" style="padding:6px 12px;font-size:12px;" ${isP?'disabled':''} onclick="showPromoPopup()">${!isP?'Enter':'Done'}</button>`}
 ];
 tasks.sort((a,b)=>(a.isDone===b.isDone)?0:a.isDone?1:-1);
@@ -1478,6 +1494,7 @@ async function doWithdraw(){
     if(!requireBothJoined('Withdraw'))return;
     let user=getActiveUser();
     
+    // 🛑 CRITICAL: ডিপোজিট না করলে উইথড্র ব্লক
     if(!user.totalDeposit || Number(user.totalDeposit) < 1){
         showPopup('⚠️ প্রথমে ডিপোজিট করুন!','আপনি এখনো কোনো ডিপোজিট করেননি!\n\n📌 উইথড্র করার জন্য প্রথমে ডিপোজিট করা জরুরি।\n\n💳 Deposit পেজে গিয়ে ডিপোজিট করুন।\n\n✅ ডিপোজিট করার পর উইথড্র করতে পারবেন।');
         return;
