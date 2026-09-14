@@ -500,6 +500,18 @@ body.dark-mode .total-user-premium .tu-count{color:#fef3c7}
       <div class="card">
         <h3>💸 Withdraw Money</h3>
         <p style="font-size:13px;color:var(--text);margin-bottom:12px;font-weight:700;opacity:.7;">বর্তমান ব্যালেন্স: ৳ <span id="wdBalance">0.00</span></p>
+
+        <!-- 🆕 Referral Progress Box -->
+        <div class="notice-box" id="withdrawRefProgressBox" style="background:linear-gradient(135deg,#eef2ff,#e0e7ff);border-color:#818cf8;color:#3730a3;margin-bottom:14px;">
+          📊 <strong>উইথড্র শর্ত:</strong> প্রতি উইথড্রর জন্য নতুন করে ১০টি রেফারেল কমপ্লিট করতে হবে<br />
+          📈 <strong>প্রগ্রেস:</strong> <strong><span id="wdRefProgressCount">0</span> / <span id="wdRefTarget">10</span></strong>
+          <span id="wdRefProgressStatus" style="font-weight:800;"></span>
+          <div style="margin-top:8px;background:rgba(0,0,0,.08);border-radius:20px;height:8px;overflow:hidden;">
+            <div id="wdRefProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,#4f46e5,#7c3aed);border-radius:20px;transition:width .4s;"></div>
+          </div>
+          <div style="font-size:11px;margin-top:6px;opacity:.85;font-weight:700;">🧮 মোট রেফার: <span id="wdTotalRefers">0</span></div>
+        </div>
+
         <div class="notice-box" style="background:var(--depNtB);border-color:var(--depNtBd);color:var(--depNtC);">⚠️ প্রতি উইথড্র ট্রানজেকশনে <strong>৫ টাকা</strong> চার্জ কাটা হবে।<br />📌 শুধুমাত্র আপনার নিজের নাম্বার ব্যবহার করুন। এক নাম্বার এক অ্যাকাউন্টে সংযুক্ত থাকবে।</div>
         <div class="input-group"><label>Select Method</label><div class="method-grid"><div class="method-option active" id="wdMethodBkash" onclick="selectWdMethod('bKash')">bKash (Personal)</div><div class="method-option" id="wdMethodNagad" onclick="selectWdMethod('Nagad')">Nagad (Personal)</div></div></div>
         <div class="input-group"><label>আপনার পেমেন্ট নম্বর (Personal)</label><input type="text" id="wdNumber" placeholder="01XXXXXXXXX" /><div style="font-size:10px;color:var(--text);opacity:.5;margin-top:4px;font-weight:600;">⚠️ এই নাম্বারটি শুধুমাত্র আপনার অ্যাকাউন্টে সংযুক্ত থাকবে</div></div>
@@ -680,7 +692,7 @@ const TELEGRAM_BOT_TOKEN='8206830214:AAGk4D2g3SedmiC-cjjwbavXkXzys3HQmYo';
 const CHANNEL_IDS={tg1:'-1002819430279',tg2:'-1002503095921'};
 const CHANNEL_LINKS={tg1:'https://t.me/taste_wallet_chenel1',tg2:'https://t.me/tasr_wallet_cchenel'};
 
-// 🚀 বোনাস আপডেট করা হয়েছে
+// 🚀 বোনাস আপডেট করা হয়েছে
 const TG_JOIN_BONUS=25; // প্রতি চ্যানেলে ২৫ টাকা
 const TG_REF_BONUS=30;  // প্রতি রেফারে ৩০ টাকা
 const MIN_DEPOSIT=500;
@@ -742,7 +754,6 @@ async function autoLoginViaTelegram() {
     
     showLoading(true);
     try {
-        // ডাটাবেজে টেলিগ্রাম আইডি খুঁজুন
         const snapshot = await database.ref('users').orderByChild('telegramId').equalTo(tgId).once('value');
         
         if (snapshot.exists()) {
@@ -752,23 +763,19 @@ async function autoLoginViaTelegram() {
             });
             
             if (foundUser) {
-                // অটো লগইন সফল
                 currentUserKey = foundUser.loginId;
                 currentUserData = foundUser;
                 setLoggedKey(currentUserKey);
                 
-                // যদি ইউজারের প্রোফাইল ছবি না থাকে, টেলিগ্রামের ছবি বসিয়ে দিন
                 if (!currentUserData.profileImg && tgPhoto) {
                     currentUserData.profileImg = tgPhoto;
                     await saveUserToFirebase(currentUserData);
                 }
-                // যদি নাম না থাকে, টেলিগ্রামের নাম বসিয়ে দিন
                 if (!currentUserData.nick && tgNick) {
                     currentUserData.nick = tgNick;
                     await saveUserToFirebase(currentUserData);
                 }
                 
-                // অ্যাপে প্রবেশ করান
                 await enterApp();
                 listenUserChanges(currentUserKey);
                 listenForBlockStatus(currentUserKey);
@@ -790,7 +797,6 @@ async function ensureTelegramId(){
     
     const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
     
-    // যদি টেলিগ্রাম আইডি না থাকে, অটো ডিটেক্ট করে বসিয়ে দিন
     if(!user.telegramId && tgUser && tgUser.id){
         const autoId = String(tgUser.id);
         const isUsed = await isTelegramIdUsed(autoId, user.loginId);
@@ -995,7 +1001,7 @@ let telegramCheckInterval=null;
 async function startTelegramCheck(){
     if(telegramCheckInterval)clearInterval(telegramCheckInterval);
     await ensureTelegramId();
-    // ⚠️ ৪৪ হাজার ইউজারের জন্য ১৫ সেকেন্ডের বদলে ৬০ সেকেন্ড করা হয়েছে API লিমিট এড়াতে
+    // ⚠️ ৪৪ হাজার ইউজারের জন্য ১৫ সেকেন্ডের বদলে ৬০ সেকেন্ড করা হয়েছে API লিমিট এড়াতে
     telegramCheckInterval=setInterval(checkAllTelegramMembers,60000); 
     await checkAllTelegramMembers();
 }
@@ -1010,7 +1016,6 @@ async function checkAllTelegramMembers(){
         const active = getActiveUser();
         if(!active || !active.telegramId) return;
         
-        // ✅ Fresh data fetch from Firebase
         const freshSnap = await database.ref('users/'+sanitizeKey(active.loginId)).once('value');
         if(!freshSnap.exists()) return;
         const user = {...freshSnap.val()};
@@ -1044,7 +1049,6 @@ async function checkAllTelegramMembers(){
             }
         }
         
-        // ✅ Referral bonus handled directly - NO duplicate
         if(bothJoined && !user.referralBonusGivenForTelegram && user.referredBy){
             const refSnap = await database.ref('users/'+sanitizeKey(user.referredBy)).once('value');
             if(refSnap.exists()){
@@ -1169,15 +1173,12 @@ const packages=[
 function showLoading(show=true){document.getElementById('loadingOverlay').classList.toggle('active',show)}
 function sanitizeKey(k){return String(k).replace(/[.#$\[\]]/g,'_')}
 
-// 🚀 FIXED: রেফার লিংক এখন টেলিগ্রাম ডিপ লিংক হবে
 function getUrlRefCode(){
     try {
-        // টেলিগ্রামের start_param থেকে রেফার কোড পড়া
         const tg = window.Telegram?.WebApp;
         if (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
             return tg.initDataUnsafe.start_param.trim();
         }
-        // ব্যাকআপ হিসেবে URL থেকে পড়া (যদি টেলিগ্রামের বাইরে থেকে ওপেন হয়)
         return(new URLSearchParams(window.location.search).get('ref')||'').trim()
     } catch(e) { return '' }
 }
@@ -1189,10 +1190,11 @@ function hideBlockedScreen(){document.getElementById('blockedScreen').classList.
 
 async function getUserFromFirebase(lid){return(await database.ref('users/'+sanitizeKey(lid)).once('value')).val()}
 
-// ✅ FIXED: saveUserToFirebase - currentUserData only for own account
+// ✅ FIXED: saveUserToFirebase - নতুন withdrawTargetRefs ফিল্ড যোগ করা হয়েছে
 async function saveUserToFirebase(u){
     const k=sanitizeKey(u.loginId),o={...u};
     o.history=o.history||[];o.investments=o.investments||[];o.usedGifts=o.usedGifts||[];o.giftHistory=o.giftHistory||[];o.completedTasks=o.completedTasks||{};o.linkedWithdrawNumber=o.linkedWithdrawNumber||'';o.linkedNumbers=o.linkedNumbers||{bKash:'',Nagad:''};o.referralBonusesGiven=o.referralBonusesGiven||[];o.referredUsers=o.referredUsers||[];o.telegramStatus=o.telegramStatus||{tg1:false,tg2:false};o.telegramId=o.telegramId||null;o.telegramJoinBonuses=o.telegramJoinBonuses||{tg1:false,tg2:false};
+    o.withdrawTargetRefs=(typeof o.withdrawTargetRefs==='number' && o.withdrawTargetRefs>=0)?o.withdrawTargetRefs:0;
     await database.ref('users/'+k).set(o);
     if(currentUserData && currentUserData.loginId === u.loginId){
         currentUserData = o;
@@ -1201,7 +1203,6 @@ async function saveUserToFirebase(u){
 function getActiveUser(){return currentUserData}
 function setLoggedKey(k){if(k)localStorage.setItem('logged_trust_user_key',k);else localStorage.removeItem('logged_trust_user_key')}
 
-// ✅ FIXED: No auto-popup on balance change
 function listenUserChanges(lid){
     database.ref('users/'+sanitizeKey(lid)).on('value',s=>{
         if(s.exists()){
@@ -1229,13 +1230,12 @@ const autoTgId = tgUser && tgUser.id ? String(tgUser.id) : null;
 const autoTgPhoto = tgUser && tgUser.photo_url ? tgUser.photo_url : '';
 const autoTgNick = tgUser ? (tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "")) : '';
 
-let newUser={nick: nick || autoTgNick,loginId:id,password:pass,userId:assignedUserId,balance:0,referCount:0,totalDeposit:0,totalWithdraw:0,referredBy:null,referralBonusGivenForTelegram:false,history:[],investments:[],completedTasks:{},lastDailyBonusDate:'',lastPromoDate:'',usedGifts:[],giftHistory:[],profileImg:autoTgPhoto || '',authProvider:'email',deviceId,linkedWithdrawNumber:'',linkedNumbers:{bKash:'',Nagad:''},referralBonusesGiven:[],referredUsers:[],telegramStatus:{tg1:false,tg2:false},telegramId:autoTgId || null,telegramJoinBonuses:{tg1:false,tg2:false}};
+let newUser={nick: nick || autoTgNick,loginId:id,password:pass,userId:assignedUserId,balance:0,referCount:0,totalDeposit:0,totalWithdraw:0,referredBy:null,referralBonusGivenForTelegram:false,history:[],investments:[],completedTasks:{},lastDailyBonusDate:'',lastPromoDate:'',usedGifts:[],giftHistory:[],profileImg:autoTgPhoto || '',authProvider:'email',deviceId,linkedWithdrawNumber:'',linkedNumbers:{bKash:'',Nagad:''},referralBonusesGiven:[],referredUsers:[],telegramStatus:{tg1:false,tg2:false},telegramId:autoTgId || null,telegramJoinBonuses:{tg1:false,tg2:false},withdrawTargetRefs:0};
 
-// 🛑 Check if Auto-detected Telegram ID is already used by someone else
 if(autoTgId) {
     const isUsed = await isTelegramIdUsed(autoTgId, id);
     if(isUsed) {
-        newUser.telegramId = null; // Don't assign stolen ID
+        newUser.telegramId = null;
         console.warn("Auto-detected TG ID already used. Won't assign.");
     }
 }
@@ -1270,6 +1270,7 @@ const user=await getUserFromFirebase(id);
 if(user&&user.password===pass){
 currentUserKey=id;currentUserData=user;
 user.investments=user.investments||[];user.referCount=user.referCount||0;user.totalDeposit=user.totalDeposit||0;user.totalWithdraw=user.totalWithdraw||0;user.completedTasks=user.completedTasks||{};user.usedGifts=user.usedGifts||[];user.giftHistory=user.giftHistory||[];user.history=user.history||[];user.linkedWithdrawNumber=user.linkedWithdrawNumber||'';user.linkedNumbers=user.linkedNumbers||{bKash:'',Nagad:''};user.referralBonusesGiven=user.referralBonusesGiven||[];user.referredUsers=user.referredUsers||[];user.telegramStatus=user.telegramStatus||{tg1:false,tg2:false};user.telegramJoinBonuses=user.telegramJoinBonuses||{tg1:false,tg2:false};
+if(typeof user.withdrawTargetRefs !== 'number') user.withdrawTargetRefs = 0;
 if(!user.telegramId){
     const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
     if(tgUser && tgUser.id) user.telegramId = String(tgUser.id);
@@ -1280,7 +1281,6 @@ setLoggedKey(currentUserKey);enterApp();listenUserChanges(currentUserKey);listen
 }
 
 async function socialLogin(p){
-    // 🛑 CRITICAL FIX: Telegram WebView-এ Google Login ব্লক করা হয়েছে
     if(window.Telegram?.WebApp?.initDataUnsafe?.user){
         showPopup('⚠️ সাপোর্ট নেই', 'টেলিগ্রাম অ্যাপের ভেতরে Google Login কাজ করে না।\n\nঅনুগ্রহ করে ফোন/ইমেইল এবং পাসওয়ার্ড দিয়ে লগইন করুন।');
         return;
@@ -1298,7 +1298,7 @@ async function socialLogin(p){
             let dc=0;for(let k in allUsers)if(allUsers[k].deviceId===deviceId)dc++;
             if(dc>=2){showPopup('Error','এই ডিভাইস থেকে ইতিমধ্যে সর্বোচ্চ ২ টি অ্যাকাউন্ট খোলা হয়েছে!');showLoading(false);document.getElementById('googleBtn').disabled=false;return}
             const autoTgId=autoDetectTelegramId();
-            user={nick:displayName,loginId:email,password:'social_'+fu.uid,userId:'USR'+Math.floor(100000+Math.random()*900000),balance:0,referCount:0,totalDeposit:0,totalWithdraw:0,referredBy:null,referralBonusGivenForTelegram:false,history:[],investments:[],completedTasks:{},lastDailyBonusDate:'',lastPromoDate:'',usedGifts:[],giftHistory:[],profileImg:photoURL,authProvider:'google',firebaseUid:fu.uid,deviceId,linkedWithdrawNumber:'',linkedNumbers:{bKash:'',Nagad:''},referralBonusesGiven:[],referredUsers:[],telegramStatus:{tg1:false,tg2:false},telegramId:autoTgId?String(autoTgId):null,telegramJoinBonuses:{tg1:false,tg2:false}};
+            user={nick:displayName,loginId:email,password:'social_'+fu.uid,userId:'USR'+Math.floor(100000+Math.random()*900000),balance:0,referCount:0,totalDeposit:0,totalWithdraw:0,referredBy:null,referralBonusGivenForTelegram:false,history:[],investments:[],completedTasks:{},lastDailyBonusDate:'',lastPromoDate:'',usedGifts:[],giftHistory:[],profileImg:photoURL,authProvider:'google',firebaseUid:fu.uid,deviceId,linkedWithdrawNumber:'',linkedNumbers:{bKash:'',Nagad:''},referralBonusesGiven:[],referredUsers:[],telegramStatus:{tg1:false,tg2:false},telegramId:autoTgId?String(autoTgId):null,telegramJoinBonuses:{tg1:false,tg2:false},withdrawTargetRefs:0};
 
             if(autoTgId) {
                 const isUsed = await isTelegramIdUsed(autoTgId, email);
@@ -1322,6 +1322,7 @@ async function socialLogin(p){
             }
             await saveUserToFirebase(user);
         }else{
+            if(typeof user.withdrawTargetRefs !== 'number') user.withdrawTargetRefs = 0;
             if(photoURL&&!user.profileImg){user.profileImg=photoURL;await saveUserToFirebase(user)}
             if(!user.telegramId){const autoTgId=autoDetectTelegramId();if(autoTgId){user.telegramId=String(autoTgId);await saveUserToFirebase(user)}}
         }
@@ -1356,12 +1357,12 @@ async function joinTelegram(k){
     const channelName = k==='tg1' ? 'Channel 1' : 'Channel 2';
     openTelegramLink(link);
     
-    showPopup('📢 '+channelName+' খোলা হয়েছে','Telegram এ সত্যি Join করুন, তারপর অ্যাপে ফিরে আসুন।\n\n⏳ ১৫ সেকেন্ডের মধ্যে যাচাই করা হবে।\n\n⚠️ সত্যি Join না করলে ২৫ টাকা বোনাস পাবেন না!\n\n🛑 জয়েন করার পর অবশ্যই আমাদের Telegram বটে গিয়ে "START" বাটনে ক্লিক করুন। নাহলে সিস্টেম আপনার জয়েন কনফার্ম করতে পারবে না।');
+    showPopup('📢 '+channelName+' খোলা হয়েছে','Telegram এ সত্যি Join করুন, তারপর অ্যাপে ফিরে আসুন।\n\n⏳ ১৫ সেকেন্ডের মধ্যে যাচাই করা হবে।\n\n⚠️ সত্যি Join না করলে ২৫ টাকা বোনাস পাবেন না!\n\n🛑 জয়েন করার পর অবশ্যই আমাদের Telegram বটে গিয়ে "START" বাটনে ক্লিক করুন। নাহলে সিস্টেম আপনার জয়েন কনফার্ম করতে পারবে না।');
     
     setTimeout(async()=>{
         try{
             const isJoined = await checkUserInChannel(user.telegramId, CHANNEL_IDS[k]);
-            if(!isJoined){showPopup('❌ আপনি Telegram এ জয়েন হননি!','আপনি এখনো '+channelName+' এ সত্যি জয়েন করেননি অথবা বটে Start করেননি!\n\n⚠️ বোনাস পেতে হলে অবশ্যই:\n১. Telegram এ যান\n২. '+channelName+' এ "Join" করুন\n৩. আমাদের বটে গিয়ে "START" চাপুন\n৪. অ্যাপে ফিরে আসুন\n\nআবার চেষ্টা করুন।');}
+            if(!isJoined){showPopup('❌ আপনি Telegram এ জয়েন হননি!','আপনি এখনো '+channelName+' এ সত্যি জয়েন করেননি অথবা বটে Start করেননি!\n\n⚠️ বোনাস পেতে হলে অবশ্যই:\n১. Telegram এ যান\n২. '+channelName+' এ "Join" করুন\n৩. আমাদের বটে গিয়ে "START" চাপুন\n৪. অ্যাপে ফিরে আসুন\n\nআবার চেষ্টা করুন।');}
         }catch(e){console.error(e)}
     }, 8000);
     setTimeout(()=>checkAllTelegramMembers(),5000);
@@ -1411,7 +1412,6 @@ document.getElementById('cardReferCount').textContent=user.referCount||0;
 document.getElementById('cardDeposit').textContent=(user.totalDeposit||0).toFixed(2);
 document.getElementById('cardWithdraw').textContent=(user.totalWithdraw||0).toFixed(2);
 
-// 🚀 FIXED: রেফার লিংক এখন টেলিগ্রাম ডিপ লিংক
 document.getElementById('refLink').value = `https://t.me/${BOT_USERNAME}?start=${user.userId}`;
 
 const wf=document.getElementById('wdNumber');if(wf&&user.linkedNumbers)wf.value=user.linkedNumbers[selectedWdMethodName]||'';
@@ -1434,7 +1434,41 @@ const invList=document.getElementById('activeInvestmentsList'),activeItems=(user
 if(pc>0){hb.textContent=pc;hb.classList.remove('hidden')}else hb.classList.add('hidden');
 if(activeItems.length===0)invList.innerHTML='<p style="color:var(--text);font-size:13px;text-align:center;padding:10px 0;opacity:.5;">কোনো সক্রিয় প্যাকেজ নেই</p>';
 else{activeItems.sort((a,b)=>(b.accumulatedProfit>0?1:0)-(a.accumulatedProfit>0?1:0));invList.innerHTML=activeItems.map(inv=>{const hp=inv.accumulatedProfit>0,oi=user.investments.indexOf(inv);return`<div class="investment-item"><div class="investment-info"><div class="title">${inv.label} (৳ ${inv.price.toLocaleString()})</div><div class="details">প্রফিট জমা: ৳ ${inv.accumulatedProfit.toFixed(2)} | দিন: ${inv.daysCount}/${inv.totalDays}</div></div><div class="claim-btn-wrapper"><button class="btn ${hp?'btn-green':'btn-disabled'}" style="padding:6px 12px;font-size:12px;" ${hp?'':'disabled'} onclick="claimProfit(${oi})">${hp?'Claim':'Claimed'}</button>${hp?'<div class="claim-notification-dot"></div>':''}</div></div>`}).join('')}
-renderTasks();renderPackages();renderTransactionHistoryList('withdrawHistoryList',user.history,'withdraw');renderTransactionHistoryList('depositHistoryList',user.history,'deposit');renderGiftHistory();gameUpdateBalance()}
+renderTasks();renderPackages();renderTransactionHistoryList('withdrawHistoryList',user.history,'withdraw');renderTransactionHistoryList('depositHistoryList',user.history,'deposit');renderGiftHistory();gameUpdateBalance();
+
+// 🆕 Withdraw Referral Progress Update (নতুন লজিক: target = আগের referCount + 10)
+const _rc = user.referCount || 0;
+const _target = (typeof user.withdrawTargetRefs === 'number') ? user.withdrawTargetRefs : 0;
+const _totalRefEl = document.getElementById('wdTotalRefers');
+if(_totalRefEl) _totalRefEl.textContent = _rc;
+
+const _refCountEl  = document.getElementById('wdRefProgressCount');
+const _refTargetEl = document.getElementById('wdRefTarget');
+const _refBarEl    = document.getElementById('wdRefProgressBar');
+const _refStatusEl = document.getElementById('wdRefProgressStatus');
+
+if(_target > 0){
+    const _pct = Math.min(100, (_rc / _target) * 100);
+    const _remaining = Math.max(0, _target - _rc);
+    if(_refCountEl)  _refCountEl.textContent  = _rc;
+    if(_refTargetEl) _refTargetEl.textContent = _target;
+    if(_refBarEl)    _refBarEl.style.width    = _pct + '%';
+    if(_refStatusEl){
+        if(_rc >= _target){
+            _refStatusEl.innerHTML = ' <span style="color:#16a34a;">✅ কমপ্লিট! উইথড্র করতে পারবেন</span>';
+            if(_refBarEl) _refBarEl.style.background = 'linear-gradient(90deg,#10b981,#059669)';
+        } else {
+            _refStatusEl.innerHTML = ` <span style="color:#dc2626;">(আর ${_remaining}টি রেফার বাকি)</span>`;
+            if(_refBarEl) _refBarEl.style.background = 'linear-gradient(90deg,#4f46e5,#7c3aed)';
+        }
+    }
+} else {
+    if(_refCountEl)  _refCountEl.textContent  = _rc;
+    if(_refTargetEl) _refTargetEl.textContent = '-';
+    if(_refBarEl)    _refBarEl.style.width    = '0%';
+    if(_refStatusEl) _refStatusEl.innerHTML   = ' <span style="color:#4f46e5;">(প্রথম উইথড্র চেষ্টা করলে টার্গেট সেট হবে)</span>';
+}
+}
 
 const TG_LOGO_SVG = '<svg viewBox="0 0 24 24" width="26" height="26" xmlns="http://www.w3.org/2000/svg" style="display:block"><circle cx="12" cy="12" r="12" fill="#229ED9"/><path d="M5.49 11.85L17.71 7.14C18.28 6.93 18.78 7.28 18.59 8.13L16.53 17.83C16.38 18.54 15.96 18.71 15.36 18.37L12.03 15.92L10.43 17.46C10.25 17.64 10.1 17.79 9.76 17.79L10 14.4L16.28 8.73C16.55 8.49 16.22 8.36 15.86 8.6L8.14 13.46L4.86 12.42C4.17 12.21 4.16 11.73 5.49 11.85Z" fill="#fff"/></svg>';
 
@@ -1489,17 +1523,41 @@ showClaimSuccess(`ডিপোজিট রিকোয়েস্ট সফল
 }catch(err){showPopup('Error',err.message)}finally{showLoading(false)}
 }
 
-// ✅ UPDATED: Deposit required for withdraw
+// ✅ UPDATED: Withdraw with new referral target logic
 async function doWithdraw(){
     if(!requireBothJoined('Withdraw'))return;
     let user=getActiveUser();
-    
-    // 🛑 CRITICAL: ডিপোজিট না করলে উইথড্র ব্লক
+
+    // 🛑 STEP 1: ডিপোজিট না থাকলে ব্লক
     if(!user.totalDeposit || Number(user.totalDeposit) < 1){
-        showPopup('⚠️ প্রথমে ডিপোজিট করুন!','আপনি এখনো কোনো ডিপোজিট করেননি!\n\n📌 উইথড্র করার জন্য প্রথমে ডিপোজিট করা জরুরি।\n\n💳 Deposit পেজে গিয়ে ডিপোজিট করুন।\n\n✅ ডিপোজিট করার পর উইথড্র করতে পারবেন।');
+        showPopup(
+            '⚠️ প্রথমে ডিপোজিট করুন!',
+            'আপনি এখনো কোনো ডিপোজিট করেননি!\n\n📌 উইথড্র করার জন্য প্রথমে ডিপোজিট করা জরুরি।\n\n💳 Deposit পেজে গিয়ে ডিপোজিট করুন।\n\n✅ ডিপোজিট করার পর উইথড্র করতে পারবেন।'
+        );
         return;
     }
-    
+
+    // 🛑 STEP 2: রেফারেল টার্গেট চেক (নতুন লজিক)
+    const referCount = user.referCount || 0;
+    let target = (typeof user.withdrawTargetRefs === 'number') ? user.withdrawTargetRefs : 0;
+
+    // প্রথমবার উইথড্র চেষ্টা হলে → snapshot: target = currentReferCount + 10
+    if(target <= 0){
+        target = referCount + 10;
+        user.withdrawTargetRefs = target;
+        await saveUserToFirebase(user);
+    }
+
+    if(referCount < target){
+        const remaining = target - referCount;
+        showPopup(
+            '⚠️ আরো রেফারেল প্রয়োজন!',
+            `আপনার এই উইথড্রর জন্য কমপক্ষে ${target} টি রেফারেল কমপ্লিট করতে হবে।\n\n📊 আপনার বর্তমান রেফার: ${referCount}\n🎯 প্রয়োজন: ${target}\n🔴 আর বাকি: ${remaining}টি\n\n👥 প্রতি সফল রেফারে ৳৩০ বোনাস পাবেন।\n📌 Home পেজে গিয়ে আপনার রেফার লিংক বন্ধুদের সাথে শেয়ার করুন।\n\n⚠️ শর্ত: রেফার করা ব্যক্তি অবশ্যই ২টি Telegram চ্যানেলে জয়েন করবেন, নাহলে রেফার কাউন্ট হবে না।\n\n✅ ${target}টি রেফার হলে আবার উইথড্র করতে পারবেন।`
+        );
+        updateUI();
+        return;
+    }
+
     const amt=parseFloat(document.getElementById('wdAmount').value),wn=document.getElementById('wdNumber').value.trim();
     if(!amt||amt<MIN_WITHDRAW||amt>50000){showPopup('Error','উইথড্র অ্যামাউন্ট সর্বনিম্ন ৫০০ টাকা থেকে সর্বোচ্চ ৫০,০০০ টাকা হতে হবে!');return}
     if(!wn||wn.length<11){showPopup('Error','সঠিক পার্সোনাল নম্বর (11 digit) দিন');return}
@@ -1508,18 +1566,27 @@ async function doWithdraw(){
     if(user.linkedNumbers&&user.linkedNumbers[selectedWdMethodName]&&user.linkedNumbers[selectedWdMethodName]!==wn){showPopup('⚠️ সতর্কতা',`আপনার অ্যাকাউন্টে ইতিমধ্যে ${selectedWdMethodName} এর জন্য একটি নাম্বার সংযুক্ত আছে!\nএকটি মেথডের জন্য শুধুমাত্র একটি নাম্বার ব্যবহার করতে পারেন।`);return}
     const wc=5,td=amt+wc;
     if(td>user.balance){showPopup('Error',`পর্যাপ্ত ব্যালেন্স নেই! প্রয়োজন: ৳ ${td.toFixed(2)} (উইথড্র ৳${amt} + চার্জ ৳${wc})`);return}
+
     showLoading(true);
     try{
         user.balance-=td;user.totalWithdraw=(user.totalWithdraw||0)+amt;
         if(!user.linkedNumbers)user.linkedNumbers={bKash:'',Nagad:''};
         user.linkedNumbers[selectedWdMethodName]=wn;user.linkedWithdrawNumber=wn;
+
+        // 🆕 সফল উইথড্রর পর নতুন target = current referCount + 10
+        user.withdrawTargetRefs = referCount + 10;
+
         const r=database.ref('pendingWithdraws').push();
         await r.set({id:r.key,uid:user.userId,userId:user.userId,loginId:user.loginId,nick:user.nick,method:selectedWdMethodName,amount:amt,charge:wc,withdrawNumber:wn,status:'Pending',time:getFormattedServerTime()});
         if(!user.history)user.history=[];
         user.history.push({id:r.key,type:`Withdraw (${selectedWdMethodName})`,method:selectedWdMethodName,amount:-amt,charge:wc,withdrawAmount:amt,status:'Pending',number:wn,time:getFormattedServerTime()});
         document.getElementById('wdAmount').value='';
         await saveUserToFirebase(user);updateUI();gameUpdateBalance();
-        showPopup('Success',`৳ ${amt.toFixed(2)} উইথড্র রিকোয়েস্ট সফল হয়েছে!\nচার্জ কাটা হয়েছে: ৳ ${wc.toFixed(2)}\nইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে পেমেন্ট হয়ে যাবে।`);
+
+        showPopup(
+            '✅ উইথড্র রিকোয়েস্ট সফল!',
+            `৳ ${amt.toFixed(2)} উইথড্র রিকোয়েস্ট সফল হয়েছে!\nচার্জ কাটা হয়েছে: ৳ ${wc.toFixed(2)}\n\n⏳ ইনফরমেশন চেক করা হচ্ছে, ২ ঘণ্টার মধ্যে পেমেন্ট হয়ে যাবে।\n\n📌 পরবর্তী উইথড্রর জন্য আপনাকে আবার ${user.withdrawTargetRefs}টি রেফারেল কমপ্লিট করতে হবে (অর্থাৎ আরো ${user.withdrawTargetRefs - referCount}টি নতুন রেফার)।`
+        );
     }catch(err){showPopup('Error',err.message)}finally{showLoading(false)}
 }
 
@@ -1730,7 +1797,6 @@ window.addEventListener('DOMContentLoaded',async()=>{
             window.Telegram.WebApp.ready();
             window.Telegram.WebApp.expand();
             
-            // 🛑 Google Login বাটন লুকিয়ে ফেলা (Telegram WebView-এ কাজ করে না)
             const socialDivider = document.getElementById('socialLoginDivider');
             const socialGrid = document.getElementById('socialLoginGrid');
             if(socialDivider) socialDivider.style.display = 'none';
@@ -1744,9 +1810,8 @@ window.addEventListener('DOMContentLoaded',async()=>{
     const urlRef=getUrlRefCode();
     if(urlRef){const ri=document.getElementById('regRefCode');if(ri)ri.value=urlRef}
     
-    // 🚀 Auto Login via Telegram ID (সবচেয়ে গুরুত্বপূর্ণ)
     const autoLoggedIn = await autoLoginViaTelegram();
-    if(autoLoggedIn) return; // অটো লগইন সফল হলে আর লগইন স্ক্রিন দেখাবে না
+    if(autoLoggedIn) return;
 
     const sk=localStorage.getItem('logged_trust_user_key');
     if(sk){
