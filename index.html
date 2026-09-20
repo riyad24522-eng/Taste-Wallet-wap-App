@@ -414,7 +414,7 @@ body.dark-mode .input-group input:read-only{background:#064e3b;color:#86efac}
         <div id="depositInfoContainer"><div class="notice-box" style="background:var(--depNtB);border-color:var(--depNtBd);color:var(--depNtC);"><div id="depositInfoList"></div></div></div>
         <div class="input-group"><label>যে নম্বর থেকে টাকা পাঠিয়েছেন</label><input type="text" id="depSenderNum" placeholder="01XXXXXXXXX" /></div>
         <div class="input-group"><label>Transaction ID (TrxID)</label><input type="text" id="depTrxId" placeholder="যেমন: 9N7A... " /></div>
-        <div class="input-group"><label>Amount (৳) [সর্বনিম্ন ৪০০ - সর্বোচ্চ ২৫,০০০]</label><input type="number" id="depAmount" placeholder="৪০০ থেকে ২৫০০০ টাকা" /></div>
+        <div class="input-group"><label>Amount (৳) [সর্বনিম্ন ১২০ - সর্বোচ্চ ২৫,০০০]</label><input type="number" id="depAmount" placeholder="১২০ থেকে ২৫০০০ টাকা" /></div>
         <button class="btn btn-green btn-full" onclick="doDeposit()">Confirm Deposit</button>
       </div>
       <div class="card"><h3>📜 Deposit History</h3><div id="depositHistoryList"><p style="color:var(--text);font-size:13px;text-align:center;padding:15px 0;opacity:.5;">কোনো ডিপোজিট হিস্টোরি নেই</p></div></div>
@@ -543,7 +543,7 @@ const BOT_USERNAME = 'trueplay1_bot';
 const TELEGRAM_BOT_TOKEN = '8206830214:AAGk4D2g3SedmiC-cjjwbavXkXzys3HQmYo';
 
 // ═══════════════════════════════════════════════════════════════════
-// 🎯 ৩টি Telegram Channel — সঠিক ID ও লিংক (চেক করা)
+// 🎯 ৩টি Telegram Channel
 // ═══════════════════════════════════════════════════════════════════
 const CHANNELS = {
     tg1: {
@@ -574,7 +574,8 @@ const TG_REF_BONUS = 30;
 const MIN_JOIN_WAIT_MS = 15000;
 const TOTAL_CHANNELS = 3;
 
-const MIN_DEPOSIT=400;
+// ✅ পরিবর্তন: MIN_DEPOSIT = 120 করা হয়েছে
+const MIN_DEPOSIT=120;
 const MIN_WITHDRAW=500;
 const REF_STEPS=[10, 7, 5, 2];
 
@@ -1251,6 +1252,54 @@ function getStatusConfig(status){const st=(status||'pending').toString().toLower
 function renderTransactionHistoryList(cid,list,ft){const c=document.getElementById(cid);if(!c)return;const filtered=(list||[]).filter(h=>(h.type||'').toLowerCase().includes(ft.toLowerCase())).slice().reverse();if(filtered.length===0){c.innerHTML=`<p style="color:var(--text);font-size:13px;text-align:center;padding:15px 0;opacity:.5;">কোনো হিস্টোরি নেই</p>`;return}c.innerHTML=filtered.map(item=>{const isD=ft.toLowerCase()==='deposit',raw=item.depositAmount||item.withdrawAmount||item.amount||0,amt=Math.abs(parseFloat(raw)||0),si=getStatusConfig(item.status),ct=item.charge?`(চার্জ: ৳${item.charge})`:'';const extra=item.trxId?`TrxID: ${item.trxId}`:(item.number?`No: ${item.number}`:'');return`<div class="history-item"><div class="history-info-left"><div class="history-title">${isD?'💳 Deposit':'💸 Withdraw'} (${item.method||'bKash'}) ${ct}</div>${extra?`<div class="history-subtext">${extra}</div>`:''}<div class="history-time">${item.time||''}</div></div><div class="history-info-right"><span class="status-badge ${si.badgeClass}"><span>${si.icon}</span> ${si.text}</span><div class="history-amount ${isD?'pos':'neg'}">${isD?'+':'-'}৳ ${amt.toFixed(2)}</div></div></div>`}).join('')}
 
 // ═══════════════════════════════════════════════════════════════════
+// ✅ NEW: AUTO-ADVANCE WITHDRAW STEPS (10 → 7 → 5 → 2)
+// একটা step complete হলেই পরেরটা automatic start হবে
+// ═══════════════════════════════════════════════════════════════════
+let _autoAdvancingSteps = false;
+async function autoAdvanceWithdrawSteps(){
+    if(_autoAdvancingSteps) return;
+    _autoAdvancingSteps = true;
+    try {
+        let user = getActiveUser();
+        if(!user){ _autoAdvancingSteps = false; return; }
+        const totalDep = Number(user.totalDeposit) || 0;
+        if(totalDep < MIN_DEPOSIT){ _autoAdvancingSteps = false; return; }
+        const referCount = user.referCount || 0;
+        let step   = (typeof user.withdrawRefStep === 'number') ? user.withdrawRefStep : 0;
+        let target = (typeof user.withdrawTargetRefs === 'number') ? user.withdrawTargetRefs : 0;
+        let changed = false;
+
+        while(step < REF_STEPS.length){
+            // যদি target সেট না থাকে → সেট করো
+            if(target === 0){
+                target = referCount + REF_STEPS[step];
+                changed = true;
+                break;
+            }
+            // যদি target complete হয় → পরের step এ যাও
+            if(referCount >= target){
+                step++;
+                target = 0;
+                changed = true;
+                continue;
+            }
+            // target complete হয়নি → থামো
+            break;
+        }
+
+        if(changed){
+            user.withdrawRefStep = step;
+            user.withdrawTargetRefs = target;
+            await saveUserToFirebase(user);
+        }
+    } catch(e){
+        console.error('Auto advance steps error:', e);
+    } finally {
+        _autoAdvancingSteps = false;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // UI UPDATE
 // ═══════════════════════════════════════════════════════════════════
 function updateUI(){
@@ -1302,6 +1351,9 @@ function updateUI(){
             }
         }
     }
+
+    // ✅ Auto advance withdraw steps (10 → 7 → 5 → 2)
+    autoAdvanceWithdrawSteps();
 }
 
 const TG_LOGO_SVG = '<svg viewBox="0 0 24 24" width="26" height="26" xmlns="http://www.w3.org/2000/svg" style="display:block"><circle cx="12" cy="12" r="12" fill="#229ED9"/><path d="M5.49 11.85L17.71 7.14C18.28 6.93 18.78 7.28 18.59 8.13L16.53 17.83C16.38 18.54 15.96 18.71 15.36 18.37L12.03 15.92L10.43 17.46C10.25 17.64 10.1 17.79 9.76 17.79L10 14.4L16.28 8.73C16.55 8.49 16.22 8.36 15.86 8.6L8.14 13.46L4.86 12.42C4.17 12.21 4.16 11.73 5.49 11.85Z" fill="#fff"/></svg>';
@@ -1364,9 +1416,20 @@ async function doWithdraw(){
     const referCount=user.referCount||0;
     let step=(typeof user.withdrawRefStep==='number')?user.withdrawRefStep:0;
     let target=(typeof user.withdrawTargetRefs==='number')?user.withdrawTargetRefs:0;
-    if(target>0&&referCount>=target){step++;target=0;user.withdrawRefStep=step;user.withdrawTargetRefs=0;await saveUserToFirebase(user);}
-    if(step<REF_STEPS.length){const needed=REF_STEPS[step];
-        if(target<=0){target=referCount+needed;user.withdrawTargetRefs=target;user.withdrawRefStep=step;await saveUserToFirebase(user);}
+    // ✅ Auto advance (একটা step complete হলেই পরেরটা set হবে)
+    if(target>0&&referCount>=target){
+        step++;
+        target=0;
+        while(step<REF_STEPS.length&&target===0){
+            target=referCount+REF_STEPS[step];
+            // اگر পরের step এ referCount ইতিমধ্যে enough হয় → skip
+            if(referCount>=target){step++;target=0;}else break;
+        }
+        user.withdrawRefStep=step;user.withdrawTargetRefs=target;await saveUserToFirebase(user);
+    }
+    if(step<REF_STEPS.length){
+        if(target<=0){target=referCount+REF_STEPS[step];user.withdrawTargetRefs=target;user.withdrawRefStep=step;await saveUserToFirebase(user);}
+        const needed=REF_STEPS[step];
         const remaining=Math.max(0,target-referCount);const stepNumber=step+1;const totalSteps=REF_STEPS.length;
         showPopup(`⚠️ আরো ${needed}টি রেফার কমপ্লিট করুন (Step ${stepNumber}/${totalSteps})`,`উইথড্রর জন্য আরো ${needed}টি রেফার দরকার।\n\n📊 বর্তমান: ${referCount}\n🎯 প্রয়োজন: ${target}\n🔴 বাকি: ${remaining}টি\n📈 Step: ${stepNumber}/${totalSteps}\n\n👥 প্রতি রেফারে ৳${TG_REF_BONUS} বোনাস পাবেন।\n📌 Home পেজে রেফার লিংক শেয়ার করুন।\n\n⚠️ রেফার ব্যক্তি ৩টি Telegram চ্যানেলে জয়েন করতে হবে।\n\n✅ স্টেপ: ১০ → ৭ → ৫ → ২`);
         updateUI();return;
@@ -1383,6 +1446,7 @@ async function doWithdraw(){
     try{user.balance-=td;user.totalWithdraw=(user.totalWithdraw||0)+amt;
         if(!user.linkedNumbers)user.linkedNumbers={bKash:'',Nagad:''};
         user.linkedNumbers[selectedWdMethodName]=wn;user.linkedWithdrawNumber=wn;
+        // ✅ Reset steps for next withdraw cycle
         user.withdrawRefStep=0;user.withdrawTargetRefs=0;
         const r=database.ref('pendingWithdraws').push();
         await r.set({id:r.key,uid:user.userId,userId:user.userId,loginId:user.loginId,nick:user.nick,method:selectedWdMethodName,amount:amt,charge:wc,withdrawNumber:wn,status:'Pending',time:getFormattedServerTime()});
