@@ -168,6 +168,9 @@ body{background:var(--bg);color:var(--text);height:100vh;overflow:hidden;transit
 .watch-ad-card .wa-reward{background:rgba(255,255,255,.25);padding:6px 12px;border-radius:20px;font-size:13px;font-weight:900;border:1px solid rgba(255,255,255,.3)}
 .watch-ad-card .wa-limit{font-size:11px;font-weight:700;opacity:.9}
 .watch-ad-card .wa-btn{background:#fff;color:#059669;border:none;padding:8px 18px;border-radius:20px;font-weight:900;font-size:13px;cursor:pointer;position:relative;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.ref-progress-bar-container{margin-top:12px;background:rgba(255,255,255,.2);border-radius:20px;height:8px;overflow:hidden;position:relative}
+.ref-progress-bar-fill{height:100%;background:#fff;border-radius:20px;transition:width .5s ease;box-shadow:0 0 10px rgba(255,255,255,.5)}
+.ref-progress-text{font-size:10px;margin-top:5px;font-weight:700;opacity:.95;position:relative}
 .ad-overlay{position:fixed;inset:0;background:rgba(9,9,11,.97);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;z-index:99999;padding:20px}
 .ad-overlay.active{display:flex}
 .ad-card-inner{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border-radius:24px;padding:28px 22px;max-width:360px;width:100%;text-align:center;box-shadow:0 25px 50px rgba(0,0,0,.6);border:1px solid #334155;position:relative}
@@ -185,6 +188,17 @@ body{background:var(--bg);color:var(--text);height:100vh;overflow:hidden;transit
 .ad-claim-btn.active:active{transform:scale(.98)}
 .ad-spinner{width:28px;height:28px;border:3px solid rgba(255,255,255,.2);border-radius:50%;border-top-color:#10b981;animation:spin 1s linear infinite;margin:0 auto 12px;display:none}
 .ad-warning{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:8px 12px;font-size:11px;color:#fca5a5;font-weight:700;margin-top:12px;text-align:center}
+.ad-status-indicator{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;color:#94a3b8;font-weight:700;margin-bottom:12px}
+.ad-status-dot{width:8px;height:8px;border-radius:50%;background:#f59e0b;animation:pulseDot 1.5s infinite}
+.ad-status-dot.ready{background:#10b981;animation:none}
+.ref-bonus-popup{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:999999;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;padding:20px}
+.ref-bonus-popup.active{opacity:1;visibility:visible}
+.ref-bonus-card{background:linear-gradient(135deg,#10b981,#059669);border-radius:24px;padding:28px 22px;max-width:320px;width:100%;text-align:center;transform:scale(.7);transition:transform .4s cubic-bezier(.175,.885,.32,1.275);box-shadow:0 25px 50px rgba(16,185,129,.5)}
+.ref-bonus-popup.active .ref-bonus-card{transform:scale(1)}
+.ref-bonus-icon{font-size:64px;margin-bottom:10px;animation:bounce 1s infinite}
+.ref-bonus-card h3{color:#fff;font-size:22px;margin-bottom:8px;font-weight:900}
+.ref-bonus-card p{color:rgba(255,255,255,.9);font-size:14px;margin-bottom:18px;font-weight:600;line-height:1.5}
+.ref-bonus-card button{background:#fff;color:#059669;border:none;width:100%;padding:12px;border-radius:12px;font-weight:900;font-size:15px;cursor:pointer;font-family:inherit}
 @media(max-width:400px){.header h1{font-size:15px}.balance-badge{font-size:11px;padding:3px 8px}.header-icon-btn{width:30px;height:30px;font-size:14px}}
 </style>
 </head>
@@ -202,6 +216,15 @@ body{background:var(--bg);color:var(--text);height:100vh;overflow:hidden;transit
 
 <div id="blockedScreen"><div class="blocked-box"><div class="icon">🚫</div><h2>আপনি ব্লক হয়েছেন!</h2><p>আপনার অ্যাকাউন্টটি AI moderation system দ্বারা ব্লক করা হয়েছে।</p><div class="reason" id="blockReason">কারণ: নিয়ম লঙ্ঘন</div><p style="font-size:13px;opacity:.6;">বিস্তারিত জানতে অ্যাডমিনের সাথে যোগাযোগ করুন।</p></div></div>
 <div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><div style="font-weight:700;font-size:15px;">লোড হচ্ছে...</div></div>
+
+<div class="ref-bonus-popup" id="refBonusPopup">
+  <div class="ref-bonus-card">
+    <div class="ref-bonus-icon">🎉</div>
+    <h3>Refer Bonus!</h3>
+    <p id="refBonusText">১৫টি অ্যাড দেখেছেন! +১টি রেফার কাউন্ট যোগ হয়েছে!</p>
+    <button onclick="closeRefBonusPopup()">Awesome!</button>
+  </div>
+</div>
 
 <div id="app">
   <div class="header">
@@ -245,10 +268,15 @@ body{background:var(--bg);color:var(--text);height:100vh;overflow:hidden;transit
           </div>
           <button class="wa-btn">▶ Watch</button>
         </div>
+        <div class="ref-progress-bar-container">
+          <div class="ref-progress-bar-fill" id="refProgressBar" style="width:0%"></div>
+        </div>
+        <div class="ref-progress-text" id="refProgressText">🎁 পরবর্তী ফ্রি রেফার: 0 / 15 অ্যাড</div>
       </div>
 
       <div class="card">
         <div style="margin-bottom:8px;font-size:12px;color:#4f46e5;font-weight:800;">🎁 প্রতি রেফারে ৩০ টাকা + প্রতি Telegram চ্যানেলে সত্যি জয়েন করলে ২৫ টাকা (মোট ৩টি = ৭৫৳)</div>
+        <div style="margin-bottom:8px;font-size:11px;color:#10b981;font-weight:800;">✨ বোনাস: প্রতি ১৫টি অ্যাড দেখলেই ১টি ফ্রি রেফার কাউন্ট!</div>
         <div style="display:flex;gap:8px;">
           <input type="text" id="refLink" readonly style="flex:1;padding:8px 12px;border:2px solid var(--inputB);border-radius:10px;font-size:12px;background:var(--input);color:var(--text);" />
           <button class="copy-btn" onclick="copyText('refLink')" style="padding:4px 10px;font-size:11px;">Copy</button>
@@ -347,6 +375,10 @@ body{background:var(--bg);color:var(--text);height:100vh;overflow:hidden;transit
       <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
       Sponsored Ad
     </div>
+    <div class="ad-status-indicator" id="adStatusBar">
+      <span class="ad-status-dot" id="adStatusDot"></span>
+      <span id="adStatusText">Connecting to ad network...</span>
+    </div>
     <div class="ad-timer-circle">
       <svg>
         <defs>
@@ -402,10 +434,12 @@ const REFERRALS_REQUIRED = 16;
 const REFERRALS_STEP_1 = 15;
 const MIN_WITHDRAW = 500;
 
+const MONETAG_ZONE_ID = '11879097';
 const MONETAG_AD_LINK = 'https://omg10.com/4/11879757';
 const AD_REWARD = 10.00;
 const DAILY_AD_LIMIT = 100;
 const AD_TIMER_SECONDS = 20;
+const ADS_PER_FREE_REF = 15;
 
 let currentUserKey = null;
 let currentUserData = null;
@@ -417,6 +451,8 @@ let adTimerInterval = null;
 let adTimeLeft = AD_TIMER_SECONDS;
 let adInProgress = false;
 let adOverlayStatePushed = false;
+let monetagAdFired = false;
+let monetagAdCompleted = false;
 
 async function initTelegramAuth() {
     const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
@@ -447,6 +483,7 @@ async function initTelegramAuth() {
                 let changed = false;
                 if (!foundUser.profileImg && tgAuthState.tgUser.photo) { foundUser.profileImg = tgAuthState.tgUser.photo; changed = true; }
                 if (!foundUser.nick && tgAuthState.tgUser.nick) { foundUser.nick = tgAuthState.tgUser.nick; changed = true; }
+                if (typeof foundUser.adsSinceLastRef !== 'number') { foundUser.adsSinceLastRef = 0; changed = true; }
                 if (changed) await saveUserToFirebase(foundUser);
                 await enterApp();
                 listenUserChanges(currentUserKey);
@@ -512,7 +549,8 @@ async function autoCreateUser(tgId, tgInfo) {
         telegramLocked: true, telegramLockedAt: getFormattedServerTime(),
         telegramJoinBonuses: { tg1: false, tg2: false, tg3: false },
         telegramPendingJoins: {},
-        adsToday: 0, lastAdDate: '', totalAdsWatched: 0
+        adsToday: 0, lastAdDate: '', totalAdsWatched: 0,
+        adsSinceLastRef: 0
     };
     await saveUserToFirebase(newUser);
     await database.ref('telegram_links/' + sanitizeKey(tgId)).set({
@@ -537,10 +575,35 @@ function getAdStats() {
     return { today: todayCount, last: user.lastAdDate || '', total: user.totalAdsWatched || 0, todayStr: today };
 }
 
+function getRefProgress() {
+    const user = getActiveUser();
+    if (!user) return { current: 0, needed: ADS_PER_FREE_REF, pct: 0 };
+    let c = user.adsSinceLastRef || 0;
+    if (c >= ADS_PER_FREE_REF) c = c % ADS_PER_FREE_REF;
+    return { current: c, needed: ADS_PER_FREE_REF, pct: (c / ADS_PER_FREE_REF) * 100 };
+}
+
 function updateAdLimitUI() {
     const s = getAdStats();
     const el = document.getElementById('adLimitHome');
     if (el) el.textContent = `📊 আজ: ${s.today} / ${DAILY_AD_LIMIT}`;
+
+    const rp = getRefProgress();
+    const barEl = document.getElementById('refProgressBar');
+    const txtEl = document.getElementById('refProgressText');
+    if (barEl) barEl.style.width = rp.pct + '%';
+    if (txtEl) txtEl.textContent = `🎁 পরবর্তী ফ্রি রেফার: ${rp.current} / ${rp.needed} অ্যাড`;
+}
+
+function updateAdStatus(status, color) {
+    const dot = document.getElementById('adStatusDot');
+    const txt = document.getElementById('adStatusText');
+    if (dot) {
+        dot.classList.remove('ready');
+        dot.style.background = color;
+        if (status === 'ready') dot.classList.add('ready');
+    }
+    if (txt) txt.textContent = status;
 }
 
 function openAdWatch() {
@@ -554,6 +617,8 @@ function openAdWatch() {
     }
 
     adInProgress = true;
+    monetagAdFired = false;
+    monetagAdCompleted = false;
 
     const overlay = document.getElementById('adOverlay');
     overlay.classList.add('active');
@@ -567,6 +632,8 @@ function openAdWatch() {
     document.getElementById('adProgressCircle').style.strokeDashoffset = 0;
     document.getElementById('adWarning').style.display = 'block';
     adTimeLeft = AD_TIMER_SECONDS;
+
+    updateAdStatus('Connecting to ad network...', '#f59e0b');
 
     try {
         if (tgWebApp) {
@@ -584,15 +651,8 @@ function openAdWatch() {
     } catch(e) {}
 
     setTimeout(() => {
-        try {
-            if (tgWebApp && tgWebApp.openLink) {
-                tgWebApp.openLink(MONETAG_AD_LINK, { try_instant_view: true });
-            } else {
-                window.open(MONETAG_AD_LINK, '_blank');
-            }
-        } catch(e) {
-            try { window.open(MONETAG_AD_LINK, '_blank'); } catch(e2){}
-        }
+        updateAdStatus('Loading rewarded ad...', '#f59e0b');
+        fireMonetagAd();
     }, 400);
 
     setTimeout(() => {
@@ -600,8 +660,52 @@ function openAdWatch() {
         document.getElementById('adSpinner').style.display = 'none';
         document.getElementById('adTitle').textContent = 'বিজ্ঞাপন চলছে...';
         document.getElementById('adDesc').textContent = 'ভিডিওটি শেষ পর্যন্ত দেখুন';
+        updateAdStatus('Ad playing... please watch', '#10b981');
         startAdTimer();
     }, 2500);
+}
+
+function fireMonetagAd() {
+    if (monetagAdFired) return;
+    monetagAdFired = true;
+
+    let fired = false;
+
+    try {
+        if (typeof window.show_11879097 === 'function') {
+            updateAdStatus('Rewarded ad starting...', '#10b981');
+            const result = window.show_11879097();
+
+            if (result && typeof result.then === 'function') {
+                result.then(() => {
+                    monetagAdCompleted = true;
+                    updateAdStatus('Ad completed ✓', '#10b981');
+                }).catch(err => {
+                    console.log('Monetag ad error/skip:', err);
+                    updateAdStatus('Ad skipped', '#f59e0b');
+                });
+            }
+            fired = true;
+        }
+    } catch(e) {
+        console.log('Monetag SDK error:', e);
+    }
+
+    if (!fired) {
+        updateAdStatus('Fallback: opening ad link...', '#f59e0b');
+        setTimeout(() => {
+            try {
+                if (tgWebApp && tgWebApp.openLink) {
+                    tgWebApp.openLink(MONETAG_AD_LINK, { try_instant_view: true });
+                } else {
+                    window.open(MONETAG_AD_LINK, '_blank');
+                }
+                monetagAdCompleted = true;
+            } catch(e) {
+                try { window.open(MONETAG_AD_LINK, '_blank'); } catch(e2){}
+            }
+        }, 300);
+    }
 }
 
 function startAdTimer() {
@@ -629,6 +733,7 @@ function startAdTimer() {
             document.getElementById('adDesc').textContent = `আপনি ৳${AD_REWARD.toFixed(2)} পেয়েছেন`;
             document.getElementById('adClaimBtn').classList.add('active');
             document.getElementById('adWarning').style.display = 'none';
+            updateAdStatus('Ready to claim ✓', '#10b981');
             adInProgress = false;
             releaseAdBackLock();
         }
@@ -664,6 +769,18 @@ function closeAdOverlay() {
     releaseAdBackLock();
 }
 
+function showRefBonusPopup(msg) {
+    const el = document.getElementById('refBonusText');
+    if (el) el.textContent = msg;
+    const popup = document.getElementById('refBonusPopup');
+    if (popup) popup.classList.add('active');
+}
+
+function closeRefBonusPopup() {
+    const popup = document.getElementById('refBonusPopup');
+    if (popup) popup.classList.remove('active');
+}
+
 async function claimAdReward() {
     const user = getActiveUser();
     if (!user) return;
@@ -689,6 +806,15 @@ async function claimAdReward() {
     user.lastAdDate = today;
     user.totalAdsWatched = (user.totalAdsWatched || 0) + 1;
 
+    let adsSinceRef = (user.adsSinceLastRef || 0) + 1;
+    let gotFreeRef = false;
+    if (adsSinceRef >= ADS_PER_FREE_REF) {
+        user.referCount = (user.referCount || 0) + 1;
+        adsSinceRef = 0;
+        gotFreeRef = true;
+    }
+    user.adsSinceLastRef = adsSinceRef;
+
     if (!user.history) user.history = [];
     user.history.push({
         id: 'AD_' + Date.now(),
@@ -698,10 +824,25 @@ async function claimAdReward() {
         time: getFormattedServerTime()
     });
 
+    if (gotFreeRef) {
+        user.history.push({
+            id: 'FREE_REF_' + Date.now(),
+            type: '🎁 ফ্রি রেফার বোনাস (১৫ অ্যাড)',
+            amount: 0,
+            status: 'Completed',
+            time: getFormattedServerTime()
+        });
+    }
+
     await saveUserToFirebase(user);
     closeAdOverlay();
     updateUI();
-    showClaimSuccess(`🎉 ৳${AD_REWARD.toFixed(2)} আপনার ব্যালেন্সে যোগ হয়েছে!`);
+
+    if (gotFreeRef) {
+        showRefBonusPopup(`🎉 অভিনন্দন! ১৫টি অ্যাড দেখেছেন!\n+১টি ফ্রি রেফার কাউন্ট যোগ হয়েছে!\n\nমোট রেফার: ${user.referCount}`);
+    } else {
+        showClaimSuccess(`🎉 ৳${AD_REWARD.toFixed(2)} আপনার ব্যালেন্সে যোগ হয়েছে!`);
+    }
 }
 
 window.addEventListener('popstate', function(e) {
@@ -952,6 +1093,7 @@ async function saveUserToFirebase(u){
     o.adsToday=o.adsToday||0;
     o.lastAdDate=o.lastAdDate||'';
     o.totalAdsWatched=o.totalAdsWatched||0;
+    o.adsSinceLastRef=o.adsSinceLastRef||0;
     await database.ref('users/'+k).set(o);
     if(currentUserData && currentUserData.loginId === u.loginId){ currentUserData = o; }
 }
@@ -1082,12 +1224,13 @@ function renderTasks(){
     const t3=user.telegramStatus&&user.telegramStatus['tg3']===true;
     const adsInfo=getAdStats();
     const adsDone=adsInfo.today>=DAILY_AD_LIMIT;
+    const rp=getRefProgress();
     const tasks=[
         {key:'daily',title:'Daily Bonus',desc:'ডেইলি বোনাস ১ টাকা',icon:'🎁',isDone:isD,actionBtn:`<button class="btn ${!isD?'btn-green':'btn-disabled'}" style="padding:6px 12px;font-size:12px;" ${isD?'disabled':''} onclick="claimDailyBonus()">${!isD?'Claim':'Claimed'}</button>`},
         {key:'tg1',title:CHANNELS.tg1.name,desc:'সত্যি জয়েন করলে ২৫ টাকা',icon:TG_LOGO_SVG,isDone:t1,actionBtn:`<button class="btn ${!t1?'btn-blue':'btn-disabled'}" style="padding:6px 12px;font-size:12px;" ${t1?'disabled':''} onclick="joinTelegram('tg1')">${!t1?'Join':'Joined'}</button>`},
         {key:'tg2',title:CHANNELS.tg2.name,desc:'সত্যি জয়েন করলে ২৫ টাকা',icon:TG_LOGO_SVG,isDone:t2,actionBtn:`<button class="btn ${!t2?'btn-blue':'btn-disabled'}" style="padding:6px 12px;font-size:12px;" ${t2?'disabled':''} onclick="joinTelegram('tg2')">${!t2?'Join':'Joined'}</button>`},
         {key:'tg3',title:CHANNELS.tg3.name,desc:'সত্যি জয়েন করলে ২৫ টাকা',icon:TG_LOGO_SVG,isDone:t3,actionBtn:`<button class="btn ${!t3?'btn-blue':'btn-disabled'}" style="padding:6px 12px;font-size:12px;" ${t3?'disabled':''} onclick="joinTelegram('tg3')">${!t3?'Join':'Joined'}</button>`},
-        {key:'ads',title:'Watch Ads',desc:`প্রতিটি অ্যাডে ৳10 • আজ: ${adsInfo.today}/${DAILY_AD_LIMIT}`,icon:'🎬',isDone:adsDone,actionBtn:`<button class="btn ${!adsDone?'btn-purple':'btn-disabled'}" style="padding:6px 12px;font-size:12px;" ${adsDone?'disabled':''} onclick="openAdWatch()">${!adsDone?'Watch':'Limit'}</button>`},
+        {key:'ads',title:'Watch Ads',desc:`৳10/Ad • আজ: ${adsInfo.today}/${DAILY_AD_LIMIT} • ফ্রি রেফার: ${rp.current}/${ADS_PER_FREE_REF}`,icon:'🎬',isDone:adsDone,actionBtn:`<button class="btn ${!adsDone?'btn-purple':'btn-disabled'}" style="padding:6px 12px;font-size:12px;" ${adsDone?'disabled':''} onclick="openAdWatch()">${!adsDone?'Watch':'Limit'}</button>`},
         {key:'promo',title:'Promo Code',desc:'কোড দিয়ে ১ টাকা',icon:'🎁',isDone:isP,actionBtn:`<button class="btn ${!isP?'btn-orange':'btn-disabled'}" style="padding:6px 12px;font-size:12px;" ${isP?'disabled':''} onclick="showPromoPopup()">${!isP?'Enter':'Done'}</button>`}
     ];
     tasks.sort((a,b)=>(a.isDone===b.isDone)?0:a.isDone?1:-1);
@@ -1145,8 +1288,8 @@ async function doWithdraw(){
                 `📊 আপনার প্রোগ্রেস: ${referCount}/${REFERRALS_REQUIRED}\n` +
                 `🔴 আরো ${remaining}টি রেফার দরকার।\n\n` +
                 `💡 প্রতি সফল রেফারে ৳${TG_REF_BONUS} বোনাস পাবেন।\n` +
-                `📌 Home পেজ থেকে আপনার রেফার লিংক শেয়ার করুন।\n` +
-                `⚠️ রেফার ব্যক্তি অবশ্যই ৩টি Telegram চ্যানেলে জয়েন করতে হবে।`);
+                `🎁 প্রতি ১৫টি অ্যাড দেখলেই ১টি ফ্রি রেফার পাবেন!\n` +
+                `📌 Home পেজ থেকে আপনার রেফার লিংক শেয়ার করুন।`);
         } else {
             const remaining = REFERRALS_REQUIRED - referCount;
             showPopup('⚠️ প্রায় হয়ে গেছে!',
