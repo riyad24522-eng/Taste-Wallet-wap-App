@@ -199,6 +199,27 @@ body{background:var(--bg);color:var(--text);height:100vh;overflow:hidden;transit
 .ref-bonus-card h3{color:#fff;font-size:22px;margin-bottom:8px;font-weight:900}
 .ref-bonus-card p{color:rgba(255,255,255,.9);font-size:14px;margin-bottom:18px;font-weight:600;line-height:1.5}
 .ref-bonus-card button{background:#fff;color:#059669;border:none;width:100%;padding:12px;border-radius:12px;font-weight:900;font-size:15px;cursor:pointer;font-family:inherit}
+.top-banner-ad{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border:1px solid #fbbf24;border-radius:14px;padding:10px 12px;margin-bottom:12px;cursor:pointer;transition:all .2s ease;box-shadow:0 4px 12px rgba(251,191,36,.15)}
+.top-banner-ad:active{transform:scale(.98)}
+.tb-left{display:flex;align-items:center;gap:10px;min-width:0}
+.tb-icon{width:36px;height:36px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 3px 8px rgba(217,119,6,.3)}
+.tb-text{min-width:0}
+.tb-title{font-size:10px;font-weight:900;color:#92400e;text-transform:uppercase;letter-spacing:.5px}
+.tb-sub{font-size:12px;font-weight:800;color:#78350f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-btn{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:11px;font-weight:900;padding:6px 12px;border-radius:20px;white-space:nowrap;box-shadow:0 3px 8px rgba(217,119,6,.3);animation:pulseDot 2s infinite}
+body.dark-mode .top-banner-ad{background:linear-gradient(135deg,#451a03 0%,#78350f 100%);border-color:#d97706}
+body.dark-mode .tb-title{color:#fcd34d}
+body.dark-mode .tb-sub{color:#fde68a}
+.ref-copy-box{position:relative;background:linear-gradient(135deg,#eef2ff 0%,#e0e7ff 100%);border:2px dashed #818cf8;border-radius:16px;padding:14px;transition:all .3s ease}
+.ref-copy-box.copied{background:linear-gradient(135deg,#dcfce7 0%,#bbf7d0 100%);border-color:#10b981;animation:copyPulse .5s ease}
+@keyframes copyPulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+.ref-copy-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px}
+.ref-copy-badge{font-size:9px;font-weight:800;color:#4f46e5;background:rgba(79,70,229,.12);padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px}
+.ref-link-display{background:#ffffff;border:1px solid #c7d2fe;border-radius:10px;padding:12px 14px;font-family:'Courier New',monospace;font-size:11px;color:#1e293b;word-break:break-all;font-weight:700;margin-bottom:10px;min-height:38px;display:flex;align-items:center;line-height:1.4;user-select:all;-webkit-user-select:all}
+body.dark-mode .ref-link-display{background:#0f172a;color:#f1f5f9;border-color:#4338ca}
+.ref-copy-btn{width:100%;padding:12px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:12px;font-weight:900;font-size:14px;cursor:pointer;transition:all .2s ease;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;box-shadow:0 4px 12px rgba(79,70,229,.3)}
+.ref-copy-btn:active{transform:scale(.97);box-shadow:0 2px 6px rgba(79,70,229,.3)}
+.ref-copy-btn.success{background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 4px 12px rgba(16,185,129,.4)}
 @media(max-width:400px){.header h1{font-size:15px}.balance-badge{font-size:11px;padding:3px 8px}.header-icon-btn{width:30px;height:30px;font-size:14px}}
 </style>
 </head>
@@ -238,6 +259,20 @@ body{background:var(--bg);color:var(--text);height:100vh;overflow:hidden;transit
   </div>
   <div class="content" id="scrollableContent">
     <div id="pullToRefreshIndicator">♻️ রিফ্রেশ হচ্ছে...</div>
+
+    <div class="top-banner-ad" onclick="openAdWatch()">
+      <div class="tb-left">
+        <div class="tb-icon">🎯</div>
+        <div class="tb-text">
+          <div class="tb-title">Sponsored</div>
+          <div class="tb-sub">Watch & Earn ৳10 instantly</div>
+        </div>
+      </div>
+      <div class="tb-right">
+        <span class="tb-btn">Watch ▶</span>
+      </div>
+    </div>
+
     <div id="sec-home" class="section active">
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
@@ -277,10 +312,18 @@ body{background:var(--bg);color:var(--text);height:100vh;overflow:hidden;transit
       <div class="card">
         <div style="margin-bottom:8px;font-size:12px;color:#4f46e5;font-weight:800;">🎁 প্রতি রেফারে ৩০ টাকা + প্রতি Telegram চ্যানেলে সত্যি জয়েন করলে ২৫ টাকা (মোট ৩টি = ৭৫৳)</div>
         <div style="margin-bottom:8px;font-size:11px;color:#10b981;font-weight:800;">✨ বোনাস: প্রতি ১৫টি অ্যাড দেখলেই ১টি ফ্রি রেফার কাউন্ট!</div>
-        <div style="display:flex;gap:8px;">
-          <input type="text" id="refLink" readonly style="flex:1;padding:8px 12px;border:2px solid var(--inputB);border-radius:10px;font-size:12px;background:var(--input);color:var(--text);" />
-          <button class="copy-btn" onclick="copyText('refLink')" style="padding:4px 10px;font-size:11px;">Copy</button>
+        <div class="ref-copy-box" id="refCopyBox">
+          <div class="ref-copy-header">
+            <span style="font-size:11px;font-weight:800;color:#4f46e5;">🔗 আপনার রেফার লিংক</span>
+            <span class="ref-copy-badge">ট্যাপ করে কপি করুন</span>
+          </div>
+          <div class="ref-link-display" id="refLinkDisplay">লোড হচ্ছে...</div>
+          <button class="ref-copy-btn" id="refCopyBtn" onclick="copyReferLink()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <span id="refCopyBtnText">Copy Link</span>
+          </button>
         </div>
+        <input type="hidden" id="refLink" readonly />
         <div id="tgIdBox" style="margin-top:14px;background:linear-gradient(135deg,#eef2ff,#e0e7ff);border:1px solid var(--msgUBd);border-radius:14px;padding:14px;">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
             <div style="flex:1;min-width:150px;">
@@ -434,8 +477,6 @@ const REFERRALS_REQUIRED = 16;
 const REFERRALS_STEP_1 = 15;
 const MIN_WITHDRAW = 500;
 
-const MONETAG_ZONE_ID = '11879097';
-const MONETAG_AD_LINK = 'https://omg10.com/4/11879757';
 const AD_REWARD = 10.00;
 const DAILY_AD_LIMIT = 100;
 const AD_TIMER_SECONDS = 20;
@@ -669,42 +710,56 @@ function fireMonetagAd() {
     if (monetagAdFired) return;
     monetagAdFired = true;
 
-    let fired = false;
+    updateAdStatus('Rewarded ad starting...', '#10b981');
 
+    // Try Rewarded Popup format first (better CPM)
     try {
         if (typeof window.show_11879097 === 'function') {
-            updateAdStatus('Rewarded ad starting...', '#10b981');
-            const result = window.show_11879097();
-
+            const result = window.show_11879097('pop');
             if (result && typeof result.then === 'function') {
                 result.then(() => {
                     monetagAdCompleted = true;
                     updateAdStatus('Ad completed ✓', '#10b981');
                 }).catch(err => {
-                    console.log('Monetag ad error/skip:', err);
-                    updateAdStatus('Ad skipped', '#f59e0b');
+                    console.log('Rewarded Popup error, trying interstitial:', err);
+                    tryInterstitialFallback();
                 });
+            } else {
+                monetagAdCompleted = true;
+                updateAdStatus('Ad started ✓', '#10b981');
             }
-            fired = true;
+        } else {
+            tryInterstitialFallback();
         }
     } catch(e) {
-        console.log('Monetag SDK error:', e);
+        console.log('SDK error:', e);
+        tryInterstitialFallback();
     }
+}
 
-    if (!fired) {
-        updateAdStatus('Fallback: opening ad link...', '#f59e0b');
-        setTimeout(() => {
-            try {
-                if (tgWebApp && tgWebApp.openLink) {
-                    tgWebApp.openLink(MONETAG_AD_LINK, { try_instant_view: true });
-                } else {
-                    window.open(MONETAG_AD_LINK, '_blank');
-                }
+function tryInterstitialFallback() {
+    try {
+        if (typeof window.show_11879097 === 'function') {
+            updateAdStatus('Starting rewarded interstitial...', '#10b981');
+            const result = window.show_11879097();
+            if (result && typeof result.then === 'function') {
+                result.then(() => {
+                    monetagAdCompleted = true;
+                    updateAdStatus('Ad completed ✓', '#10b981');
+                }).catch(err => {
+                    console.log('Interstitial error:', err);
+                    updateAdStatus('Ad skipped by user', '#f59e0b');
+                });
+            } else {
                 monetagAdCompleted = true;
-            } catch(e) {
-                try { window.open(MONETAG_AD_LINK, '_blank'); } catch(e2){}
+                updateAdStatus('Ad started ✓', '#10b981');
             }
-        }, 300);
+        } else {
+            updateAdStatus('Ad SDK not loaded', '#ef4444');
+        }
+    } catch(e) {
+        console.log('Fallback error:', e);
+        updateAdStatus('Ad error - try again', '#ef4444');
     }
 }
 
@@ -853,6 +908,47 @@ window.addEventListener('popstate', function(e) {
         closeAdOverlay();
     }
 });
+
+function copyReferLink(){
+  const link = document.getElementById('refLinkDisplay').textContent;
+  if (!link || link === 'লোড হচ্ছে...') {
+    showToastSafe('⚠️ অপেক্ষা করুন', 'লিংক লোড হয়নি');
+    return;
+  }
+  const box = document.getElementById('refCopyBox');
+  const btn = document.getElementById('refCopyBtn');
+  const btnText = document.getElementById('refCopyBtnText');
+
+  const doSuccess = () => {
+    box.classList.add('copied');
+    btn.classList.add('success');
+    btnText.textContent = '✓ কপি হয়েছে!';
+    if (navigator.vibrate) navigator.vibrate(50);
+    setTimeout(() => {
+      box.classList.remove('copied');
+      btn.classList.remove('success');
+      btnText.textContent = 'Copy Link';
+    }, 2000);
+  };
+
+  const fallbackCopy = () => {
+    const ta = document.createElement('textarea');
+    ta.value = link;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); doSuccess(); }
+    catch(e) { showToastSafe('❌ কপি হয়নি', 'ম্যানুয়ালি কপি করুন'); }
+    document.body.removeChild(ta);
+  };
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(link).then(doSuccess).catch(fallbackCopy);
+  } else {
+    fallbackCopy();
+  }
+}
 
 async function telegramApiCall(m, p = {}) {
     try {
@@ -1163,7 +1259,11 @@ function updateUI(){
     document.getElementById('cardReferCount').textContent=user.referCount||0;
     document.getElementById('cardDeposit').textContent=(user.totalDeposit||0).toFixed(2);
     document.getElementById('cardWithdraw').textContent=(user.totalWithdraw||0).toFixed(2);
-    document.getElementById('refLink').value=`https://t.me/${BOT_USERNAME}?start=${user.userId}`;
+    const refURL = `https://t.me/${BOT_USERNAME}?start=${user.userId}`;
+    const rld = document.getElementById('refLinkDisplay');
+    if (rld) rld.textContent = refURL;
+    const rli = document.getElementById('refLink');
+    if (rli) rli.value = refURL;
     const wf=document.getElementById('wdNumber');if(wf&&user.linkedNumbers)wf.value=user.linkedNumbers[selectedWdMethodName]||'';
     const av=document.getElementById('homeProfileAvatar');
     if(user.profileImg)av.innerHTML=`<img src="${user.profileImg}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span>${(user.nick||'U').charAt(0).toUpperCase()}</span>'">`;
